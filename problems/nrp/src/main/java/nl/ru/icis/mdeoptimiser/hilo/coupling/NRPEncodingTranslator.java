@@ -2,6 +2,7 @@ package nl.ru.icis.mdeoptimiser.hilo.coupling;
 
 import org.eclipse.emf.henshin.model.resource.HenshinResourceSet;
 
+import models.nrp.nextReleaseProblem.EcorePackage;
 import models.nrp.nextReleaseProblem.NRP;
 import models.nrp.nextReleaseProblem.SoftwareArtifact;
 
@@ -19,7 +20,7 @@ public class NRPEncodingTranslator {
     var artifacts = originalModel.getAvailableArtifacts();
     for (SoftwareArtifact artifact : artifacts) {
       if (encoding[artifacts.indexOf(artifact)]) {
-        // TODO add artifact to Solution
+        returnModel.getSolutions().get(0).getSelectedArtifacts().add(artifact);
       }
     }
     return returnModel;
@@ -30,6 +31,29 @@ public class NRPEncodingTranslator {
   }
   
   public NRP getModel() {
+    var metamodel = EcorePackage.eINSTANCE;
     return (NRP) resourceSet.getResource("nrp-model-25-cus-50-req-203-sa.xmi").getContents().get(0);
+  }
+  
+  /**
+   * Should be done by building the encoding instead.
+   * @param sol
+   * @return
+   */
+  public boolean[] repair(boolean[] sol) {    
+    var artifacts = originalModel.getAvailableArtifacts();
+    for (SoftwareArtifact artifact : artifacts) {
+      if (sol[artifacts.indexOf(artifact)]) {
+        flipRequiresToOnes(sol, artifact);
+      }
+    }
+    return sol;
+  }
+  
+  private void flipRequiresToOnes(boolean[] sol, SoftwareArtifact artifact) {
+    for (SoftwareArtifact requires : artifact.getRequires()) {
+      sol[originalModel.getAvailableArtifacts().indexOf(requires)] = true;
+      flipRequiresToOnes(sol, requires);
+    }
   }
 }
