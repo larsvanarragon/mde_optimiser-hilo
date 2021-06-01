@@ -35,11 +35,11 @@ public class AbstractNRP extends AbstractProblem {
   }
 
   @Override
-  public void evaluate(Solution solution) {
+  public void evaluate(Solution solution) { // TODO evaluate based on ENCODING
     boolean[] sol = EncodingUtils.getBinary(solution.getVariable(0));
     uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.interpreter.guidance.Solution wrapperSolution = 
         new uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.interpreter.guidance.Solution(translator.translate(translator.repair(sol)));
-    solution.setObjective(MINCOST_INDEX, fitnessMinCost.computeFitness(wrapperSolution));
+    solution.setObjective(MINCOST_INDEX, -fitnessMinCost.computeFitness(wrapperSolution));
     solution.setObjective(MAXSAT_INDEX, fitnessMaxSat.computeFitness(wrapperSolution));
   }
 
