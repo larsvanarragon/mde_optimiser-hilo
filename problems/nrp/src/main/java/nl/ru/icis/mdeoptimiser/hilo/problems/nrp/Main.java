@@ -5,25 +5,25 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
 
-import org.eclipse.xtext.testing.util.ParseHelper;
+import org.eclipse.emf.henshin.model.resource.HenshinResourceSet;
 import org.moeaframework.Executor;
 import org.moeaframework.core.NondominatedPopulation;
 import org.moeaframework.core.variable.EncodingUtils;
 
-import com.google.inject.Injector;
-import com.google.inject.Key;
-
-import nl.ru.icis.mdeoptimiser.hilo.coupling.NRPEncodingTranslator;
-import uk.ac.kcl.inf.mdeoptimiser.languages.MoptStandaloneSetup;
-import uk.ac.kcl.inf.mdeoptimiser.languages.mopt.Optimisation;
-import uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.OptimisationInterpreter;
+import models.nrp.nextReleaseProblem.EcorePackage;
+import models.nrp.nextReleaseProblem.NRP;
 
 public class Main {
-  public static void main( String[] args ) throws Exception {
-    NRPEncodingTranslator translator = new NRPEncodingTranslator();
-    AbstractNRP problem = new AbstractNRP(translator);
+  private static final String RESOURCE_LOCATION = "src/main/resources/nl/ru/icis/mdeoptimiser/hilo/problems/nrp/models";
+  private static final String MODEL_NAME = "nrp-model-25-cus-50-req-203-sa.xmi";
+  
+  private static HenshinResourceSet resourceSet = new HenshinResourceSet(RESOURCE_LOCATION);
+  
+  private static NRP model;
+  
+  public static void main( String[] args ) throws Exception {    
+    AbstractNRP problem = new AbstractNRP();
     NondominatedPopulation result = new Executor().withProblem(problem)
-                  .withProperty("populationSize", 40) // Not working?
                   .withAlgorithm("NSGAII")
                   .withMaxEvaluations(500)
                   .run();
@@ -34,5 +34,15 @@ public class Main {
     }
   }
   
+  public static NRP getModel() {
+    if (model == null) {
+      var metamodel = EcorePackage.eINSTANCE;
+      model = (NRP) resourceSet.getResource(MODEL_NAME).getContents().get(0);
+    }
+    return model;
+  }
   
+  public static int NRPArtifactsSize() {
+    return getModel().getAvailableArtifacts().size();
+  }
 }

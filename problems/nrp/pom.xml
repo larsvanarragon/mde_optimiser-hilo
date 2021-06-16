@@ -12,6 +12,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <aspectj.version>1.8.9</aspectj.version>
   </properties>
 
   <dependencies>
@@ -26,6 +27,18 @@
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
+    
+    <!-- <dependency>
+        <groupId>org.aspectj</groupId>
+        <artifactId>aspectjrt</artifactId>
+        <version>${aspectj.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.aspectj</groupId>
+        <artifactId>aspectjweaver</artifactId>
+        <version>${aspectj.version}</version>
+    </dependency> -->
   </dependencies>
 
   <build>

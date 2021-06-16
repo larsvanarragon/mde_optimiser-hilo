@@ -5,10 +5,8 @@ import org.moeaframework.core.variable.EncodingUtils;
 import org.moeaframework.problem.AbstractProblem;
 
 import models.nrp.fitness.MaximiseSatisfaction;
-import models.nrp.fitness.MaximiseSatisfactionReimplemented;
 import models.nrp.fitness.MinimiseCost;
 import models.nrp.nextReleaseProblem.NRP;
-import nl.ru.icis.mdeoptimiser.hilo.coupling.NRPEncodingTranslator;
 
 public class AbstractNRP extends AbstractProblem {
   
@@ -23,30 +21,28 @@ public class AbstractNRP extends AbstractProblem {
   private MinimiseCost fitnessMinCost;
   private MaximiseSatisfaction fitnessMaxSat;
   
-  private NRPEncodingTranslator translator;
-  
-  public AbstractNRP(NRPEncodingTranslator translator) {
+  public AbstractNRP() {
     super(N_VARIABLES, N_OBJECTIVES, N_CONSTRAINTS);
     
     this.fitnessMinCost = new MinimiseCost();
     this.fitnessMaxSat = new MaximiseSatisfaction();
-    
-    this.translator = translator;
   }
 
   @Override
-  public void evaluate(Solution solution) { // TODO evaluate based on ENCODING
-    boolean[] sol = EncodingUtils.getBinary(solution.getVariable(0));
+  public void evaluate(Solution solution) {
+    // Later use AspectJ to intercept the moeaSolution.getModel() function and just give the bare model
+    NRP model = Main.getModel();
     uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.interpreter.guidance.Solution wrapperSolution = 
-        new uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.interpreter.guidance.Solution(translator.translate(translator.repair(sol)));
-    solution.setObjective(MINCOST_INDEX, -fitnessMinCost.computeFitness(wrapperSolution));
-    solution.setObjective(MAXSAT_INDEX, fitnessMaxSat.computeFitness(wrapperSolution));
+        new uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.interpreter.guidance.Solution(model);
+    
+    solution.setObjective(MINCOST_INDEX, fitnessMinCost.computeFitness(wrapperSolution));
+//    solution.setObjective(MAXSAT_INDEX, fitnessMaxSat.computeFitness(wrapperSolution));
   }
 
   @Override
   public Solution newSolution() {
     Solution solution = new Solution(N_VARIABLES, N_OBJECTIVES, N_CONSTRAINTS);
-    solution.setVariable(0,  EncodingUtils.newBinary(translator.NRPArtifactsSize()));
+    solution.setVariable(0,  EncodingUtils.newBinary(Main.NRPArtifactsSize()));
     return solution;
   }
 }
