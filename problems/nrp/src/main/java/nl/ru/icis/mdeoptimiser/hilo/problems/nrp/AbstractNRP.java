@@ -30,6 +30,9 @@ public class AbstractNRP extends AbstractProblem {
 
   @Override
   public void evaluate(Solution solution) {
+    // TODO Store solution information
+    
+    
     // Later use AspectJ to intercept the moeaSolution.getModel() function and just give the bare model
     NRP model = Main.getModel();
     uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.interpreter.guidance.Solution wrapperSolution = 

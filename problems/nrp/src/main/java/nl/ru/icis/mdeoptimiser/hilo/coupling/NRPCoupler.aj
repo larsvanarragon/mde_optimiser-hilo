@@ -6,7 +6,6 @@ import org.moeaframework.core.variable.EncodingUtils;
 
 import models.nrp.nextReleaseProblem.EcoreFactory;
 import models.nrp.nextReleaseProblem.NRP;
-import models.nrp.nextReleaseProblem.SoftwareArtifact;
 import models.nrp.nextReleaseProblem.Solution;
 import models.nrp.nextReleaseProblem.impl.EcoreFactoryImpl;
 import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.AbstractNRP;
@@ -26,6 +25,8 @@ public aspect NRPCoupler {
     EList<Solution> returnList = new BasicEList<Solution>();
     Solution returnSol = factory.createSolution();
     
+    System.out.println("Intercepted!");
+//    
     for(int i = 0; i < currentNRPSolution.length; i++) {
       if (currentNRPSolution[i]) {
         returnSol.getSelectedArtifacts().add(model.getAvailableArtifacts().get(i));
@@ -36,7 +37,7 @@ public aspect NRPCoupler {
   }
   
 //  pointcut getSelectedArtifacts(): call(EList<SoftwareArtifact> models.nrp.nextReleaseProblem.Solution.getSelectedArtifacts());
-
+//
 //  EList<SoftwareArtifact> around(): getSelectedArtifacts() {
 //    EList<SoftwareArtifact> returnList = new BasicEList<SoftwareArtifact>();
 //    
@@ -52,9 +53,4 @@ public aspect NRPCoupler {
 //  }
   
 //  pointcut getSolutions(): call(EList<Solution> models.nrp.nextReleaseProblem.SoftwareArtifact.getSolutions());
-  
-  before(org.moeaframework.core.Solution solution): call(void AbstractNRP.evaluate(org.moeaframework.core.Solution)) && args(solution) {
-    System.out.println("Intercepte222d!");
-    this.currentNRPSolution = EncodingUtils.getBinary(solution.getVariable(0));
-  }
 }
