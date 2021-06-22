@@ -1,9 +1,13 @@
 package nl.ru.icis.mdeoptimiser.hilo.coupling;
 
+import java.util.HashMap;
 import java.util.Map;
 
+// TODO clean this up neatly
 public class NRPCoupleData {
-  private static Map<String, boolean[]> relations;
+  private static Map<String, boolean[]> relations = new HashMap<>();
+  
+  public static final String SOLUTION_RELATION = "solution";
   
   public static boolean[] getRelation(String key) {
     return relations.get(key);

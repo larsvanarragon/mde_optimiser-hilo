@@ -7,6 +7,7 @@ import org.moeaframework.problem.AbstractProblem;
 import models.nrp.fitness.MaximiseSatisfaction;
 import models.nrp.fitness.MinimiseCost;
 import models.nrp.nextReleaseProblem.NRP;
+import nl.ru.icis.mdeoptimiser.hilo.coupling.NRPCoupleData;
 
 public class AbstractNRP extends AbstractProblem {
   
@@ -30,8 +31,8 @@ public class AbstractNRP extends AbstractProblem {
 
   @Override
   public void evaluate(Solution solution) {
-    // TODO Store solution information
-    
+    // Store solution information
+    NRPCoupleData.setRelation(NRPCoupleData.SOLUTION_RELATION, EncodingUtils.getBinary(solution.getVariable(0)));
     
     // Later use AspectJ to intercept the moeaSolution.getModel() function and just give the bare model
     NRP model = Main.getModel();
@@ -39,7 +40,7 @@ public class AbstractNRP extends AbstractProblem {
         new uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.interpreter.guidance.Solution(model);
     
     solution.setObjective(MINCOST_INDEX, fitnessMinCost.computeFitness(wrapperSolution));
-//    solution.setObjective(MAXSAT_INDEX, fitnessMaxSat.computeFitness(wrapperSolution));
+    solution.setObjective(MAXSAT_INDEX, fitnessMaxSat.computeFitness(wrapperSolution));
   }
 
   @Override

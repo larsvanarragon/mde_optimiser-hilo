@@ -21,11 +21,15 @@ public class Main {
   
   private static NRP model;
   
-  public static void main( String[] args ) throws Exception {    
+  public static void main( String[] args ) throws Exception {
+    
     AbstractNRP problem = new AbstractNRP();
+    // Pareto front can compare using hypervolume (which has a calculation)
+    // TODO Run with actual model but random mutation
+    // TODO see about compile time weaving
     NondominatedPopulation result = new Executor().withProblem(problem)
                   .withAlgorithm("NSGAII")
-                  .withMaxEvaluations(500)
+                  .withMaxEvaluations(5000)
                   .run();
     
     System.out.println(result.size());
