@@ -12,6 +12,7 @@ import org.moeaframework.core.variable.EncodingUtils;
 
 import models.nrp.nextReleaseProblem.EcorePackage;
 import models.nrp.nextReleaseProblem.NRP;
+import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.model.AbstractModelNRP;
 
 public class Main {
   private static final String RESOURCE_LOCATION = "src/main/resources/nl/ru/icis/mdeoptimiser/hilo/problems/nrp/models";
@@ -21,23 +22,33 @@ public class Main {
   
   private static NRP model;
   
+  private static boolean AJEnabled = true;
+  
   public static void main( String[] args ) throws Exception {
     
-    AbstractBooleanNRP problem = new AbstractBooleanNRP();
+    AbstractBooleanNRP bitProblem = new AbstractBooleanNRP();
     // Pareto front can compare using hypervolume (which has a calculation)
     // TODO Run with actual model but random mutation
     // TODO see about compile time weaving
-    NondominatedPopulation result = new Executor().withProblem(problem)
+    NondominatedPopulation bitResult = new Executor().withProblem(bitProblem)
                   .withAlgorithm("NSGAII")
                   .withMaxEvaluations(5000)
                   .run();
     
-    AbstractModelNRP moeaProblem = new AbstractModelNRP();
+//    AJEnabled = false;
+//    AbstractModelNRP modelProblem = new AbstractModelNRP(model);
+//    NondominatedPopulation modelResult = new Executor().withProblem(modelProblem)
+//        .withAlgorithm("NSGAII")
+//        .withMaxEvaluations(5000)
+//        .run();
     
-    System.out.println(result.size());
-    for (boolean b : EncodingUtils.getBinary(result.get(0).getVariable(0))) {
-      System.out.print(b + ", ");
-    }
+//    System.out.println(bitResult.size());
+//    for (boolean b : EncodingUtils.getBinary(bitResult.get(0).getVariable(0))) {
+//      System.out.print(b + ", ");
+//    }
+    
+//    System.out.println(modelResult.size());
+    // TODO print which selected
   }
   
   public static NRP getModel() {
@@ -46,6 +57,10 @@ public class Main {
       model = (NRP) resourceSet.getResource(MODEL_NAME).getContents().get(0);
     }
     return model;
+  }
+  
+  public static boolean AJEnabled() {
+    return AJEnabled;
   }
   
   public static int NRPArtifactsSize() {

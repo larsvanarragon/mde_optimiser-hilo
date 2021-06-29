@@ -15,6 +15,10 @@ public aspect NRPCoupler {
   pointcut getSelectedArtifacts(): call(EList<SoftwareArtifact> models.nrp.nextReleaseProblem.Solution.getSelectedArtifacts());
 
   EList<SoftwareArtifact> around(): getSelectedArtifacts() {
+    if (!Main.AJEnabled()) {
+      return proceed();
+    }
+    
     EList<SoftwareArtifact> returnList = new BasicEList<SoftwareArtifact>();
     
     for(int i = 0; i < NRPCoupleData.getRelation(NRPCoupleData.SOLUTION_RELATION).length; i++) {
@@ -29,6 +33,10 @@ public aspect NRPCoupler {
   pointcut getSolutions(SoftwareArtifact sa): call(EList<Solution> models.nrp.nextReleaseProblem.SoftwareArtifact.getSolutions()) && this(sa);
   
   EList<Solution> around(SoftwareArtifact sa): getSolutions(sa) {
+    if (!Main.AJEnabled()) {
+      return proceed(sa);
+    }
+    
     EList<Solution> returnList = new BasicEList<Solution>();
     
     if(NRPCoupleData.getRelation(NRPCoupleData.SOLUTION_RELATION)[model.getAvailableArtifacts().indexOf(sa)]) {

@@ -12,7 +12,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <aspectj.version>1.9.6</aspectj.version>
+    <aspectj.version>1.8.9</aspectj.version>
   </properties>
 
   <dependencies>
@@ -28,13 +28,7 @@
       <scope>test</scope>
     </dependency>
     
-    <dependency>
-			<groupId>org.moeaframework</groupId>
-			<artifactId>moeaframework</artifactId>
-			<version>2.13</version>
-		</dependency>
-    
-    <dependency>
+    <!-- <dependency>
         <groupId>org.aspectj</groupId>
         <artifactId>aspectjrt</artifactId>
         <version>${aspectj.version}</version>
@@ -43,7 +37,7 @@
         <groupId>org.aspectj</groupId>
         <artifactId>aspectjweaver</artifactId>
         <version>${aspectj.version}</version>
-    </dependency>
+    </dependency> -->
   </dependencies>
 
   <build>
@@ -89,41 +83,6 @@
           <artifactId>maven-project-info-reports-plugin</artifactId>
           <version>3.0.0</version>
         </plugin>
-        
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>aspectj-maven-plugin</artifactId>
-					<version>1.7</version>
-					<configuration>
-					    <complianceLevel>1.8</complianceLevel>
-					    <source>1.8</source>
-					    <target>1.8</target>
-					    <showWeaveInfo>true</showWeaveInfo>
-					    <verbose>true</verbose>
-					    <Xlint>ignore</Xlint>
-					    <encoding>UTF-8 </encoding>
-							<weaveDependencies>
-								<weaveDependency>  
-									<groupId>uk.ac.kcl.inf.mdeoptimiser.examples.problems</groupId>
-                  <artifactId>uk.ac.kcl.inf.mdeoptimiser.examples.problems.nrp</artifactId>
-								</weaveDependency>
-								<weaveDependency>
-									<groupId>org.moeaframework</groupId>
-                  <artifactId>moeaframework</artifactId>
-								</weaveDependency>
-							</weaveDependencies>
-					</configuration>
-					<executions>
-						<execution>
-							<goals>
-								<!-- use this goal to weave all your main classes -->
-								<goal>compile</goal>
-								<!-- use this goal to weave all your test classes -->
-								<goal>test-compile</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
       </plugins>
     </pluginManagement>
   </build>

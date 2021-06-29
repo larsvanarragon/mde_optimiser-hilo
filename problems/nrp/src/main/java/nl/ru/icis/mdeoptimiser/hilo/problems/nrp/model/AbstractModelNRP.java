@@ -1,14 +1,11 @@
-package nl.ru.icis.mdeoptimiser.hilo.problems.nrp;
+package nl.ru.icis.mdeoptimiser.hilo.problems.nrp.model;
 
 import org.moeaframework.core.Solution;
-import org.moeaframework.core.variable.EncodingUtils;
 import org.moeaframework.problem.AbstractProblem;
 
 import models.nrp.fitness.MaximiseSatisfaction;
 import models.nrp.fitness.MinimiseCost;
 import models.nrp.nextReleaseProblem.NRP;
-import nl.ru.icis.mdeoptimiser.hilo.coupling.NRPCoupleData;
-
 public class AbstractModelNRP extends AbstractProblem {
   
   private static final int N_OBJECTIVES = 2;
@@ -22,22 +19,21 @@ public class AbstractModelNRP extends AbstractProblem {
   private MinimiseCost fitnessMinCost;
   private MaximiseSatisfaction fitnessMaxSat;
   
-  public AbstractModelNRP() {
+  private NRP originalModel;
+  
+  public AbstractModelNRP(NRP originalModel) {
     super(N_VARIABLES, N_OBJECTIVES, N_CONSTRAINTS);
     
     this.fitnessMinCost = new MinimiseCost();
     this.fitnessMaxSat = new MaximiseSatisfaction();
+    
+    this.originalModel = originalModel;
   }
 
   @Override
-  public void evaluate(Solution solution) {
-    // Store solution information
-    NRPCoupleData.setRelation(NRPCoupleData.SOLUTION_RELATION, EncodingUtils.getBinary(solution.getVariable(0)));
-    
-    // Later use AspectJ to intercept the moeaSolution.getModel() function and just give the bare model
-    NRP model = Main.getModel();
+  public void evaluate(Solution solution) {    
     uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.interpreter.guidance.Solution wrapperSolution = 
-        new uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.interpreter.guidance.Solution(model);
+        new uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.interpreter.guidance.Solution(((ModelNRPVariable) solution.getVariable(0)).getModel());
     
     solution.setObjective(MINCOST_INDEX, fitnessMinCost.computeFitness(wrapperSolution));
     solution.setObjective(MAXSAT_INDEX, fitnessMaxSat.computeFitness(wrapperSolution));
@@ -46,8 +42,7 @@ public class AbstractModelNRP extends AbstractProblem {
   @Override
   public Solution newSolution() {
     Solution solution = new Solution(N_VARIABLES, N_OBJECTIVES, N_CONSTRAINTS);
-    solution.setVariable(0,  EncodingUtils.newBinary(Main.NRPArtifactsSize()));
-    solution.setVariable(0, );
+    solution.setVariable(0, new ModelNRPVariable(originalModel));
     return solution;
   }
 }
