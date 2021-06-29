@@ -9,7 +9,7 @@ import models.nrp.fitness.MinimiseCost;
 import models.nrp.nextReleaseProblem.NRP;
 import nl.ru.icis.mdeoptimiser.hilo.coupling.NRPCoupleData;
 
-public class AbstractNRP extends AbstractProblem {
+public class AbstractModelNRP extends AbstractProblem {
   
   private static final int N_OBJECTIVES = 2;
   
@@ -22,7 +22,7 @@ public class AbstractNRP extends AbstractProblem {
   private MinimiseCost fitnessMinCost;
   private MaximiseSatisfaction fitnessMaxSat;
   
-  public AbstractNRP() {
+  public AbstractModelNRP() {
     super(N_VARIABLES, N_OBJECTIVES, N_CONSTRAINTS);
     
     this.fitnessMinCost = new MinimiseCost();
@@ -47,6 +47,7 @@ public class AbstractNRP extends AbstractProblem {
   public Solution newSolution() {
     Solution solution = new Solution(N_VARIABLES, N_OBJECTIVES, N_CONSTRAINTS);
     solution.setVariable(0,  EncodingUtils.newBinary(Main.NRPArtifactsSize()));
+    solution.setVariable(0, );
     return solution;
   }
 }

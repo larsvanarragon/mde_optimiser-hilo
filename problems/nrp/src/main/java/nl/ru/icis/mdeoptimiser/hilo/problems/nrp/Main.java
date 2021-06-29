@@ -23,7 +23,7 @@ public class Main {
   
   public static void main( String[] args ) throws Exception {
     
-    AbstractNRP problem = new AbstractNRP();
+    AbstractBooleanNRP problem = new AbstractBooleanNRP();
     // Pareto front can compare using hypervolume (which has a calculation)
     // TODO Run with actual model but random mutation
     // TODO see about compile time weaving
@@ -31,6 +31,8 @@ public class Main {
                   .withAlgorithm("NSGAII")
                   .withMaxEvaluations(5000)
                   .run();
+    
+    AbstractModelNRP moeaProblem = new AbstractModelNRP();
     
     System.out.println(result.size());
     for (boolean b : EncodingUtils.getBinary(result.get(0).getVariable(0))) {
