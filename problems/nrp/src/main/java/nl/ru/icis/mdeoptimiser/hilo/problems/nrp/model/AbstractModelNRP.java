@@ -1,5 +1,6 @@
 package nl.ru.icis.mdeoptimiser.hilo.problems.nrp.model;
 
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.moeaframework.core.Solution;
 import org.moeaframework.problem.AbstractProblem;
 
@@ -42,7 +43,7 @@ public class AbstractModelNRP extends AbstractProblem {
   @Override
   public Solution newSolution() {
     Solution solution = new Solution(N_VARIABLES, N_OBJECTIVES, N_CONSTRAINTS);
-    solution.setVariable(0, new ModelNRPVariable(originalModel));
+    solution.setVariable(0, new ModelNRPVariable(EcoreUtil.copy(originalModel)));
     return solution;
   }
 }
