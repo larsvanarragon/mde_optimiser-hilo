@@ -32,17 +32,17 @@ public class Main {
   
   private static boolean AJEnabled = true;
   
-  private static final int EVALUATIONS_START_VALUE = 100;
-  private static final int EVALUATIONS_END_VALUE = 300;
-//  private static final int EVALUATIONS_END_VALUE = 10_000;
-  private static final int EVALUATIONS_INCREMENT_STEP = 100;
+  private static final int EVALUATIONS_START_VALUE = 1000;
+//  private static final int EVALUATIONS_END_VALUE = 300;
+  private static final int EVALUATIONS_END_VALUE = 10_000;
+  private static final int EVALUATIONS_INCREMENT_STEP = 1000;
   
   private static final int POPSIZE_START_VALUE = 50;
-  private static final int POPSIZE_END_VALUE = 100;
-//  private static final int POPSIZE_END_VALUE = 400;
-  private static final int POPSIZE_INCREMENT_STEP = 50;
+//  private static final int POPSIZE_END_VALUE = 100;
+  private static final int POPSIZE_END_VALUE = 350;
+  private static final int POPSIZE_INCREMENT_STEP = 100;
   
-  private static final int EXPERIMENTS_PER_CYCLE = 20;
+  private static final int EXPERIMENTS_PER_CYCLE = 5;
   
   // TODO this does not work if the finals don't produce the correct integer (when dividing doesn't give a whole number)
   private static long[][] bitResults = new long[calcNEvals()]
