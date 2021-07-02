@@ -30,26 +30,34 @@ public class Main {
   private static boolean AJEnabled = true;
   
   public static void main( String[] args ) throws Exception {
+    AbstractBooleanNRP bitProblem = new AbstractBooleanNRP();
+    // Pareto front can compare using hypervolume (which has a calculation)
+    // TODO Run with actual model but random mutation
+    // TODO see about compile time weaving
     
-//    AbstractBooleanNRP bitProblem = new AbstractBooleanNRP();
-//    // Pareto front can compare using hypervolume (which has a calculation)
-//    // TODO Run with actual model but random mutation
-//    // TODO see about compile time weaving
-//    NondominatedPopulation bitResult = new Executor().withProblem(bitProblem)
-//                  .withAlgorithm("NSGAII")
-//                  .withMaxEvaluations(5000)
-//                  .run();
+    long startTimeBits = System.nanoTime();
+    NondominatedPopulation bitResult = new Executor().withProblem(bitProblem)
+                  .withAlgorithm("NSGAII")
+                  .withMaxEvaluations(1000)
+                  .run();
+    long endTimeBits = System.nanoTime() - startTimeBits;
     
     AJEnabled = false;
     AbstractModelNRP modelProblem = new AbstractModelNRP(getModel());
     AlgorithmFactory factory = new AlgorithmFactory();
     factory.addProvider(new ModelNRPFactory());
     
+    long startTimeModel = System.nanoTime();
     NondominatedPopulation modelResult = new Executor().usingAlgorithmFactory(factory)
         .withProblem(modelProblem)
         .withAlgorithm("NSGAII")
-        .withMaxEvaluations(5000)
+        .withMaxEvaluations(1000)
         .run();
+    long endTimeModel = System.nanoTime() - startTimeModel;
+    
+    System.out.println(endTimeBits);
+    System.out.println(endTimeModel);
+    
     
 //    System.out.println(bitResult.size());
 //    for (boolean b : EncodingUtils.getBinary(bitResult.get(0).getVariable(0))) {
@@ -59,19 +67,8 @@ public class Main {
 //    System.out.println(modelResult.size());
     // TODO print which selected
     
+   
     
-    
-// // Create an initial random population of population size
-//    var initialization =
-//        new RandomInitialization(problem, (Integer) properties.get("populationSize"));
-//
-//    return new NSGAII(
-//        problem,
-//        new NondominatedSortingPopulation(),
-//        null, // no archive
-//        null, // default selection the the one built in
-//        getVariation(properties),
-//        getRandomInitialization(problem, properties));
   }
   
   public static NRP getModel() {
