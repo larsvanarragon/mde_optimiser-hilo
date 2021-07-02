@@ -18,7 +18,7 @@ public class ModelNRPFactory extends AlgorithmProvider {
     if ("NSGAII".equals(name)) {
       // Create an initial random population of population size (From MDEOptimiser? Not sure why TODO)
       var initialization =
-          new RandomInitialization(problem, 40);
+          new RandomInitialization(problem, (Integer.parseInt(properties.getProperty("populationSize"))));
   
       return new NSGAII(
           problem,
@@ -26,7 +26,7 @@ public class ModelNRPFactory extends AlgorithmProvider {
           null, // no archive
           null, // default selection the the one built in
           new ModelNRPVariation(),
-          new RandomInitialization(problem, 40));
+          new RandomInitialization(problem, (Integer.parseInt(properties.getProperty("populationSize")))));
     } else {
       throw new UnexpectedAlgorithmException(name);
     }

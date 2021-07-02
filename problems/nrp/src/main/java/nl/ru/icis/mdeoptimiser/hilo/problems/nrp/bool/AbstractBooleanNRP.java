@@ -1,4 +1,4 @@
-package nl.ru.icis.mdeoptimiser.hilo.problems.nrp;
+package nl.ru.icis.mdeoptimiser.hilo.problems.nrp.bool;
 
 import org.moeaframework.core.Solution;
 import org.moeaframework.core.variable.EncodingUtils;
@@ -8,6 +8,7 @@ import models.nrp.fitness.MaximiseSatisfaction;
 import models.nrp.fitness.MinimiseCost;
 import models.nrp.nextReleaseProblem.NRP;
 import nl.ru.icis.mdeoptimiser.hilo.coupling.NRPCoupleData;
+import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.Main;
 
 public class AbstractBooleanNRP extends AbstractProblem {
   
