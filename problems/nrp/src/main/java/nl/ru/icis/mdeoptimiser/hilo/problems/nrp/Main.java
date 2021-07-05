@@ -33,14 +33,14 @@ public class Main {
   private static boolean AJEnabled = true;
   
   private static final int EVALUATIONS_START_VALUE = 1000;
-//  private static final int EVALUATIONS_END_VALUE = 300;
-  private static final int EVALUATIONS_END_VALUE = 10_000;
+  private static final int EVALUATIONS_END_VALUE = 2000;
+//  private static final int EVALUATIONS_END_VALUE = 10_000;
   private static final int EVALUATIONS_INCREMENT_STEP = 1000;
   
-  private static final int POPSIZE_START_VALUE = 50;
-//  private static final int POPSIZE_END_VALUE = 100;
-  private static final int POPSIZE_END_VALUE = 350;
-  private static final int POPSIZE_INCREMENT_STEP = 100;
+  private static final int POPSIZE_START_VALUE = 400;
+  private static final int POPSIZE_END_VALUE = 4000;
+//  private static final int POPSIZE_END_VALUE = 350;
+  private static final int POPSIZE_INCREMENT_STEP = 400;
   
   private static final int EXPERIMENTS_PER_CYCLE = 5;
   
@@ -151,7 +151,7 @@ public class Main {
     for(int row = 0; row < calcNEvals(); row++) {
       for(int column = 0; column < calcNPopSize(); column++) {
         builder.append(results[row][column]);
-        if (column < results.length)
+        if (column < results[row].length)
           builder.append(",");
       }
       builder.append("\n");
