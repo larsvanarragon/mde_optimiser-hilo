@@ -1,0 +1,4 @@
+0.6418348542385811,0.6591969266768204,
+0.5723884328538832,0.6246860619490031,
+
+hypervolumesResultList.add(modelExperiment.createHyperVolume().evaluate(bitExperiment.result()));

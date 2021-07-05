@@ -32,25 +32,24 @@ public class Main {
   
   private static boolean AJEnabled = true;
   
-  private static final int EVALUATIONS_START_VALUE = 1000;
-  private static final int EVALUATIONS_END_VALUE = 2000;
+  private static final int EVALUATIONS_START_VALUE = 100;
+  private static final int EVALUATIONS_END_VALUE = 200;
 //  private static final int EVALUATIONS_END_VALUE = 10_000;
-  private static final int EVALUATIONS_INCREMENT_STEP = 1000;
+  private static final int EVALUATIONS_INCREMENT_STEP = 100;
   
   private static final int POPSIZE_START_VALUE = 400;
-  private static final int POPSIZE_END_VALUE = 4000;
+  private static final int POPSIZE_END_VALUE = 800;
 //  private static final int POPSIZE_END_VALUE = 350;
   private static final int POPSIZE_INCREMENT_STEP = 400;
   
   private static final int EXPERIMENTS_PER_CYCLE = 5;
   
   // TODO this does not work if the finals don't produce the correct integer (when dividing doesn't give a whole number)
-  private static long[][] bitResults = new long[calcNEvals()]
-      [calcNPopSize()];
-  private static long[][] modelResults = new long[calcNEvals()]
-      [calcNPopSize()];
+  private static double[][] bitResults = new double[calcNEvals()][calcNPopSize()];
+  private static double[][] modelResults = new double[calcNEvals()][calcNPopSize()];
+  private static double[][] hypervolumes = new double[calcNEvals()][calcNPopSize()];
   
-  private static SimpleDateFormat dt = new SimpleDateFormat("yyyyy-mm-dd_hh-mm-ss");
+  private static SimpleDateFormat dt = new SimpleDateFormat("yyyy-mm-dd_hh-mm-ss");
   
   public static void main( String[] args ) throws Exception {
     for (int popsize = POPSIZE_START_VALUE; popsize <= POPSIZE_END_VALUE; popsize += POPSIZE_INCREMENT_STEP) {
@@ -67,19 +66,28 @@ public class Main {
     
     printResultsToCSV("bitResults", bitResults);
     printResultsToCSV("modelResults", modelResults);
+    printResultsToCSV("hypervolumes", hypervolumes);
   }
   
   private static void runExperiments(int popsize, int evaluations) {
     List<Long> bitResultsList = new ArrayList<>();
     List<Long> modelResultsList = new ArrayList<>();
+    List<Double> hypervolumesResultList = new ArrayList<>();
     
     //logging
     System.out.print("Working on: ");
     for (int experiment = 0; experiment < EXPERIMENTS_PER_CYCLE; experiment++) {
     //logging
       System.out.print(experiment + " ");
-      bitResultsList.add(doBitExperiment(popsize, evaluations, experiment));
-      modelResultsList.add(doModelExperiment(popsize, evaluations, experiment));      
+      Experiment bitExperiment = doBitExperiment(popsize, evaluations, experiment);
+      Experiment modelExperiment = doModelExperiment(popsize, evaluations, experiment);
+      
+      bitResultsList.add(bitExperiment.timeTaken());
+      modelResultsList.add(modelExperiment.timeTaken());
+      
+      // Calculate difference between experiments
+//      hypervolumesResultList.add(bitExperiment.createHyperVolume().evaluate(modelExperiment.result()));
+      hypervolumesResultList.add(modelExperiment.createHyperVolume().evaluate(bitExperiment.result()));
     }
     //logging
     System.out.println("finished!");
@@ -89,18 +97,23 @@ public class Main {
     
     bitResults[evaluationIndex][popsizeIndex] = averageOfLongList(bitResultsList);
     modelResults[evaluationIndex][popsizeIndex] = averageOfLongList(modelResultsList);
+    hypervolumes[evaluationIndex][popsizeIndex] = averageOfDoubleList(hypervolumesResultList);
   }
   
-  private static long doBitExperiment(int popsize, int evaluations, int experimentNumber) {
+  private static Experiment doBitExperiment(int popsize, int evaluations, int experimentNumber) {
     Experiment bitExperiment = new BooleanExperiment(getModel(), evaluations, popsize);
     AJEnabled = bitExperiment.requiresAJ();
-    return bitExperiment.run();
+    bitExperiment.run();
+    
+    return bitExperiment;
   }
   
-  private static long doModelExperiment(int popsize, int evaluations, int experimentNumber) {
+  private static Experiment doModelExperiment(int popsize, int evaluations, int experimentNumber) {
     Experiment modelExperiment = new ModelExperiment(getModel(), evaluations, popsize);
     AJEnabled = modelExperiment.requiresAJ();
-    return modelExperiment.run();
+    modelExperiment.run();
+    
+    return modelExperiment;
   }
   
   // START INDEX CALCULATION
@@ -145,7 +158,17 @@ public class Main {
     return sum.divide(BigInteger.valueOf(list.size())).longValue();
   }
   
-  private static void printResultsToCSV(String csvName, long[][] results) throws IOException {
+  private static double averageOfDoubleList(List<Double> list) {
+    Double sum = 0.0;
+    
+    for (Double n : list) {
+      sum += n;
+    }
+    
+    return sum/list.size();
+  }
+  
+  private static void printResultsToCSV(String csvName, double[][] results) throws IOException {
     StringBuilder builder = new StringBuilder();
     
     for(int row = 0; row < calcNEvals(); row++) {

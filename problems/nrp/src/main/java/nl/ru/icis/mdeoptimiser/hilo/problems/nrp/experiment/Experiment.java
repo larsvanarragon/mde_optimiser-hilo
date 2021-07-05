@@ -1,6 +1,7 @@
 package nl.ru.icis.mdeoptimiser.hilo.problems.nrp.experiment;
 
 import org.moeaframework.core.NondominatedPopulation;
+import org.moeaframework.core.indicator.Hypervolume;
 import org.moeaframework.problem.AbstractProblem;
 
 import models.nrp.nextReleaseProblem.NRP;
@@ -13,6 +14,8 @@ public abstract class Experiment {
   protected AbstractProblem problem;
   
   protected boolean requiresAJ;
+  
+  private long timeTaken = 0;
   
   // Default values
   private static final int DEFAULT_EVALUATIONS = 1000;
@@ -42,7 +45,8 @@ public abstract class Experiment {
   public long run() {
     long startTimeBits = System.nanoTime();
     this.result = doExperiment();
-    return System.nanoTime() - startTimeBits;
+    this.timeTaken = System.nanoTime() - startTimeBits;
+    return this.timeTaken;
   }
   
   public boolean requiresAJ() {
@@ -51,5 +55,17 @@ public abstract class Experiment {
   
   public NondominatedPopulation result() {
     return result;
+  }
+  
+  public long timeTaken() {
+    return timeTaken;
+  }
+  
+  public Hypervolume createHyperVolume() {
+    if (problem == null || result == null) {
+      return null;
+    }
+    
+    return new Hypervolume(problem, result);
   }
 }
