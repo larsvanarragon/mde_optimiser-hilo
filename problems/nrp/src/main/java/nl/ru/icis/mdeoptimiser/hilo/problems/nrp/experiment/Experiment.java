@@ -38,14 +38,19 @@ public abstract class Experiment {
   
   protected abstract NondominatedPopulation doExperiment();
   
+  public abstract Experiment copy();
+  
   protected abstract AbstractProblem problem();
   
   protected abstract boolean initializeAJRequired();
+  
+  protected abstract String name();
   
   public long run() {
     long startTimeBits = System.nanoTime();
     this.result = doExperiment();
     this.timeTaken = System.nanoTime() - startTimeBits;
+    
     return this.timeTaken;
   }
   

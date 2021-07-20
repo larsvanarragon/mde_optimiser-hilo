@@ -4,12 +4,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-
 import org.eclipse.emf.henshin.model.resource.HenshinResourceSet;
 import org.moeaframework.Executor;
 import org.moeaframework.core.NondominatedPopulation;
@@ -18,8 +14,8 @@ import org.moeaframework.core.spi.AlgorithmFactory;
 import models.nrp.nextReleaseProblem.EcorePackage;
 import models.nrp.nextReleaseProblem.NRP;
 import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.bool.AbstractBooleanNRP;
+import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.experiment.Batch;
 import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.experiment.BooleanExperiment;
-import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.experiment.Experiment;
 import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.experiment.ModelExperiment;
 import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.model.AbstractModelNRP;
 import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.model.ModelNRPFactory;
@@ -32,10 +28,10 @@ public class Main {
   
   private static boolean AJEnabled = true;
   
-  private static final int EVALUATIONS_START_VALUE = 100;
-  private static final int EVALUATIONS_END_VALUE = 200;
+  private static final int EVALUATIONS_START_VALUE = 4000;
+  private static final int EVALUATIONS_END_VALUE = 5000;
 //  private static final int EVALUATIONS_END_VALUE = 10_000;
-  private static final int EVALUATIONS_INCREMENT_STEP = 100;
+  private static final int EVALUATIONS_INCREMENT_STEP = 1000;
   
   private static final int POPSIZE_START_VALUE = 400;
   private static final int POPSIZE_END_VALUE = 800;
@@ -45,75 +41,47 @@ public class Main {
   private static final int EXPERIMENTS_PER_CYCLE = 5;
   
   // TODO this does not work if the finals don't produce the correct integer (when dividing doesn't give a whole number)
-  private static double[][] bitResults = new double[calcNEvals()][calcNPopSize()];
-  private static double[][] modelResults = new double[calcNEvals()][calcNPopSize()];
-  private static double[][] hypervolumes = new double[calcNEvals()][calcNPopSize()];
+  private static Batch[][] bitResults = new Batch[calcNEvals()][calcNPopSize()];
+  private static Batch[][] modelResults = new Batch[calcNEvals()][calcNPopSize()];
+//  private static List<Double>[][] hypervolumes = new ArrayList[calcNEvals()][calcNPopSize()];
   
   private static SimpleDateFormat dt = new SimpleDateFormat("yyyy-mm-dd_hh-mm-ss");
+  
+  // TODO TTESTING to check the hypervolumes mannwhitneymaywillcox
+  // TODO show that they are not different (effect size to show how big difference VDA)
+  // TODO if different check the seeds
   
   public static void main( String[] args ) throws Exception {
     for (int popsize = POPSIZE_START_VALUE; popsize <= POPSIZE_END_VALUE; popsize += POPSIZE_INCREMENT_STEP) {
       for (int evaluations = EVALUATIONS_START_VALUE; evaluations <= EVALUATIONS_END_VALUE; evaluations += EVALUATIONS_INCREMENT_STEP) {
         //logging
-        System.out.println("Running " + EXPERIMENTS_PER_CYCLE + " experiments with popsize: " + popsize + " and evaluations: " + evaluations);
+        System.out.println("Running 2 batches of " + EXPERIMENTS_PER_CYCLE + " experiments with popsize: " + popsize + " and evaluations: " + evaluations);
         
         runExperiments(popsize, evaluations);
         
         //logging
-        System.out.println("Finished " + EXPERIMENTS_PER_CYCLE + " experiments with popsize: " + popsize + " and evaluations: " + evaluations);
+        System.out.println("Finished 2 batches of " + EXPERIMENTS_PER_CYCLE + " experiments with popsize: " + popsize + " and evaluations: " + evaluations);
       }
     }
     
     printResultsToCSV("bitResults", bitResults);
     printResultsToCSV("modelResults", modelResults);
-    printResultsToCSV("hypervolumes", hypervolumes);
+//    printResultsToCSV("hypervolumes", hypervolumes);
   }
   
   private static void runExperiments(int popsize, int evaluations) {
-    List<Long> bitResultsList = new ArrayList<>();
-    List<Long> modelResultsList = new ArrayList<>();
-    List<Double> hypervolumesResultList = new ArrayList<>();
-    
-    //logging
-    System.out.print("Working on: ");
-    for (int experiment = 0; experiment < EXPERIMENTS_PER_CYCLE; experiment++) {
-    //logging
-      System.out.print(experiment + " ");
-      Experiment bitExperiment = doBitExperiment(popsize, evaluations, experiment);
-      Experiment modelExperiment = doModelExperiment(popsize, evaluations, experiment);
-      
-      bitResultsList.add(bitExperiment.timeTaken());
-      modelResultsList.add(modelExperiment.timeTaken());
-      
-      // Calculate difference between experiments
-//      hypervolumesResultList.add(bitExperiment.createHyperVolume().evaluate(modelExperiment.result()));
-      hypervolumesResultList.add(modelExperiment.createHyperVolume().evaluate(bitExperiment.result()));
-    }
-    //logging
-    System.out.println("finished!");
-    
     int evaluationIndex = calcEvalIndex(evaluations);
     int popsizeIndex = calcPopSizeIndex(popsize);
     
-    bitResults[evaluationIndex][popsizeIndex] = averageOfLongList(bitResultsList);
-    modelResults[evaluationIndex][popsizeIndex] = averageOfLongList(modelResultsList);
-    hypervolumes[evaluationIndex][popsizeIndex] = averageOfDoubleList(hypervolumesResultList);
-  }
-  
-  private static Experiment doBitExperiment(int popsize, int evaluations, int experimentNumber) {
-    Experiment bitExperiment = new BooleanExperiment(getModel(), evaluations, popsize);
-    AJEnabled = bitExperiment.requiresAJ();
-    bitExperiment.run();
+    Batch bitBatch = new Batch(new BooleanExperiment(getModel(), evaluations, popsize), EXPERIMENTS_PER_CYCLE);
+    AJEnabled = bitBatch.requiresAJ();
+    bitBatch.run();
+    bitResults[evaluationIndex][popsizeIndex] = bitBatch;
     
-    return bitExperiment;
-  }
-  
-  private static Experiment doModelExperiment(int popsize, int evaluations, int experimentNumber) {
-    Experiment modelExperiment = new ModelExperiment(getModel(), evaluations, popsize);
-    AJEnabled = modelExperiment.requiresAJ();
-    modelExperiment.run();
-    
-    return modelExperiment;
+    Batch modelBatch = new Batch(new ModelExperiment(getModel(), evaluations, popsize), EXPERIMENTS_PER_CYCLE);
+    AJEnabled = modelBatch.requiresAJ();
+    modelBatch.run();
+    modelResults[evaluationIndex][popsizeIndex] = modelBatch;
   }
   
   // START INDEX CALCULATION
@@ -148,32 +116,33 @@ public class Main {
   }
   // END INDEX CALCULATION
   
-  private static long averageOfLongList(List<Long> list) {
-    BigInteger sum = BigInteger.valueOf(0);
-    
-    for (Long n : list) {
-      sum = sum.add(BigInteger.valueOf(n));
-    }
-    
-    return sum.divide(BigInteger.valueOf(list.size())).longValue();
-  }
+  // NO LONGER TAKE AN AVERAGE
+//  private static long averageOfLongList(List<Long> list) {
+//    BigInteger sum = BigInteger.valueOf(0);
+//    
+//    for (Long n : list) {
+//      sum = sum.add(BigInteger.valueOf(n));
+//    }
+//    
+//    return sum.divide(BigInteger.valueOf(list.size())).longValue();
+//  }
+//  
+//  private static double averageOfDoubleList(List<Double> list) {
+//    Double sum = 0.0;
+//    
+//    for (Double n : list) {
+//      sum += n;
+//    }
+//    
+//    return sum/list.size();
+//  }
   
-  private static double averageOfDoubleList(List<Double> list) {
-    Double sum = 0.0;
-    
-    for (Double n : list) {
-      sum += n;
-    }
-    
-    return sum/list.size();
-  }
-  
-  private static void printResultsToCSV(String csvName, double[][] results) throws IOException {
+  private static void printResultsToCSV(String csvName, Batch[][] results) throws IOException {
     StringBuilder builder = new StringBuilder();
     
     for(int row = 0; row < calcNEvals(); row++) {
       for(int column = 0; column < calcNPopSize(); column++) {
-        builder.append(results[row][column]);
+        builder.append(results[row][column].generateResults());
         if (column < results[row].length)
           builder.append(",");
       }

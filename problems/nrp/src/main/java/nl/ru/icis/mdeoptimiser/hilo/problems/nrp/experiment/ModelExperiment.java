@@ -1,5 +1,6 @@
 package nl.ru.icis.mdeoptimiser.hilo.problems.nrp.experiment;
 
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.moeaframework.Executor;
 import org.moeaframework.core.NondominatedPopulation;
 import org.moeaframework.core.spi.AlgorithmFactory;
@@ -51,4 +52,13 @@ public class ModelExperiment extends Experiment {
     return false;
   }
 
+  @Override
+  public Experiment copy() {
+    return new ModelExperiment(EcoreUtil.copy(model), evaluations, populationSize);
+  }
+
+  @Override
+  protected String name() {
+    return "ModelExperiment";
+  }
 }
