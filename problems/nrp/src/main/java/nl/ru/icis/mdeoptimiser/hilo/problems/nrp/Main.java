@@ -9,16 +9,24 @@ import java.util.Date;
 import org.eclipse.emf.henshin.model.resource.HenshinResourceSet;
 import org.moeaframework.Executor;
 import org.moeaframework.core.NondominatedPopulation;
+import org.moeaframework.core.Population;
+import org.moeaframework.core.Solution;
 import org.moeaframework.core.spi.AlgorithmFactory;
+import org.moeaframework.core.variable.BinaryVariable;
+import org.moeaframework.core.variable.EncodingUtils;
 
 import models.nrp.nextReleaseProblem.EcorePackage;
 import models.nrp.nextReleaseProblem.NRP;
+import models.nrp.nextReleaseProblem.SoftwareArtifact;
 import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.bool.AbstractBooleanNRP;
 import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.experiment.Batch;
 import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.experiment.BooleanExperiment;
+import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.experiment.Experiment;
 import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.experiment.ModelExperiment;
 import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.model.AbstractModelNRP;
 import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.model.ModelNRPFactory;
+import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.model.ModelNRPVariable;
+import nl.ru.icis.mdeoptimiser.hilo.util.HILOUtil;
 
 public class Main {
   private static final String RESOURCE_LOCATION = "src/main/resources/nl/ru/icis/mdeoptimiser/hilo/problems/nrp/models";
@@ -27,6 +35,8 @@ public class Main {
   private static HenshinResourceSet resourceSet = new HenshinResourceSet(RESOURCE_LOCATION);
   
   private static boolean AJEnabled = true;
+  
+  private static boolean createReferencePareto = true;
   
   private static final int EVALUATIONS_START_VALUE = 4000;
   private static final int EVALUATIONS_END_VALUE = 5000;
@@ -52,6 +62,12 @@ public class Main {
   // TODO if different check the seeds
   
   public static void main( String[] args ) throws Exception {
+    if (createReferencePareto) {
+      System.out.println("Creating reference pareto front for model instance: " + MODEL_NAME);
+      makeReferencePoint();
+      System.exit(0);
+    }
+    
     for (int popsize = POPSIZE_START_VALUE; popsize <= POPSIZE_END_VALUE; popsize += POPSIZE_INCREMENT_STEP) {
       for (int evaluations = EVALUATIONS_START_VALUE; evaluations <= EVALUATIONS_END_VALUE; evaluations += EVALUATIONS_INCREMENT_STEP) {
         //logging
@@ -116,27 +132,6 @@ public class Main {
   }
   // END INDEX CALCULATION
   
-  // NO LONGER TAKE AN AVERAGE
-//  private static long averageOfLongList(List<Long> list) {
-//    BigInteger sum = BigInteger.valueOf(0);
-//    
-//    for (Long n : list) {
-//      sum = sum.add(BigInteger.valueOf(n));
-//    }
-//    
-//    return sum.divide(BigInteger.valueOf(list.size())).longValue();
-//  }
-//  
-//  private static double averageOfDoubleList(List<Double> list) {
-//    Double sum = 0.0;
-//    
-//    for (Double n : list) {
-//      sum += n;
-//    }
-//    
-//    return sum/list.size();
-//  }
-  
   private static void printResultsToCSV(String csvName, Batch[][] results) throws IOException {
     StringBuilder builder = new StringBuilder();
     
@@ -157,45 +152,6 @@ public class Main {
     writer.close();
   }
   
-  private static void old() {
-    AbstractBooleanNRP bitProblem = new AbstractBooleanNRP();
-    // Pareto front can compare using hypervolume (which has a calculation)
-    // TODO Run with actual model but random mutation
-    // TODO see about compile time weaving
-    
-    long startTimeBits = System.nanoTime();
-    NondominatedPopulation bitResult = new Executor().withProblem(bitProblem)
-                  .withAlgorithm("NSGAII")
-                  .withMaxEvaluations(1000)
-                  .run();
-    long endTimeBits = System.nanoTime() - startTimeBits;
-    
-    AJEnabled = false;
-    AbstractModelNRP modelProblem = new AbstractModelNRP(getModel());
-    AlgorithmFactory factory = new AlgorithmFactory();
-    factory.addProvider(new ModelNRPFactory());
-    
-    long startTimeModel = System.nanoTime();
-    NondominatedPopulation modelResult = new Executor().usingAlgorithmFactory(factory)
-        .withProblem(modelProblem)
-        .withAlgorithm("NSGAII")
-        .withMaxEvaluations(1000)
-        .run();
-    long endTimeModel = System.nanoTime() - startTimeModel;
-    
-    System.out.println(endTimeBits);
-    System.out.println(endTimeModel);
-    
-    // TODO PRINT PROPERLY
-//    System.out.println(bitResult.size());
-//    for (boolean b : EncodingUtils.getBinary(bitResult.get(0).getVariable(0))) {
-//      System.out.print(b + ", ");
-//    }
-    
-//    System.out.println(modelResult.size());
-    // TODO print which selected
-  }
-  
   // Getter for the original model
   public static NRP getModel() {
     var metamodel = EcorePackage.eINSTANCE;
@@ -210,5 +166,65 @@ public class Main {
   // How many artifacts are available in the original model
   public static int NRPArtifactsSize() {
     return getModel().getAvailableArtifacts().size();
+  }
+  
+  private static final int REFERENCE_POPSIZE = 2000;
+  private static final int REFERENCE_EVALUATIONS = 25_000;
+  
+//  private static final int REFERENCE_POPSIZE = 100;
+//  private static final int REFERENCE_EVALUATIONS = 500;
+  
+  public static void makeReferencePoint() {
+    Experiment boolExperiment = new BooleanExperiment(getModel(), REFERENCE_EVALUATIONS, REFERENCE_POPSIZE);
+    Experiment modelExperiment = new ModelExperiment(getModel(), REFERENCE_EVALUATIONS, REFERENCE_POPSIZE);
+    
+    System.out.println("Running long Boolean Experiment...");
+    AJEnabled = boolExperiment.requiresAJ();
+    boolExperiment.run();
+    
+    System.out.println("Running long Model Experiment...");
+    AJEnabled = modelExperiment.requiresAJ();
+    modelExperiment.run();
+    
+    System.out.println("Combining pareto fronts...");
+    
+    System.out.println(boolExperiment.result().size());
+    System.out.println(modelExperiment.result().size());
+    
+    System.out.println(convertModelToBitVector(modelExperiment.result()).size());
+    Population result = convertModelToBitVector(modelExperiment.result());
+    result.addAll(boolExperiment.result());
+    
+    System.out.println(result.size());
+    
+    System.out.println("Writing pareto front to file...");
+    HILOUtil.writeBinaryVariablePopulationToFile(result, "combinedParetoFront" + dt.format(new Date()));
+    
+    System.out.println("Finished!");
+  }
+  
+  // Assuming that the population of solutions have 1 variable with an NRP model  
+  private static Population convertModelToBitVector(NondominatedPopulation modelPop) {
+    Population result = new Population();
+    
+    for (Solution sol : modelPop) {
+      Solution toAdd = new Solution(sol.getNumberOfVariables(), sol.getNumberOfObjectives(), sol.getNumberOfConstraints());
+      toAdd.setVariable(0, convertNRPToBoolArray(((ModelNRPVariable) sol.getVariable(0)).getModel())); 
+      result.add(toAdd);
+    }
+    
+    return result;
+  }
+  
+  private static BinaryVariable convertNRPToBoolArray(NRP model) {
+    BinaryVariable result = new BinaryVariable(model.getAvailableArtifacts().size());
+    
+    for (int i = 0; i < model.getAvailableArtifacts().size(); i++) {
+      if (model.getSolutions().get(0).getSelectedArtifacts().contains(model.getAvailableArtifacts().get(i))) {
+        result.set(i, true);
+      }
+    }
+    
+    return result;
   }
 }
