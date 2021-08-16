@@ -14,6 +14,9 @@ public class ModelNRPVariation implements Variation {
   private static final double P_HUX = 1.0;
   private static final double P_BITFLIP = 0.01;
   
+  private static HUX hux;
+  private static BitFlip bitFlip;
+  
   @Override
   public int getArity() {
     return 2;

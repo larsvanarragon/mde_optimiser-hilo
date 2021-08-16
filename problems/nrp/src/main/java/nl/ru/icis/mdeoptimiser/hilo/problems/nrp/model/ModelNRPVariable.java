@@ -1,7 +1,5 @@
 package nl.ru.icis.mdeoptimiser.hilo.problems.nrp.model;
 
-import java.util.Random;
-
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.moeaframework.core.PRNG;
 import org.moeaframework.core.Variable;
@@ -18,7 +16,9 @@ public class ModelNRPVariable implements Variable {
 
   @Override
   public Variable copy() {
-    return new ModelNRPVariable(EcoreUtil.copy(model));
+    ModelNRPVariable var = new ModelNRPVariable(EcoreUtil.copy(model));
+    System.out.println(EcoreUtil.equals(model.getSolutions().get(0).getSelectedArtifacts().get(0), var.getModel().getSolutions().get(0).getSelectedArtifacts().get(0)));
+    return var;
   }
 
   @Override

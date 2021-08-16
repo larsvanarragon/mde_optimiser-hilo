@@ -3,17 +3,23 @@ package nl.ru.icis.mdeoptimiser.hilo.problems.nrp.experiment;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.moeaframework.core.indicator.Hypervolume;
+
 public class Batch {
   private Experiment experiment;
-  private int n;
+  private int size;
   
   private List<Long> results = new ArrayList<>();
   
-  public Batch(Experiment experiment, int n) {
+  private List<Double> hypervolumes = new ArrayList<>();
+  private HypervolumeEvaluator hvEvaluator;
+  
+  public Batch(Experiment experiment, int size, HypervolumeEvaluator hypervolumeEvaluator) {
     this.experiment = experiment;
-    this.n = n;
+    this.size = size;
+    this.hvEvaluator = hypervolumeEvaluator;
     
-    if (n < 1) {
+    if (size < 1) {
       System.out.println("ERROR: Failed initializing batch, SEVERE ERROR! n needs to be >= 1");
       System.exit(1);
     }
@@ -29,11 +35,12 @@ public class Batch {
       return;
     }
     
-    System.out.print("Running batch of " + n + " " + experiment.name() + "s, working on: ");
+    System.out.print("Running batch of " + size + " " + experiment.name() + "s, working on: ");
     
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < size; i++) {
       System.out.print((i+1) + " ");
       results.add(experiment.run());
+      hypervolumes.add(hvEvaluator.evaluate(experiment.result));
       
       // Hopefully have the other experiment garbage collected
       experiment = experiment.copy();
@@ -48,13 +55,22 @@ public class Batch {
     StringBuilder builder = new StringBuilder();
     
     builder.append("(");
-    for (Long r : results) {
-      builder.append(r);
+    for (int i = 0; i < size; i++) {
+      builder.append("t");
+      builder.append(results.get(i));
+      
+      builder.append(" hv");
+      builder.append(hypervolumes.get(i));
+      
       builder.append(" - ");
     }
     builder.delete((builder.length() - 3), builder.length());
     builder.append(")");
     
     return builder.toString();
+  }
+  
+  public int size() {
+    return size;
   }
 }
