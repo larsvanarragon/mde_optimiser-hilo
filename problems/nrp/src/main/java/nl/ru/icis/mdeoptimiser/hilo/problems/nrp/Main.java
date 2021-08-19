@@ -25,7 +25,7 @@ public class Main {
   
   private static boolean AJEnabled = true;
   
-  private static boolean createReferencePareto = true;
+  private static boolean createReferencePareto = false;
   
   private static final int EVALUATIONS_START_VALUE = 4000;
   private static final int EVALUATIONS_END_VALUE = 5000;
@@ -171,10 +171,10 @@ public class Main {
     // END 
     
     System.out.println(HILOUtil.convertModelToBitVector(modelExperiment.result()).size());
-    NondominatedPopulation result = boolExperiment.result();
-    boolean changed = result.addAll(HILOUtil.convertModelToBitVector(modelExperiment.result()));
-//    NondominatedPopulation result = HILOUtil.convertModelToBitVector(modelExperiment.result());
-//    boolean changed = result.addAll(boolExperiment.result());
+//    NondominatedPopulation result = boolExperiment.result();
+//    boolean changed = result.addAll(HILOUtil.convertModelToBitVector(modelExperiment.result()));
+    NondominatedPopulation result = HILOUtil.convertModelToBitVector(modelExperiment.result());
+    boolean changed = result.addAll(boolExperiment.result());
     
     System.out.println(changed);
     
