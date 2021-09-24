@@ -45,23 +45,4 @@ public aspect NRPCoupler {
     
     return returnList;
   }
-  
-//  pointcut getSolutions(): call(EList<Solution> models.nrp.nextReleaseProblem.NRP.getSolutions()) && !within(org.eclipse.emf..*);
-//  
-//  EList<Solution> around(): getSolutions() {
-//    EList<Solution> returnList = new BasicEList<Solution>();
-//    Solution returnSol = factory.createSolution();
-//    
-//    System.out.println("Intercepted!");
-//    
-//    for(int i = 0; i < NRPCoupleData.getRelation(NRPCoupleData.SOLUTION_RELATION).length; i++) {
-//      if (NRPCoupleData.getRelation(NRPCoupleData.SOLUTION_RELATION)[i]) {
-//        returnSol.getSelectedArtifacts().add(model.getAvailableArtifacts().get(i));
-//      }
-//    }
-//      
-//    return returnList;
-//  }
-  
-//  pointcut getSolutions(): call(EList<Solution> models.nrp.nextReleaseProblem.SoftwareArtifact.getSolutions());
 }

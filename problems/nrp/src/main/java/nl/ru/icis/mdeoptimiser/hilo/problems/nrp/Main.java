@@ -25,19 +25,21 @@ public class Main {
   
   private static boolean AJEnabled = true;
   
-  private static boolean createReferencePareto = false;
+  private static boolean createReferencePareto = true;
   
-  private static final int EVALUATIONS_START_VALUE = 4000;
-  private static final int EVALUATIONS_END_VALUE = 5000;
-//  private static final int EVALUATIONS_END_VALUE = 10_000;
+  private static final int EVALUATIONS_START_VALUE = 1000;
+//  private static final int EVALUATIONS_END_VALUE = 5000;
+  private static final int EVALUATIONS_END_VALUE = 10_000;
   private static final int EVALUATIONS_INCREMENT_STEP = 1000;
   
-  private static final int POPSIZE_START_VALUE = 400;
-  private static final int POPSIZE_END_VALUE = 800;
+  private static final int POPSIZE_START_VALUE = 200;
+  private static final int POPSIZE_END_VALUE = 1000;
 //  private static final int POPSIZE_END_VALUE = 350;
-  private static final int POPSIZE_INCREMENT_STEP = 400;
+  private static final int POPSIZE_INCREMENT_STEP = 200;
   
   private static final int EXPERIMENTS_PER_CYCLE = 5;
+  
+  // TODO IMPORTANT either we take arbitrary henshin rules and can apply on an encoding OR -> we extrapolate an encoding from an arbitrary model
   
   // TODO this does not work if the finals don't produce the correct integer (when dividing doesn't give a whole number)
   private static Batch[][] bitResults = new Batch[calcNEvals()][calcNPopSize()];
@@ -49,6 +51,9 @@ public class Main {
   // TODO TTESTING to check the hypervolumes mannwhitneymaywillcox
   // TODO show that they are not different (effect size to show how big difference VDA)
   // TODO if different check the seeds
+  
+  // TODO for ttesting we want to reject the 0 null hypothesis by finding a p value lower than 5 percent.
+  // TODO assuming that they are the same (which is what we want to show, so we look for a p value > 5 per cent)
   
   private static HypervolumeEvaluator hypervolumeEvaluator = new HypervolumeEvaluator(new AbstractBooleanNRP(), COMBINED_PARETO_FRONT_NAME, true);
   
@@ -142,8 +147,11 @@ public class Main {
     return getModel().getAvailableArtifacts().size();
   }
   
-  private static final int REFERENCE_POPSIZE = 2000;
-  private static final int REFERENCE_EVALUATIONS = 25_000;
+//  private static final int REFERENCE_POPSIZE = 2000;
+//  private static final int REFERENCE_EVALUATIONS = 25_000;
+  
+  private static final int REFERENCE_POPSIZE = 3000;
+  private static final int REFERENCE_EVALUATIONS = 50_000;
   
 //  private static final int REFERENCE_POPSIZE = 100;
 //  private static final int REFERENCE_EVALUATIONS = 500;

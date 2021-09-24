@@ -7,6 +7,7 @@ import org.moeaframework.problem.AbstractProblem;
 import models.nrp.fitness.MaximiseSatisfaction;
 import models.nrp.fitness.MinimiseCost;
 import models.nrp.nextReleaseProblem.NRP;
+
 public class AbstractModelNRP extends AbstractProblem {
   
   private static final int N_OBJECTIVES = 2;
