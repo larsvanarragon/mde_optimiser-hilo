@@ -2,15 +2,15 @@ package nl.ru.icis.mdeoptimiser.hilo.problems.nrp.bool;
 
 import org.moeaframework.core.Solution;
 import org.moeaframework.core.variable.EncodingUtils;
-import org.moeaframework.problem.AbstractProblem;
 
 import models.nrp.fitness.MaximiseSatisfaction;
 import models.nrp.fitness.MinimiseCost;
 import models.nrp.nextReleaseProblem.NRP;
-import nl.ru.icis.mdeoptimiser.hilo.coupling.NRPCoupleData;
+import nl.ru.icis.mdeoptimiser.hilo.experiment.ExperimentProblem;
 import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.Main;
+import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.coupling.NRPCoupleData;
 
-public class AbstractBooleanNRP extends AbstractProblem {
+public class AbstractBooleanNRP extends ExperimentProblem {
   
   private static final int N_OBJECTIVES = 2;
   
@@ -49,5 +49,10 @@ public class AbstractBooleanNRP extends AbstractProblem {
     Solution solution = new Solution(N_VARIABLES, N_OBJECTIVES, N_CONSTRAINTS);
     solution.setVariable(0,  EncodingUtils.newBinary(Main.NRPArtifactsSize()));
     return solution;
+  }
+
+  @Override
+  public boolean requiresAspectJ() {
+    return true;
   }
 }

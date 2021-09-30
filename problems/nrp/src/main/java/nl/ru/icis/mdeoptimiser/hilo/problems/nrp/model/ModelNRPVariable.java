@@ -17,7 +17,6 @@ public class ModelNRPVariable implements Variable {
   @Override
   public Variable copy() {
     ModelNRPVariable var = new ModelNRPVariable(EcoreUtil.copy(model));
-//    System.out.println(EcoreUtil.equals(model.getSolutions().get(0).getSelectedArtifacts().get(0), var.getModel().getSolutions().get(0).getSelectedArtifacts().get(0)));
     return var;
   }
 

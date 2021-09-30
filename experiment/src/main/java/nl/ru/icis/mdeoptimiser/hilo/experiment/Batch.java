@@ -1,9 +1,9 @@
-package nl.ru.icis.mdeoptimiser.hilo.problems.nrp.experiment;
+package nl.ru.icis.mdeoptimiser.hilo.experiment;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.moeaframework.core.indicator.Hypervolume;
+import nl.ru.icis.mdeoptimiser.hilo.experiment.hypervolume.HypervolumeEvaluator;
 
 public class Batch {
   private Experiment experiment;

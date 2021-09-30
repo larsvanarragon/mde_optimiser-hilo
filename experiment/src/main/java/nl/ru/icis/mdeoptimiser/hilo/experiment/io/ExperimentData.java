@@ -1,4 +1,4 @@
-package nl.ru.icis.mdeoptimiser.hilo.util;
+package nl.ru.icis.mdeoptimiser.hilo.experiment.io;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -6,24 +6,17 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Date;
 
 import org.moeaframework.core.NondominatedPopulation;
-import org.moeaframework.core.Population;
 import org.moeaframework.core.Solution;
 import org.moeaframework.core.NondominatedPopulation.DuplicateMode;
 import org.moeaframework.core.comparator.ParetoDominanceComparator;
 import org.moeaframework.core.variable.BinaryVariable;
 import org.moeaframework.core.variable.EncodingUtils;
 
-import models.nrp.nextReleaseProblem.NRP;
-import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.Main;
-import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.bool.AbstractBooleanNRP;
-import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.experiment.Batch;
-import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.model.AbstractModelNRP;
-import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.model.ModelNRPVariable;
+import nl.ru.icis.mdeoptimiser.hilo.experiment.Batch;
 
-public class HILOUtil {
+public class ExperimentData {
   private static final String VALUE_SEPARATOR = "|";
   
   private static final String DATA_EXTENSION = ".dat";
@@ -43,13 +36,16 @@ public class HILOUtil {
         builder.append("\n");
       }
       
-      File file = new File(System.getProperty("user.dir"), csvName + ".txt");
-      
+      File file = new File(System.getProperty("user.dir") + RESULTS_FOLDER, csvName + ".txt");
       file.createNewFile();
+      
+      System.out.println("[INFO] Writing results to CSV: " + file.toString());
       
       BufferedWriter writer = new BufferedWriter(new FileWriter(file));
       writer.write(builder.toString());
       writer.close();
+      
+      System.out.println("[INFO] Finished writing results to CSV: " + file.toString());
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -133,71 +129,7 @@ public class HILOUtil {
     return solution;
   }
   
-  //Assuming that the population of solutions have 1 variable with an NRP model  
-  public static NondominatedPopulation convertModelToBitVector(NondominatedPopulation modelPop) {
-    boolean old = Main.AJEnabled();
-    Main.setAJEnabled(false);
-    
-    NondominatedPopulation result = newArchive();
-     
-    for (Solution sol : modelPop) {
-      Solution toAdd = new Solution(sol.getNumberOfVariables(), sol.getNumberOfObjectives(), sol.getNumberOfConstraints());
-      toAdd.setVariable(0, convertNRPToBoolArray(((ModelNRPVariable) sol.getVariable(0)).getModel()));
-      
-      result.add(toAdd);
-      
-      // Also fills in the objectives of the toAdd solution
-      if (!areNRPandBoolSame(sol, toAdd)) {
-        System.out.println("SEVERE ERROR: Converted solution is not the same as the original!");
-        System.exit(1);
-      }
-    }
-    
-    Main.setAJEnabled(old);
-    
-//    System.out.print("modelPopSize: " + modelPop.size() + " ");
-//    System.out.print("resultPopSize: " + result.size() + " ");
-    
-    return result;
-  }
-  
-  public static BinaryVariable convertNRPToBoolArray(NRP model) {
-    BinaryVariable result = new BinaryVariable(model.getAvailableArtifacts().size());
-    
-    for (int i = 0; i < model.getAvailableArtifacts().size(); i++) {
-      if (model.getSolutions().get(0).getSelectedArtifacts().contains(model.getAvailableArtifacts().get(i))) {
-        result.set(i, true);
-      }
-    }
-    
-    return result;
-  }
-  
-  public static void evaluateBooleanSolution(Solution solution) {
-    boolean old = Main.AJEnabled();
-    Main.setAJEnabled(false);
-    
-    new AbstractBooleanNRP().evaluate(solution);
-    
-    Main.setAJEnabled(old);
-  }
-  
   public static NondominatedPopulation newArchive() {
     return new NondominatedPopulation(new ParetoDominanceComparator(), DuplicateMode.ALLOW_DUPLICATE_OBJECTIVES);
-  }
-  
-  public static boolean areNRPandBoolSame(Solution model, Solution bitvector) {
-    AbstractBooleanNRP boolProblem = new AbstractBooleanNRP();
-    AbstractModelNRP modelProblem = new AbstractModelNRP(Main.getModel());
-    
-    boolean old = Main.AJEnabled();
-    Main.setAJEnabled(true);
-    boolProblem.evaluate(bitvector);
-    
-    Main.setAJEnabled(false);
-    modelProblem.evaluate(model);
-    Main.setAJEnabled(old);
-    
-    return (model.getObjective(0) == bitvector.getObjective(0)) && (model.getObjective(1) == bitvector.getObjective(1));
   }
 }

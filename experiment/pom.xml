@@ -5,56 +5,53 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>nl.ru.icis.mdeoptimiser.hilo</groupId>
-  <artifactId>nl.ru.icis.mdeoptimiser.hilo.problems.nrp</artifactId>
+  <artifactId>nl.ru.icis.mdeoptimiser.hilo.experiment</artifactId>
   <version>1.0.0-SNAPSHOT</version>
 
-  <name>nl.ru.icis.mdeoptimiser.hilo.problems.nrp</name>
+  <name>nl.ru.icis.mdeoptimiser.hilo.experiment</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <aspectj.version>1.8.9</aspectj.version>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
   </properties>
 
   <dependencies>
     <dependency>
-      <groupId>uk.ac.kcl.inf.mdeoptimiser.examples.problems</groupId>
-      <artifactId>uk.ac.kcl.inf.mdeoptimiser.examples.problems.nrp</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>nl.ru.icis.mdeoptimiser.hilo</groupId>
-      <artifactId>nl.ru.icis.mdeoptimiser.hilo.experiment</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+			<groupId>org.moeaframework</groupId>
+			<artifactId>moeaframework</artifactId>
+			<version>2.13</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.emf</groupId>
+			<artifactId>org.eclipse.emf.ecore</artifactId>
+			<version>2.15.0</version>
+		</dependency>
   </dependencies>
 
   <build>
-    <pluginManagement>
+    <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
+        <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
           <version>3.1.0</version>
         </plugin>
+        <!-- default lifecycle, jar packaging: see https://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
           <version>3.0.2</version>
         </plugin>
         <plugin>
-	        <artifactId>maven-compiler-plugin</artifactId>
-	        <version>3.0</version>
-	        <configuration>
-	          <source>11</source>
-	          <target>11</target>
-	        </configuration>
-	      </plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.8.0</version>
+        </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.22.1</version>
@@ -71,6 +68,7 @@
           <artifactId>maven-deploy-plugin</artifactId>
           <version>2.8.2</version>
         </plugin>
+        <!-- site lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#site_Lifecycle -->
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
           <version>3.7.1</version>

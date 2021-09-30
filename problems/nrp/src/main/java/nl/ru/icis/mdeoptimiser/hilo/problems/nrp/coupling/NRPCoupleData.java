@@ -1,4 +1,4 @@
-package nl.ru.icis.mdeoptimiser.hilo.coupling;
+package nl.ru.icis.mdeoptimiser.hilo.problems.nrp.coupling;
 
 import java.util.HashMap;
 import java.util.Map;

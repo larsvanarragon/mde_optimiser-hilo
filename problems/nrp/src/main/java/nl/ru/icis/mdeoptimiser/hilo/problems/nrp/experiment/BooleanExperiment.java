@@ -3,9 +3,10 @@ package nl.ru.icis.mdeoptimiser.hilo.problems.nrp.experiment;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.moeaframework.Executor;
 import org.moeaframework.core.NondominatedPopulation;
-import org.moeaframework.problem.AbstractProblem;
 
 import models.nrp.nextReleaseProblem.NRP;
+import nl.ru.icis.mdeoptimiser.hilo.experiment.Experiment;
+import nl.ru.icis.mdeoptimiser.hilo.experiment.ExperimentProblem;
 import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.bool.AbstractBooleanNRP;
 
 public class BooleanExperiment extends Experiment {
@@ -22,24 +23,19 @@ public class BooleanExperiment extends Experiment {
   protected NondominatedPopulation doExperiment() {
     return new Executor().withProblem(this.problem)
         .withAlgorithm("NSGAII")
-        .withMaxEvaluations(this.evaluations)
-        .withProperty("populationSize", this.populationSize)
+        .withMaxEvaluations(config.evaluations)
+        .withProperty("populationSize", config.populationSize)
         .run();
   }
 
   @Override
-  protected AbstractProblem problem() {
+  protected ExperimentProblem problem() {
     return new AbstractBooleanNRP();
   }
-
-  @Override
-  protected boolean initializeAJRequired() {
-    return true;
-  }
-
+  
   @Override
   public Experiment copy() {
-    return new BooleanExperiment(EcoreUtil.copy(model), evaluations, populationSize);
+    return new BooleanExperiment((NRP) EcoreUtil.copy(model), config.evaluations, config.populationSize);
   }
 
   @Override

@@ -1,4 +1,4 @@
-package nl.ru.icis.mdeoptimiser.hilo.coupling;
+package nl.ru.icis.mdeoptimiser.hilo.problems.nrp.coupling;
 
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
@@ -6,6 +6,7 @@ import org.eclipse.emf.common.util.EList;
 import models.nrp.nextReleaseProblem.NRP;
 import models.nrp.nextReleaseProblem.SoftwareArtifact;
 import models.nrp.nextReleaseProblem.Solution;
+import nl.ru.icis.mdeoptimiser.hilo.experiment.config.ExperimentConfig;
 import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.Main;
 
 public aspect NRPCoupler {
@@ -15,7 +16,7 @@ public aspect NRPCoupler {
   pointcut getSelectedArtifacts(): call(EList<SoftwareArtifact> models.nrp.nextReleaseProblem.Solution.getSelectedArtifacts());
 
   EList<SoftwareArtifact> around(): getSelectedArtifacts() {
-    if (!Main.AJEnabled()) {
+    if (!ExperimentConfig.isAspectJEnabled) {
       return proceed();
     }
     
@@ -33,7 +34,7 @@ public aspect NRPCoupler {
   pointcut getSolutions(SoftwareArtifact sa): call(EList<Solution> models.nrp.nextReleaseProblem.SoftwareArtifact.getSolutions()) && this(sa);
   
   EList<Solution> around(SoftwareArtifact sa): getSolutions(sa) {
-    if (!Main.AJEnabled()) {
+    if (!ExperimentConfig.isAspectJEnabled) {
       return proceed(sa);
     }
     

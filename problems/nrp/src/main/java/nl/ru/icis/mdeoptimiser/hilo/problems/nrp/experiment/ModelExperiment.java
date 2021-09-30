@@ -7,6 +7,9 @@ import org.moeaframework.core.spi.AlgorithmFactory;
 import org.moeaframework.problem.AbstractProblem;
 
 import models.nrp.nextReleaseProblem.NRP;
+import nl.ru.icis.mdeoptimiser.hilo.experiment.Experiment;
+import nl.ru.icis.mdeoptimiser.hilo.experiment.ExperimentProblem;
+import nl.ru.icis.mdeoptimiser.hilo.experiment.config.ExperimentConfig;
 import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.model.AbstractModelNRP;
 import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.model.ModelNRPFactory;
 
@@ -37,24 +40,19 @@ public class ModelExperiment extends Experiment {
     return new Executor().usingAlgorithmFactory(factory)
         .withProblem(this.problem)
         .withAlgorithm("NSGAII")
-        .withMaxEvaluations(this.evaluations)
-        .withProperty("populationSize", this.populationSize)
+        .withMaxEvaluations(config.evaluations)
+        .withProperty("populationSize", config.populationSize)
         .run();
   }
 
   @Override
-  protected AbstractProblem problem() {
-    return new AbstractModelNRP(this.model);
-  }
-
-  @Override
-  protected boolean initializeAJRequired() {
-    return false;
+  protected ExperimentProblem problem() {
+    return new AbstractModelNRP((NRP) this.model);
   }
 
   @Override
   public Experiment copy() {
-    return new ModelExperiment(EcoreUtil.copy(model), evaluations, populationSize);
+    return new ModelExperiment((NRP) EcoreUtil.copy(model), config.evaluations, config.populationSize);
   }
 
   @Override

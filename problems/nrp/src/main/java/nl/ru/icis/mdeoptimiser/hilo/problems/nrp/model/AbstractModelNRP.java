@@ -2,13 +2,13 @@ package nl.ru.icis.mdeoptimiser.hilo.problems.nrp.model;
 
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.moeaframework.core.Solution;
-import org.moeaframework.problem.AbstractProblem;
 
 import models.nrp.fitness.MaximiseSatisfaction;
 import models.nrp.fitness.MinimiseCost;
 import models.nrp.nextReleaseProblem.NRP;
+import nl.ru.icis.mdeoptimiser.hilo.experiment.ExperimentProblem;
 
-public class AbstractModelNRP extends AbstractProblem {
+public class AbstractModelNRP extends ExperimentProblem {
   
   private static final int N_OBJECTIVES = 2;
   
@@ -46,5 +46,10 @@ public class AbstractModelNRP extends AbstractProblem {
     Solution solution = new Solution(N_VARIABLES, N_OBJECTIVES, N_CONSTRAINTS);
     solution.setVariable(0, new ModelNRPVariable(EcoreUtil.copy(originalModel)));
     return solution;
+  }
+
+  @Override
+  public boolean requiresAspectJ() {
+    return false;
   }
 }

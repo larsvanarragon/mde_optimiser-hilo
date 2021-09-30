@@ -39,4 +39,47 @@ public class Encoding {
   public boolean relationExists(String relationName, String fromPackageName, String fromObjectName, String toPackageName, String toObjectName) {
     return encodings.get(relationName + fromPackageName + fromObjectName + toPackageName + toObjectName) != null;
   }
+  
+  public boolean relationExists(String relationName) {
+    return encodings.get(relationName) != null;
+  }
+  
+  public boolean relationInstanceExists(String relationName, String instanceName) {
+    if (encodings.get(relationName) == null) {
+      return false;
+    }
+    return encodings.get(relationName).get(instanceName) != null;
+  }
+  
+  public Encoding copy() {
+    Encoding copiedEncoding = new Encoding();
+    
+    for (String relation : encodings.keySet()) {
+      HashMap<String, BitSet> relationInstances = new HashMap<>();
+      for (String relationInstanceKey : encodings.get(relation).keySet()) {
+        relationInstances.put(relationInstanceKey, (BitSet) encodings.get(relation).get(relationInstanceKey).clone());
+      }
+    }
+    
+    return copiedEncoding;
+  }
+  
+  public boolean equals(Encoding otherEncoding) {
+    for (String relation : encodings.keySet()) {
+      if (!otherEncoding.relationExists(relation)) {
+        return false;
+      }
+      
+      for (String relationInstance : encodings.get(relation).keySet()) {
+        if (!otherEncoding.relationInstanceExists(relation, relationInstance)) {
+          return false;
+        }
+        
+        if (!encodings.get(relation).get(relationInstance).equals(otherEncoding.getEncodedRelation(relation).get(relationInstance))) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
 }
