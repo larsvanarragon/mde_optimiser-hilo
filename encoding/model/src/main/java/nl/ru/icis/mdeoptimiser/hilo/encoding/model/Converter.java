@@ -135,10 +135,13 @@ public class Converter {
         }
       }
       
+      System.out.println("Name: " + relationName);
+      
       String relation = relationName + objectMetaClass.basicGetEPackage().getName() + objectMetaClass.getName() + toMetaClass.basicGetEPackage().getName() + toMetaClass.getName();
       String toClassIdentifier = modelInstance.getURIFragment(relationDynamicObject);
+      String fromClassIdentifier = modelInstance.getURIFragment(dynamicObject);
       
-      encoding.setValueInRelationForIdentifier(relation, toClassIdentifier, true);
+      encoding.addDestinationToRelation(relation, fromClassIdentifier, toClassIdentifier, true);
     }
     
     // Convert all other objects related to this class

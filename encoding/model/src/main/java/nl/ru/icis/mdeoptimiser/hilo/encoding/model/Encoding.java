@@ -77,9 +77,6 @@ public class Encoding {
     String relation = relationName + fromPackageName + fromObject + toPackageName + toObject;
     
     encodings.get(relation).put(identifier, new BitSet());
-    
-    //TODO THIS GOES WRONG
-//    identifiersIndex.get(relation).add(identifier);
   }
   
   public boolean relationExists(String relationName, String fromPackageName, String fromObjectName, String toPackageName, String toObjectName) {
@@ -162,7 +159,10 @@ public class Encoding {
     return true;
   }
 
-  public void setValueInRelationForIdentifier(String relation, String toClassIdentifier, boolean b) {
+  public void addDestinationToRelation(String relation, String fromClassIdentifier, String toClassIdentifier, boolean b) {
+    int index = identifiersIndex.get(relation).size(); 
+    identifiersIndex.get(relation).add(toClassIdentifier);
     
+    encodings.get(relation).get(fromClassIdentifier).set(index, b);
   }
 }

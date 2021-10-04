@@ -1,6 +1,5 @@
 package nl.ru.icis.mdeoptimiser.hilo.problems.cra.encoding;
 
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.moeaframework.core.Solution;
 import org.moeaframework.problem.AbstractProblem;
 
