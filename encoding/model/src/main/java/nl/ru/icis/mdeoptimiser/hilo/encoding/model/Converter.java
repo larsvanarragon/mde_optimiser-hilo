@@ -105,17 +105,43 @@ public class Converter {
     }
     converted.add(dynamicObject);
     
+    // For all meta relation in this class add them as an instance in the encoding
     for (EStructuralFeature metaClassRelation : dynamicObject.eClass().getEAllStructuralFeatures()) {
       if (metaClassRelation instanceof EReferenceImpl) {
         if (!(((EReferenceImpl) metaClassRelation).basicGetEType() instanceof EClassImpl)) {
-          throw new Exception("A");
+          throw new Exception("Meta class found to be of wrong type!");
         }
         EClassImpl toMetaClass = ((EClassImpl) ((EReferenceImpl) metaClassRelation).basicGetEType());
         
-        addDynamicEObjectImpl(metaClassRelation.getName(), objectMetaClass.basicGetEPackage().getName(), objectMetaClass.getName(), toMetaClass.basicGetEPackage().getName(), toMetaClass.getName(), dynamicObject, encoding);
+        addDynamicEObjectImpl(metaClassRelation.getName(), objectMetaClass.basicGetEPackage().getName(), objectMetaClass.getName(), 
+            toMetaClass.basicGetEPackage().getName(), toMetaClass.getName(), dynamicObject, encoding);
       }
     }
     
+    // For all other object in this class initialize that their relation is '1' in the encoding
+    for (EObject relationDynamicObject : dynamicObject.eContents()) {
+      if (!(relationDynamicObject instanceof DynamicEObjectImpl)) {
+        continue;
+      }
+      
+      EClassImpl toMetaClass = ((EClassImpl) ((DynamicEObjectImpl) relationDynamicObject).eClass());
+      // For all structural features in the from class find the relation name
+      String relationName = "";
+      for (EStructuralFeature metaClassRelation : dynamicObject.eClass().getEAllStructuralFeatures()) {
+        if (metaClassRelation instanceof EReferenceImpl) {
+          if (((EReferenceImpl) metaClassRelation).basicGetEType().getName().equals(toMetaClass.getName())) {
+            relationName = metaClassRelation.getName();
+          }
+        }
+      }
+      
+      String relation = relationName + objectMetaClass.basicGetEPackage().getName() + objectMetaClass.getName() + toMetaClass.basicGetEPackage().getName() + toMetaClass.getName();
+      String toClassIdentifier = modelInstance.getURIFragment(relationDynamicObject);
+      
+      encoding.setValueInRelationForIdentifier(relation, toClassIdentifier, true);
+    }
+    
+    // Convert all other objects related to this class
     for (EObject relationDynamicObject : dynamicObject.eContents()) {
       if (relationDynamicObject instanceof DynamicEObjectImpl && !converted.contains(relationDynamicObject)) {
         convertDynamicEObjectImpl((DynamicEObjectImpl) relationDynamicObject, encoding);

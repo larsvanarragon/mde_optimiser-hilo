@@ -9,8 +9,6 @@
   <version>1.0.0-SNAPSHOT</version>
 
   <name>nl.ru.icis.mdeoptimiser.hilo.encoding.model</name>
-  <!-- FIXME change it to the project's website -->
-  <url>http://www.example.com</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -34,6 +32,12 @@
 			<groupId>org.eclipse.emf</groupId>
 			<artifactId>org.eclipse.emf.ecore.xmi</artifactId>
 			<version>2.15.0</version>
+		</dependency>
+		<!-- Library used for among other BiMaps -->
+		<dependency>
+	    <groupId>com.google.guava</groupId>
+	    <artifactId>guava</artifactId>
+	    <version>31.0.1-jre</version>
 		</dependency>
   </dependencies>
 
