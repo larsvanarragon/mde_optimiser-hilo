@@ -15,10 +15,10 @@ public class Encoding {
   
   private Map<String, List<String>> identifiersIndex = new HashMap<String, List<String>>();
   
-  private Repository repository = Repository.getInstance();
+  private Repository repository;
   
   public Encoding() {
-    
+    this.repository = Repository.getInstance();
   }
   
   public EList<EObject> getRelatedInstancesFor(String relation, String identifier) {
@@ -40,6 +40,10 @@ public class Encoding {
     }
     
     return returnList;
+  }
+  
+  public void addIdentifierEObjectBiMap(String identifier, EObject object) {
+    repository.addIdentifierEObjectBiMap(identifier, object);
   }
   
   public void setIdentifierRelatedToInstance(String relation, String identifier, EObject object, boolean value) {
@@ -69,12 +73,14 @@ public class Encoding {
   }
   
   public void addRelationInstance(String identifier, String relationName, String fromPackageName, String fromObject, String toPackageName, String toObject) {
-    if (!relationExists(relationName, fromPackageName, fromObject, toPackageName, toObject)) {
-      System.out.println("[ERROR] Attempted to add instance to nonexisting relation: " + fromPackageName + fromObject + toPackageName + toObject);
+    addRelationInstance(identifier, relationName + fromPackageName + fromObject + toPackageName + toObject);
+  }
+  
+  public void addRelationInstance(String identifier, String relation) {
+    if (!relationExists(relation)) {
+      System.out.println("[ERROR] Attempted to add instance to nonexisting relation: " + relation);
       return;
     }
-    
-    String relation = relationName + fromPackageName + fromObject + toPackageName + toObject;
     
     encodings.get(relation).put(identifier, new BitSet());
   }
@@ -160,6 +166,16 @@ public class Encoding {
   }
 
   public void addDestinationToRelation(String relation, String fromClassIdentifier, String toClassIdentifier, boolean b) {
+    if (!relationInstanceExists(relation, fromClassIdentifier)) {
+      System.out.println("[WARNING]: no instance for the relation: " + relation + " with id: " + fromClassIdentifier + ", cannot add a relation");
+      return;
+    }
+    
+    if ("".equals(toClassIdentifier) || "".equals(relation) || "".equals(fromClassIdentifier)) {
+      System.out.println("[WARNING]: empty values given as argument, this is not allowed");
+      System.exit(1);
+    }
+    
     int index = identifiersIndex.get(relation).size(); 
     identifiersIndex.get(relation).add(toClassIdentifier);
     

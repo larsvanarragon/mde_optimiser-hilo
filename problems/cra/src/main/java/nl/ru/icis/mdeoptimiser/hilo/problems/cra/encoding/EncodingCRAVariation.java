@@ -12,7 +12,7 @@ public class EncodingCRAVariation implements Variation {
 
   @Override
   public Solution[] evolve(Solution[] parents) {
-    //simulate the henshin rules
+    // Apply the henshin rules
     return parents;
   }
 

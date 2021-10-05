@@ -17,7 +17,7 @@ public class Repository {
     return repository;
   }
   
-  public void addIdEObjectRelation(String identifier, EObject object) {
+  public void addIdentifierEObjectBiMap(String identifier, EObject object) {
     if (data.get(identifier) != null || data.inverse().get(object) != null) {
       System.out.println("[ERROR]: This Identifier EObject relation already exists");
       System.exit(1);

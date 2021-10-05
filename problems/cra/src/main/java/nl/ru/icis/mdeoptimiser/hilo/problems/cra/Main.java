@@ -1,5 +1,9 @@
 package nl.ru.icis.mdeoptimiser.hilo.problems.cra;
 
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.impl.EReferenceImpl;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.henshin.model.resource.HenshinResourceSet;
 import org.moeaframework.Executor;
 import org.moeaframework.core.NondominatedPopulation;
@@ -22,10 +26,22 @@ public class Main {
   public static void main( String[] args ) throws Exception {
     Converter converter = new Converter(RESOURCE_LOCATION, ECORE_FILENAME, MODEL_INSTANCE);
 
-    Encoding encoding = converter.convert();
-    
     var metamodel = ArchitectureCRAPackage.eINSTANCE;
-    ClassModel cra = (ClassModel) resourceSet.getResource(MODEL_INSTANCE).getContents().get(0);
+    Resource modelInstance = resourceSet.getResource(MODEL_INSTANCE);
+    ClassModel cra = (ClassModel) modelInstance.getContents().get(0);
+    
+    Encoding encoding = converter.convert(cra);
+    
+//    for (EStructuralFeature metaRelation : cra.eClass().getEAllStructuralFeatures()) {
+//      if (metaRelation instanceof EReferenceImpl) {
+//        Object test = cra.eGet(metaRelation);
+//        if (test instanceof EObjectContainmentEList) {
+//          
+//        }
+//        System.out.println(test.getClass().getCanonicalName());
+//        
+//      }
+//    }
     
     AbstractEncodingCRA encodedCRAProblem = new AbstractEncodingCRA(encoding, cra);
     

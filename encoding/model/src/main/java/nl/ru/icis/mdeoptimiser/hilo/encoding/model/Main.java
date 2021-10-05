@@ -9,7 +9,7 @@ public class Main {
   public static void main( String[] args ) throws Exception {
     Converter converter = new Converter(RESOURCE_LOCATION, ECORE_FILENAME, MODEL_INSTANCE);
     
-    Encoding encoding = converter.convert();
+//    Encoding encoding = converter.convert();
     System.out.println("Test");
   }
 }
