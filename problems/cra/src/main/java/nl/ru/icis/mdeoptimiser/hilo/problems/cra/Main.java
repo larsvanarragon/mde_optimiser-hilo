@@ -1,10 +1,5 @@
 package nl.ru.icis.mdeoptimiser.hilo.problems.cra;
 
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.impl.EReferenceImpl;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
-import org.eclipse.emf.henshin.model.resource.HenshinResourceSet;
 import org.moeaframework.Executor;
 import org.moeaframework.core.NondominatedPopulation;
 import org.moeaframework.core.spi.AlgorithmFactory;
@@ -20,28 +15,11 @@ public class Main {
   private static final String RESOURCE_LOCATION = "src/main/resources/nl/ru/icis/mdeoptimiser/hilo/problems/cra";
   private static final String ECORE_FILENAME = "architectureCRA.ecore";
   private static final String MODEL_INSTANCE = "TTC_InputRDG_A.xmi";
-
-  private static HenshinResourceSet resourceSet = new HenshinResourceSet(RESOURCE_LOCATION);
   
   public static void main( String[] args ) throws Exception {
-    Converter converter = new Converter(RESOURCE_LOCATION, ECORE_FILENAME, MODEL_INSTANCE);
-
-    var metamodel = ArchitectureCRAPackage.eINSTANCE;
-    Resource modelInstance = resourceSet.getResource(MODEL_INSTANCE);
-    ClassModel cra = (ClassModel) modelInstance.getContents().get(0);
-    
-    Encoding encoding = converter.convert(cra);
-    
-//    for (EStructuralFeature metaRelation : cra.eClass().getEAllStructuralFeatures()) {
-//      if (metaRelation instanceof EReferenceImpl) {
-//        Object test = cra.eGet(metaRelation);
-//        if (test instanceof EObjectContainmentEList) {
-//          
-//        }
-//        System.out.println(test.getClass().getCanonicalName());
-//        
-//      }
-//    }
+    Converter converter = new Converter(RESOURCE_LOCATION, ECORE_FILENAME, MODEL_INSTANCE, ArchitectureCRAPackage.eINSTANCE);
+    Encoding encoding = converter.convert();
+    ClassModel cra = (ClassModel) converter.getStructuredModelInstance().getContents().get(0);
     
     AbstractEncodingCRA encodedCRAProblem = new AbstractEncodingCRA(encoding, cra);
     

@@ -12,7 +12,7 @@ import org.eclipse.emf.ecore.impl.EClassImpl;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.eclipse.emf.ecore.impl.EReferenceImpl;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EObjectEList;
 import org.eclipse.emf.ecore.util.EcoreEList;
 
 import nl.ru.icis.mdeoptimiser.hilo.encoding.io.ModelLoader;
@@ -24,63 +24,112 @@ public class Converter {
   
   ModelLoader modelLoader;
   
+  // The metaModel and metaModelInstance contain the structure of the ecore model and xmi instance
+  // They do NOT contain the class model as its appropriate instance
+  // These resources are used to create and instantiate the relations in the Encoding
   private Resource metaModel;
-  private Resource modelInstance;
+  private Resource metaModelInstance;
+  
+  // The structuredModelInstance contains the model instance from the xmi file structured
+  // using the package that is given to convert(EPackage), i.e. it contains the class model
+  // as its appropriate instance. It is used to fill the Repository with the structured classes
+  private Resource structuredModelInstance; 
   
   private Encoding result;
   
-  private List<DynamicEObjectImpl> converted = new ArrayList<>();
+  private List<DynamicEObjectImpl> convertedMetaInstances = new ArrayList<>();
+  private List<EObject> convertedStructuredInstances = new ArrayList<>();
   
-  public Converter(String resourceLocation, String ecoreFilename, String XMIFilename) {
+  public Converter(String resourceLocation, String ecoreFilename, String XMIFilename, EPackage structuredModelPackage) throws Exception {
     this.resourceLocation = resourceLocation;
     this.ecoreFilename = ecoreFilename;
     this.XMIFilename = XMIFilename;
     
     this.modelLoader = new ModelLoader(resourceLocation);
+    
+    // Load the meta model from the ecore file
     this.metaModel = this.modelLoader.loadMetaModel(ecoreFilename);
+    
+    // Load the metaModelInstance from the xmi file
+    this.metaModelInstance = modelLoader.loadModelInstance(XMIFilename, (EPackage) metaModel.getContents().get(0));
+    
+    // Load the structuredModelInstance using the structuredModelPackage
+    this.structuredModelInstance = modelLoader.loadModelInstance(XMIFilename, structuredModelPackage);
   }
 
-  public Encoding convert(EObject baseModelInstance) throws Exception {
-    Encoding result = new Encoding();
+  public Encoding convert() throws Exception {
+    if (this.result != null) {
+      System.out.println("[ERROR]: This converter has already converted the given models to an encoding");
+      throw new Exception("Already converted the models to an encoding");
+    }
     
+    // Fill in the result with a fresh encoding
+    this.result = new Encoding();
+    
+    // Instantiate the encoding using the meta models
+    instantiateEncoding();
+    
+    // Filling up the repository using the structured model instance
+    initializeRepository();
+    
+    return result;
+  }
+  
+  private void instantiateEncoding() throws Exception {
+    // Instantiate the result encoding relations using the meta model
     for (EObject obj : metaModel.getContents()) {
       if (obj instanceof EPackageImpl) {
         convertEPackageImpl((EPackageImpl) obj, result);
       }
     }
     
-    if (XMIFilename == null || "".equals(XMIFilename)) {
-      System.out.println("[ERROR] XMIFilename not supplied for the model instance of the metamodel");
-      throw new Exception();
-    }
-    
-    this.modelInstance = modelLoader.loadModelInstance(XMIFilename, (EPackage) metaModel.getContents().get(0));
-    
-    for (EObject obj : modelInstance.getContents()) {
+    // Fill the meta relations using the instances in the metaMod
+    for (EObject obj : metaModelInstance.getContents()) {
       if (obj instanceof DynamicEObjectImpl) {
         convertDynamicEObjectImpl((DynamicEObjectImpl) obj, result);
       }
     }
-    
-    // Function that takes an EObject and uses it to initialize the model
-    // IMPORTANT: This EObject must be the ROOT of the model instance as its
-    //        generated interface (e.g. NRP or ClassModel for the NRP and CRA cases)
-    initializeRepository(baseModelInstance);
-    
-    this.result = result;
-    return result;
   }
   
-  private void initializeRepository(EObject baseModelInstance) {
-    for (EStructuralFeature metaRelation : baseModelInstance.eClass().getEAllStructuralFeatures()) {
+  private void initializeRepository() throws Exception {    
+    for (EObject structuredObject : this.structuredModelInstance.getContents()) {
+      addStructuredObjectToRepository(structuredObject);
+    }
+  }
+  
+  private void addStructuredObjectToRepository(EObject structuredObject) throws Exception {
+    // Check if structuredObject has already been added to the repository
+    if (this.convertedStructuredInstances.contains(structuredObject)) {
+      System.out.println("[INFO]: Structured object has already been added to the repository, skipping..");
+      return;
+    }
+    
+    // Generate identifier based on URIFragment and add it to the encoding
+    String identifier = this.structuredModelInstance.getURIFragment(structuredObject);
+    if ("".equals(identifier) || "//-1".equals(identifier) || "/-1".equals(identifier)) {
+      throw new Exception("Converter could not instantiate an identifier for a structuredObject to be added to the Repository");
+    }
+    result.addIdentifierEObjectBiMap(identifier, structuredObject);
+    convertedStructuredInstances.add(structuredObject);
+    
+    // For all other structuredObjects within this one add them as well
+    for (EStructuralFeature metaRelation : structuredObject.eClass().getEAllStructuralFeatures()) {
       if (!(metaRelation instanceof EReferenceImpl)) {
         continue;
       }
       
-      Object toHandle = baseModelInstance.eGet(metaRelation);
-      if (toHandle instanceof EObjectContainmentEList) {
-        
-      } 
+      Object toHandle = structuredObject.eGet(metaRelation);
+      if (toHandle instanceof EObjectEList) {
+        for (Object instance : (EObjectEList) toHandle) {
+          if (!(instance instanceof EObject)) {
+            throw new Exception("instance from EObjectContainmentEList was not an EObject");
+          }
+          
+          addStructuredObjectToRepository((EObject) instance);
+        }
+      } else if (toHandle != null) {
+        System.out.println("Weird type: " + toHandle.getClass().getCanonicalName());
+      }
 //      else if (toHandle instanceof EObjectContainment) {
 //        TODO single EObject instead of more than one.
 //      }
@@ -121,15 +170,15 @@ public class Converter {
     }
     EClassImpl fromMetaClass = (EClassImpl) dynamicObject.eClass();
     
-    if (converted.contains(dynamicObject)) {
+    if (convertedMetaInstances.contains(dynamicObject)) {
       System.out.println("[INFO]: Object instance has already been converted, skipping..");
       return;
     }
-    converted.add(dynamicObject);
+    convertedMetaInstances.add(dynamicObject);
     
     // Generate identifier for the to be converted dynamic object
     // We look at any relation going outward from the dynamicObject, thus we call it the fromIdentifier
-    String fromIdentifier = modelInstance.getURIFragment(dynamicObject);
+    String fromIdentifier = metaModelInstance.getURIFragment(dynamicObject);
     
     // For all meta relation in this class add them as an instance in the encoding
     for (EStructuralFeature metaClassRelation : dynamicObject.eClass().getEAllStructuralFeatures()) {
@@ -153,7 +202,7 @@ public class Converter {
         if (toHandle instanceof EcoreEList) {
           for (Object obj : (EcoreEList) toHandle) {
             if (obj instanceof DynamicEObjectImpl) {
-              encoding.addDestinationToRelation(relation, fromIdentifier, modelInstance.getURIFragment((DynamicEObjectImpl) obj), true);
+              encoding.addDestinationToRelation(relation, fromIdentifier, metaModelInstance.getURIFragment((DynamicEObjectImpl) obj), true);
               convertDynamicEObjectImpl((DynamicEObjectImpl) obj, encoding);
             } else {
               System.out.println("[ERROR]: Iterating over instances got from a meta reference gave unexpected type: " + obj.getClass().getCanonicalName());
@@ -163,7 +212,7 @@ public class Converter {
         } 
         // Or a singular DynamicEObjectImpl.
         else if (toHandle instanceof DynamicEObjectImpl) { 
-          encoding.addDestinationToRelation(relation, fromIdentifier, modelInstance.getURIFragment((DynamicEObjectImpl) toHandle), true);
+          encoding.addDestinationToRelation(relation, fromIdentifier, metaModelInstance.getURIFragment((DynamicEObjectImpl) toHandle), true);
           convertDynamicEObjectImpl((DynamicEObjectImpl) toHandle, encoding);
         } else if (toHandle == null) {
           System.out.println("[WARNING]: Meta relation did not find any instances");
@@ -179,11 +228,15 @@ public class Converter {
     return XMIFilename;
   }
 
-  public void setXMIFilename(String xMIFilename) {
-    XMIFilename = xMIFilename;
+  public void setXMIFilename(String XMIFilename) {
+    XMIFilename = XMIFilename;
   }
   
-  public Encoding getLastResult() {
+  public Encoding getResult() {
     return this.result;
+  }
+  
+  public Resource getStructuredModelInstance() {
+    return this.structuredModelInstance;
   }
 }

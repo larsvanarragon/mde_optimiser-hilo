@@ -4,6 +4,8 @@ import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.collect.HashBiMap;
 
+import nl.ru.icis.mdeoptimiser.hilo.encoding.exception.DuplicateIdentifierEObjectPairException;
+
 public class Repository {
   private static Repository repository = new Repository();
   
@@ -17,10 +19,9 @@ public class Repository {
     return repository;
   }
   
-  public void addIdentifierEObjectBiMap(String identifier, EObject object) {
+  public void addIdentifierEObjectBiMap(String identifier, EObject object) throws DuplicateIdentifierEObjectPairException {
     if (data.get(identifier) != null || data.inverse().get(object) != null) {
-      System.out.println("[ERROR]: This Identifier EObject relation already exists");
-      System.exit(1);
+      throw new DuplicateIdentifierEObjectPairException(identifier, object);
     }
     
     data.put(identifier, object);

@@ -10,6 +10,8 @@ import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
+import nl.ru.icis.mdeoptimiser.hilo.encoding.exception.DuplicateIdentifierEObjectPairException;
+
 public class Encoding {
   private Map<String, Map<String, BitSet>> encodings = new HashMap<String, Map<String, BitSet>>();
   
@@ -42,7 +44,7 @@ public class Encoding {
     return returnList;
   }
   
-  public void addIdentifierEObjectBiMap(String identifier, EObject object) {
+  public void addIdentifierEObjectBiMap(String identifier, EObject object) throws DuplicateIdentifierEObjectPairException {
     repository.addIdentifierEObjectBiMap(identifier, object);
   }
   

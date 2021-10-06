@@ -21,6 +21,7 @@ public class ModelLoader {
     this.resourceLocation = resourceLocation;
   }
   
+  // TODO perform some simple checks and throw errors where appropriate
   public Resource loadMetaModel(String ecoreFileName) {
     File ecoreFile = new File(resourceLocation + "/" + ecoreFileName);
     ResourceSet resourceSet = new ResourceSetImpl();
