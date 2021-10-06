@@ -21,7 +21,7 @@ public class Main {
     Encoding encoding = converter.convert();
     ClassModel cra = (ClassModel) converter.getStructuredModelInstance().getContents().get(0);
     
-    AbstractEncodingCRA encodedCRAProblem = new AbstractEncodingCRA(encoding, cra);
+    AbstractEncodingCRA encodedCRAProblem = new AbstractEncodingCRA(encoding, cra, null);
     
     AlgorithmFactory factory = new AlgorithmFactory();
     factory.addProvider(new EncodingCRAFactory());
