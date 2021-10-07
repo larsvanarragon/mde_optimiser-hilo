@@ -12,6 +12,7 @@ import org.eclipse.emf.ecore.resource.Resource.Factory.Registry;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.eclipse.emf.henshin.model.resource.HenshinResourceSet;
 
 public class ModelLoader {
 
@@ -48,6 +49,11 @@ public class ModelLoader {
     URI uri = URI.createFileURI(instanceFile.getAbsolutePath());
     
     return resourceSet.getResource(uri, true);
+  }
+  
+  public org.eclipse.emf.henshin.model.Module loadHenshinModule(String henshinFileName) {
+    HenshinResourceSet resourceSet = new HenshinResourceSet(resourceLocation);
+    return resourceSet.getModule(henshinFileName, false);
   }
   
   public String getResourceLocation() {

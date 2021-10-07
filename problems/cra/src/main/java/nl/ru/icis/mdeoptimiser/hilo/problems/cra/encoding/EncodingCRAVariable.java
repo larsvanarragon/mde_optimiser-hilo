@@ -1,5 +1,6 @@
 package nl.ru.icis.mdeoptimiser.hilo.problems.cra.encoding;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,25 +15,24 @@ public class EncodingCRAVariable implements Variable {
   private Encoding encoding;
   
   private ClassModel model;
+
+  private static ArrayList<Unit> operators = new ArrayList<Unit>();
   
-  private List<Unit> henshinOperators;
-  
-  public EncodingCRAVariable(Encoding encoding, ClassModel model, List<Unit> henshinOperators) {
+  public EncodingCRAVariable(Encoding encoding, ClassModel model, ArrayList<Unit> operators) {
     this.encoding = encoding;
     this.model = model;
-    this.henshinOperators = henshinOperators;
+    this.operators = operators;
   }
 
   @Override
   public Variable copy() {
-    EncodingCRAVariable var = new EncodingCRAVariable(encoding.copy(), model, henshinOperators);
+    EncodingCRAVariable var = new EncodingCRAVariable(encoding.copy(), model, operators);
     return var;
   }
 
   @Override
   public void randomize() {
-    // TODO Auto-generated method stub
-    
+    new EncodingCRAVariation().mutate(this);
   }
   
   public Encoding getEncoding() {
@@ -42,9 +42,8 @@ public class EncodingCRAVariable implements Variable {
   public ClassModel getModel() {
     return this.model;
   }
-
-  public Unit getRandomOperator() {
-    Collections.shuffle(henshinOperators);
-    return henshinOperators.get(0);
+  
+  public ArrayList<Unit> getOperators() {
+    return operators;
   }
 }
