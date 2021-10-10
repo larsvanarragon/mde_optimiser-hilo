@@ -16,7 +16,7 @@ public class EncodingCRAVariable implements Variable {
   
   private ClassModel model;
 
-  private static ArrayList<Unit> operators = new ArrayList<Unit>();
+  private ArrayList<Unit> operators = new ArrayList<Unit>();
   
   public EncodingCRAVariable(Encoding encoding, ClassModel model, ArrayList<Unit> operators) {
     this.encoding = encoding;

@@ -1,5 +1,6 @@
 package nl.ru.icis.mdeoptimiser.hilo.problems.cra.encoding;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.emf.henshin.model.Unit;
@@ -28,9 +29,9 @@ public class AbstractEncodingCRA extends AbstractProblem {
   // Original model instance used as filler, AspectJ handles all calls using the encoding
   private ClassModel cra;
   // Henshin mutation operators
-  private List<Unit> henshinOperators;
+  private ArrayList<Unit> henshinOperators;
   
-  public AbstractEncodingCRA(Encoding originalEncoding, ClassModel cra, List<Unit> henshinOperators) {
+  public AbstractEncodingCRA(Encoding originalEncoding, ClassModel cra, ArrayList<Unit> henshinOperators) {
     super(N_VARIABLES, N_OBJECTIVES, N_CONSTRAINTS);
     
     this.maximiseCRA = new MaximiseCRA();
