@@ -12,6 +12,7 @@ import models.cra.fitness.MinimiseClasslessFeatures;
 import models.cra.fitness.MinimiseEmptyClasses;
 import models.cra.fitness.architectureCRA.ClassModel;
 import nl.ru.icis.mdeoptimiser.hilo.encoding.model.Encoding;
+import nl.ru.icis.mdeoptimiser.hilo.problems.cra.coupling.CRACoupleData;
 
 public class AbstractEncodingCRA extends AbstractProblem {
   // Static values for the amount of objectives, constraints and variables
@@ -45,7 +46,7 @@ public class AbstractEncodingCRA extends AbstractProblem {
 
   @Override
   public void evaluate(Solution solution) {
-    // Set current Encoding in AspectJ
+    CRACoupleData.setCurrentEncoding(((EncodingCRAVariable) solution.getVariable(0)).getEncoding());
     
     uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.interpreter.guidance.Solution wrapperSolution = 
         new uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.interpreter.guidance.Solution(cra);

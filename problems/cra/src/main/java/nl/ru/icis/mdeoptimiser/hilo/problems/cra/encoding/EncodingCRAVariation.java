@@ -15,7 +15,7 @@ import uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.interpreter.henshi
 
 public class EncodingCRAVariation implements Variation {
   
-  Engine engine = new EngineImpl();
+  static Engine engine = new EngineImpl();
 
   MdeoRuleApplicationImpl ruleRunner = new MdeoRuleApplicationImpl(engine);
   
@@ -56,8 +56,7 @@ public class EncodingCRAVariation implements Variation {
     
     while (!operators.isEmpty()) {
       Collections.shuffle(operators);
-      ruleRunner.setUnit(operators.get(0));
-      operators.remove(0);
+      ruleRunner.setUnit(operators.remove(0));
       
       if (ruleRunner.execute(null)) {
         break;

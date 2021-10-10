@@ -16,6 +16,7 @@ import models.cra.fitness.architectureCRA.ClassModel;
 import nl.ru.icis.mdeoptimiser.hilo.encoding.io.ModelLoader;
 import nl.ru.icis.mdeoptimiser.hilo.encoding.model.Converter;
 import nl.ru.icis.mdeoptimiser.hilo.encoding.model.Encoding;
+import nl.ru.icis.mdeoptimiser.hilo.experiment.config.ExperimentConfig;
 import nl.ru.icis.mdeoptimiser.hilo.problems.cra.encoding.AbstractEncodingCRA;
 import nl.ru.icis.mdeoptimiser.hilo.problems.cra.encoding.EncodingCRAFactory;
 import uk.ac.kcl.inf.mdeoptimiser.languages.MoptStandaloneSetup;
@@ -75,6 +76,8 @@ public class Main {
     
     AlgorithmFactory factory = new AlgorithmFactory();
     factory.addProvider(new EncodingCRAFactory());
+    
+    ExperimentConfig.isAspectJEnabled = true;
     
     NondominatedPopulation result = new Executor().usingAlgorithmFactory(factory)
         .withProblem(encodedCRAProblem)

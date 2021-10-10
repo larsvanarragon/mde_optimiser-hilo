@@ -23,6 +23,10 @@ public class Encoding {
     this.repository = Repository.getInstance();
   }
   
+  public EList<EObject> getRelatedInstancesFor(String relation, EObject object) {
+    return getRelatedInstancesFor(relation, repository.getIdentifierForEObject(object));
+  }
+  
   public EList<EObject> getRelatedInstancesFor(String relation, String identifier) {
     if (!relationInstanceExists(relation, identifier)) {
       System.out.println("[ERROR] Can't get instances for a non-existing relation");
@@ -40,7 +44,7 @@ public class Encoding {
         returnList.add(toAdd);
       }
     }
-    
+    System.out.println("A");
     return returnList;
   }
   
