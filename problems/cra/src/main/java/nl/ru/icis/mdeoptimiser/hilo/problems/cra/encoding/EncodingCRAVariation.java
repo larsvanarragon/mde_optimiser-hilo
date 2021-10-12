@@ -47,6 +47,8 @@ public class EncodingCRAVariation implements Variation {
     return parents;
   }
   
+  // TODO we want to instead of henshin applying the rule only match it
+  
   // Mutate the variable with a random operator for a single step, if the operator fails we try another
   public void mutate(EncodingCRAVariable variable) {
     CRAEGraphImpl graph = new CRAEGraphImpl(variable.getModel(), variable.getEncoding());
