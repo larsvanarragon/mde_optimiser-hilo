@@ -9,6 +9,7 @@ import org.moeaframework.core.Variable;
 
 import models.cra.fitness.architectureCRA.ClassModel;
 import nl.ru.icis.mdeoptimiser.hilo.encoding.model.Encoding;
+import nl.ru.icis.mdeoptimiser.hilo.problems.cra.coupling.CRACoupleData;
 
 public class EncodingCRAVariable implements Variable {
   
@@ -32,6 +33,7 @@ public class EncodingCRAVariable implements Variable {
 
   @Override
   public void randomize() {
+    CRACoupleData.setCurrentEncoding(encoding);
     new EncodingCRAVariation().mutate(this);
   }
   

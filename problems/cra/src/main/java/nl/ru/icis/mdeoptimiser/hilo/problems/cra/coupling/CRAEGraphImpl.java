@@ -33,5 +33,9 @@ public class CRAEGraphImpl extends EGraphImpl {
   public Encoding getEncoding() {
     return encoding;
   }
-
+  
+  @Override
+  protected void didAdd(EObject object) {
+    // Do NOT notify objects they have been added, this is not needed
+  }
 }

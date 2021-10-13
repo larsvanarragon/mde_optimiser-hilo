@@ -29,7 +29,7 @@ public class Encoding {
   
   public EList<EObject> getRelatedInstancesFor(String relation, String identifier) {
     if (!relationInstanceExists(relation, identifier)) {
-      System.out.println("[ERROR] Can't get instances for a non-existing relation");
+      System.out.println("[ERROR] Can't get instances for a non-existing relation:" + relation);
       return null;
     }
     
@@ -44,7 +44,7 @@ public class Encoding {
         returnList.add(toAdd);
       }
     }
-    System.out.println("A");
+    
     return returnList;
   }
   
@@ -186,5 +186,49 @@ public class Encoding {
     identifiersIndex.get(relation).add(toClassIdentifier);
     
     encodings.get(relation).get(fromClassIdentifier).set(index, b);
+  }
+  
+  public int getIndexFor(String relation, String fromClassIdentifier, String toClassIdentifier) throws Exception {
+    if (!relationInstanceExists(relation, fromClassIdentifier)) {
+      throw new Exception("Relation does not exist");
+    }
+    
+    int index = identifiersIndex.get(relation).indexOf(toClassIdentifier);
+    
+    if (index < 0) {
+      index = identifiersIndex.get(relation).size();
+      identifiersIndex.get(relation).add(toClassIdentifier);
+    }
+    
+    return index;
+  }
+
+  public void addNewEObject(EObject createdObject) throws DuplicateIdentifierEObjectPairException {    
+    repository.addEObjectGeneratingIdentifier(createdObject);
+  }
+
+  public void addRelationBetween(String referenceName, EObject source, String sourceRelationIdentifier, EObject target, String targetRelationIdentifier) throws Exception {
+    setRelationBetween(referenceName, source, sourceRelationIdentifier, target, targetRelationIdentifier, true);
+  }
+
+  public void removeRelationBetween(String referenceName, EObject source, String sourceRelationIdentifier, EObject target, String targetRelationIdentifier) throws Exception {
+     setRelationBetween(referenceName, source, sourceRelationIdentifier, target, targetRelationIdentifier, false);
+    
+  }
+  
+  public void setRelationBetween(String referenceName, EObject source, String sourceRelationIdentifier, EObject target, String targetRelationIdentifier, boolean value) throws Exception {
+    String sourceIdentifier = repository.getIdentifierForEObject(source);
+    String targetIdentifier = repository.getIdentifierForEObject(target);
+    
+    String relation = referenceName + sourceRelationIdentifier + targetRelationIdentifier;
+    
+    // If this is a newly added object we don't know the relations yet, so we add it if it's missing
+    if (!relationInstanceExists(relation, sourceIdentifier)) {
+      addRelationInstance(sourceIdentifier, relation);
+    }
+    
+    int index = getIndexFor(relation, sourceIdentifier, targetIdentifier);
+    
+    encodings.get(relation).get(sourceIdentifier).set(index, value);
   }
 }
