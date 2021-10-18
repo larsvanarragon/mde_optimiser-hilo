@@ -7,10 +7,8 @@ public class CRACoupleData {
   
   public static final String CLASSMODEL_TO_CLASS_RELATION = "classesarchitectureCRAClassModelarchitectureCRAClass";
   public static final String CLASSMODEL_TO_FEATURE_RELATION = "featuresarchitectureCRAClassModelarchitectureCRAFeature";
-  //isEncapsulatedByarchitectureCRAAttributearchitectureCRAClass
   public static final String CLASS_TO_FEATURE_RELATION = "encapsulatesarchitectureCRAClassarchitectureCRAFeature";
   public static final String METHOD_TO_ATTRIBUTE_FD_RELATION = "functionalDependencyarchitectureCRAMethodarchitectureCRAMethod";
-  //isEncapsulatedByarchitectureCRAMethodarchitectureCRAClass
   public static final String METHOD_TO_ATTRIBUTE_DD_RELATION = "dataDependencyarchitectureCRAMethodarchitectureCRAAttribute";
   public static final String FEATURE_TO_CLASS_RELATION = "isEncapsulatedByarchitectureCRAFeaturearchitectureCRAClass";
   

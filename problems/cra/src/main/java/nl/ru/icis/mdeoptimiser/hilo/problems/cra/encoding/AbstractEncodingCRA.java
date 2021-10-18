@@ -54,6 +54,8 @@ public class AbstractEncodingCRA extends AbstractProblem {
     solution.setObjective(0, maximiseCRA.computeFitness(wrapperSolution));
     solution.setConstraint(0, minimiseClasslessFeatures.computeFitness(wrapperSolution));
     solution.setConstraint(1, minimiseEmptyClasses.computeFitness(wrapperSolution));
+    
+    System.out.println(solution.getObjective(0) + ", " + solution.getConstraint(0) + " & "  + solution.getConstraint(1));
   }
 
   @Override

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.henshin.interpreter.impl.EGraphImpl;
 
@@ -17,6 +18,8 @@ public class CRAEGraphImpl extends EGraphImpl {
   public CRAEGraphImpl(ClassModel model, Encoding encoding) {
     super();
     this.encoding = encoding;
+    
+//    initializeContents(Collections.singleton(model));
     
     addTree(model);
   }
@@ -37,5 +40,8 @@ public class CRAEGraphImpl extends EGraphImpl {
   @Override
   protected void didAdd(EObject object) {
     // Do NOT notify objects they have been added, this is not needed
+    EClass type = object.eClass();
+    getDomain(type).add(object);
+    addEPackage(type.getEPackage());
   }
 }

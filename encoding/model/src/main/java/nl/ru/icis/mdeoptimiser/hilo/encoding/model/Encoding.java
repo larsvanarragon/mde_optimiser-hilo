@@ -9,6 +9,8 @@ import java.util.Map;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
 
 import nl.ru.icis.mdeoptimiser.hilo.encoding.exception.DuplicateIdentifierEObjectPairException;
 
@@ -23,8 +25,14 @@ public class Encoding {
     this.repository = Repository.getInstance();
   }
   
-  public EList<EObject> getRelatedInstancesFor(String relation, EObject object) {
-    return getRelatedInstancesFor(relation, repository.getIdentifierForEObject(object));
+  public EList<EObject> getRelatedInstancesFor(String relation, EObject object) throws Exception {
+    String identifier = repository.getIdentifierForEObject(object);
+    
+    if (identifier == null) {
+      throw new Exception("Identifier could not be found for given object");
+    }
+    
+    return getRelatedInstancesFor(relation, identifier);
   }
   
   public EList<EObject> getRelatedInstancesFor(String relation, String identifier) {
@@ -52,18 +60,18 @@ public class Encoding {
     repository.addIdentifierEObjectBiMap(identifier, object);
   }
   
-  public void setIdentifierRelatedToInstance(String relation, String identifier, EObject object, boolean value) {
+  public void setIdentifierRelatedToInstance(String relation, String identifier, EObject object, boolean value) throws Exception {
     if (!relationInstanceExists(relation, identifier)) {
       System.out.println("[ERROR]: Trying to relate EObject to non existing relation");
       System.exit(1);
     }
     String otherObjectIdentifier = repository.getIdentifierForEObject(object);
-    int indexOfOtherObject = identifiersIndex.get(relation).indexOf(otherObjectIdentifier);
+    int indexOfOtherObject = getIndexFor(relation, otherObjectIdentifier);
     
     encodings.get(relation).get(identifier).set(indexOfOtherObject, value);
   }
 
-  public Map<String, BitSet> getEncodedRelation(String relationName) {
+  protected Map<String, BitSet> getEncodedRelation(String relationName) {
     return encodings.get(relationName);
   }
   
@@ -188,46 +196,58 @@ public class Encoding {
     encodings.get(relation).get(fromClassIdentifier).set(index, b);
   }
   
-  public int getIndexFor(String relation, String fromClassIdentifier, String toClassIdentifier) throws Exception {
-    if (!relationInstanceExists(relation, fromClassIdentifier)) {
+  public int getIndexFor(String relation, String toIdentifier) throws Exception {
+    if (!relationExists(relation)) {
       throw new Exception("Relation does not exist");
     }
     
-    int index = identifiersIndex.get(relation).indexOf(toClassIdentifier);
+    int index = identifiersIndex.get(relation).indexOf(toIdentifier);
     
     if (index < 0) {
       index = identifiersIndex.get(relation).size();
-      identifiersIndex.get(relation).add(toClassIdentifier);
+      identifiersIndex.get(relation).add(toIdentifier);
     }
     
     return index;
   }
 
-  public void addNewEObject(EObject createdObject) throws DuplicateIdentifierEObjectPairException {    
-    repository.addEObjectGeneratingIdentifier(createdObject);
-  }
-
-  public void addRelationBetween(String referenceName, EObject source, String sourceRelationIdentifier, EObject target, String targetRelationIdentifier) throws Exception {
-    setRelationBetween(referenceName, source, sourceRelationIdentifier, target, targetRelationIdentifier, true);
-  }
-
-  public void removeRelationBetween(String referenceName, EObject source, String sourceRelationIdentifier, EObject target, String targetRelationIdentifier) throws Exception {
-     setRelationBetween(referenceName, source, sourceRelationIdentifier, target, targetRelationIdentifier, false);
+  public void addNewEObject(EObject createdObject) throws Exception {    
+    String identifier = repository.addEObjectGeneratingIdentifier(createdObject);
     
+    String relationToPart = createdObject.eClass().getEPackage().getName() + createdObject.eClass().getName();
+    
+    for (String relation : identifiersIndex.keySet()) {
+      if (relationToPart.equals(relation.substring(relation.length() - relationToPart.length()))) {
+        getIndexFor(relation, identifier);
+      }
+    }
+  }
+
+  public void addRelationBetween(EReference type, EObject source, EObject target) throws Exception {
+    setRelationBetween(type, source, target, true);
+  }
+
+  public void removeRelationBetween(EReference type, EObject source, EObject target) throws Exception {
+    setRelationBetween(type, source, target, false);
   }
   
-  public void setRelationBetween(String referenceName, EObject source, String sourceRelationIdentifier, EObject target, String targetRelationIdentifier, boolean value) throws Exception {
+  public void setRelationBetween(EReference type, EObject source, EObject target, boolean value) throws Exception {
+    String relation = type.getName() + type.getEContainingClass().getEPackage().getName() + type.getEContainingClass().getName()
+                          + type.getEReferenceType().getEPackage().getName() + type.getEReferenceType().getName();
+    
     String sourceIdentifier = repository.getIdentifierForEObject(source);
     String targetIdentifier = repository.getIdentifierForEObject(target);
     
-    String relation = referenceName + sourceRelationIdentifier + targetRelationIdentifier;
+    if (sourceIdentifier == null || targetIdentifier == null) {
+      throw new Exception("No identfier found for either the source or the target");
+    }
     
     // If this is a newly added object we don't know the relations yet, so we add it if it's missing
     if (!relationInstanceExists(relation, sourceIdentifier)) {
       addRelationInstance(sourceIdentifier, relation);
     }
-    
-    int index = getIndexFor(relation, sourceIdentifier, targetIdentifier);
+
+    int index = getIndexFor(relation, targetIdentifier);
     
     encodings.get(relation).get(sourceIdentifier).set(index, value);
   }

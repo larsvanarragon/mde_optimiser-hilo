@@ -4,32 +4,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.henshin.interpreter.Engine;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.henshin.interpreter.Match;
-import org.eclipse.emf.henshin.interpreter.impl.EGraphImpl;
 import org.eclipse.emf.henshin.interpreter.impl.EngineImpl;
 import org.eclipse.emf.henshin.interpreter.impl.MatchImpl;
 import org.eclipse.emf.henshin.interpreter.info.RuleChangeInfo;
-import org.eclipse.emf.henshin.interpreter.info.RuleInfo;
 import org.eclipse.emf.henshin.model.Edge;
 import org.eclipse.emf.henshin.model.Node;
-import org.eclipse.emf.henshin.model.Parameter;
 import org.eclipse.emf.henshin.model.Rule;
 import org.eclipse.emf.henshin.model.Unit;
 import org.moeaframework.core.Solution;
 import org.moeaframework.core.Variation;
 
-import nl.ru.icis.mdeoptimiser.hilo.encoding.exception.DuplicateIdentifierEObjectPairException;
 import nl.ru.icis.mdeoptimiser.hilo.encoding.model.Encoding;
+import nl.ru.icis.mdeoptimiser.hilo.problems.cra.coupling.CRACoupleData;
 import nl.ru.icis.mdeoptimiser.hilo.problems.cra.coupling.CRAEGraphImpl;
-import uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.interpreter.henshin.MdeoRuleApplicationImpl;
 
 public class EncodingCRAVariation implements Variation {
   
   static EngineImpl engine = new EngineImpl();
-
-  MdeoRuleApplicationImpl ruleRunner = new MdeoRuleApplicationImpl(engine);
-  
   
   @Override
   public int getArity() {
@@ -38,19 +31,24 @@ public class EncodingCRAVariation implements Variation {
 
   @Override
   public Solution[] evolve(Solution[] parents) {
-    EncodingCRAVariable variable = (EncodingCRAVariable) parents[0].getVariable(0);
+    // Copy and set parent
+    Solution mutated = parents[0].copy();
+    mutated.setAttribute("parent", parents[0]);
     
-    mutate(variable);
+    // Get the variable we will mutate and set the current encoding
+    EncodingCRAVariable toMutateVariable = (EncodingCRAVariable) mutated.getVariable(0);
+    CRACoupleData.setCurrentEncoding(toMutateVariable.getEncoding());
     
-    return parents;
+    // Mutate it
+    mutate(toMutateVariable);
+    
+    // Return it
+    return new Solution[] {mutated};
   }
-  
-  // TODO we want to instead of henshin applying the rule only match it
   
   // Mutate the variable with a random operator for a single step, if the operator fails we try another
   public void mutate(EncodingCRAVariable variable) {
     CRAEGraphImpl graph = new CRAEGraphImpl(variable.getModel(), variable.getEncoding());
-    ruleRunner.setEGraph(graph);
     
     ArrayList<Unit> operators = new ArrayList<>(variable.getOperators());
     
@@ -58,6 +56,10 @@ public class EncodingCRAVariation implements Variation {
       while (!operators.isEmpty()) {
         Collections.shuffle(operators);
         Rule rule = (Rule) operators.remove(0);
+        
+        if (rule.getName().equals("deleteEmptyClass") || rule.getName().equals("moveFeature")) {
+          continue;
+        }
         
         Match potentialMatch = engine.findMatches(rule, graph, null).iterator().next();
         if (mutateEncodingWithMatch(variable.getEncoding(), potentialMatch, new MatchImpl(rule, true), rule)) {
@@ -82,6 +84,8 @@ public class EncodingCRAVariation implements Variation {
       return false;
     }
     
+    System.out.println(rule.getName());
+    
     RuleChangeInfo ruleChange = engine.getRuleInfo(rule).getChangeInfo();
     
     for (Node node : ruleChange.getCreatedNodes()) {
@@ -92,6 +96,7 @@ public class EncodingCRAVariation implements Variation {
     }
     
     for (Node node : ruleChange.getDeletedNodes()) {
+      System.out.println("Delete");
       // TODO mark object for possible deletion, check whether other objects have any reference to it
     }
     
@@ -103,22 +108,29 @@ public class EncodingCRAVariation implements Variation {
     for (Edge edge : ruleChange.getCreatedEdges()) {
       EObject source = resultMatch.getNodeTarget(edge.getSource());
       EObject target = resultMatch.getNodeTarget(edge.getTarget());
+     
+      encoding.addRelationBetween(edge.getType(), source, target);
       
-      String sourceRelationIdentifier = source.eClass().getEPackage().getName() + source.eClass().getName();
-      String targetRelationIdentifier = edge.getType().getEGenericType().getERawType().getEPackage().getName() + edge.getType().getEGenericType().getERawType().getName();
-      encoding.addRelationBetween(edge.getType().getName(), source, sourceRelationIdentifier, target, targetRelationIdentifier);
+      // Fix the opposite
+      EReference opposite = edge.getType().getEOpposite();
+      if (opposite != null) {
+        encoding.addRelationBetween(opposite, target, source);
+      }
     }
     
     for (Edge edge : ruleChange.getDeletedEdges()) {
       EObject source = match.getNodeTarget(edge.getSource());
       EObject target = match.getNodeTarget(edge.getTarget());
-
-      String sourceRelationIdentifier = source.eClass().getEPackage().getName() + source.eClass().getName();
-      String targetRelationIdentifier = edge.getType().getEGenericType().getERawType().getEPackage().getName() + edge.getType().getEGenericType().getERawType().getName();
-      encoding.removeRelationBetween(edge.getType().getName(), source, sourceRelationIdentifier, target, targetRelationIdentifier);
+      
+      encoding.removeRelationBetween(edge.getType(), source, target);
+      
+      // Fix the opposite
+      EReference opposite = edge.getType().getEOpposite();
+      if (opposite != null) {
+        encoding.removeRelationBetween(opposite, target, source);
+      }
     }
     
     return true;
   }
-
 }

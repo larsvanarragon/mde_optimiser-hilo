@@ -3,13 +3,21 @@ package nl.ru.icis.mdeoptimiser.hilo.problems.cra.coupling;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.impl.EReferenceImpl;
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EObjectResolvingEList;
+import org.eclipse.emf.ecore.util.EObjectWithInverseResolvingEList;
 
+import models.cra.fitness.architectureCRA.ArchitectureCRAPackage;
+import models.cra.fitness.architectureCRA.Attribute;
+import models.cra.fitness.architectureCRA.Feature;
+import models.cra.fitness.architectureCRA.Method;
 import models.cra.fitness.architectureCRA.impl.ClassImpl;
-import models.cra.fitness.architectureCRA.impl.ClassModelImpl;
+import models.cra.fitness.architectureCRA.ClassModel;
 import models.cra.fitness.architectureCRA.impl.FeatureImpl;
 import models.cra.fitness.architectureCRA.impl.MethodImpl;
 import nl.ru.icis.mdeoptimiser.hilo.encoding.model.Encoding;
@@ -55,7 +63,12 @@ public aspect CRACoupler {
     String relation = reference.getName() + object.eClass().getEPackage().getName() + object.eClass().getName();
     relation += reference.basicGetEReferenceType().getEPackage().getName() + reference.basicGetEReferenceType().getName();
     
+    try {
     addToList.addAll(encoding.getRelatedInstancesFor(relation, object));
+    } catch (Exception e) {
+      e.printStackTrace();
+      System.exit(1);
+    }
   }
   
   // START INTERCEPTING ClassModelImpl GETTERS
@@ -63,38 +76,50 @@ public aspect CRACoupler {
    * Pointcut to intercept the getter for the classes of a ClassModelImpl
    * @param classModel
    */
-  pointcut getClassesFromClassModel(ClassModelImpl classModel): 
-    call(EList<models.cra.fitness.architectureCRA.Class> ClassModelImpl.getClasses())
+  pointcut getClassesFromClassModel(ClassModel classModel): 
+    call(EList<models.cra.fitness.architectureCRA.Class> ClassModel.getClasses())
     && target (classModel);
   
-  EList<models.cra.fitness.architectureCRA.Class> around(ClassModelImpl classModel): getClassesFromClassModel(classModel) {
+  EList<models.cra.fitness.architectureCRA.Class> around(ClassModel classModel): getClassesFromClassModel(classModel) {
     if (!ExperimentConfig.isAspectJEnabled) {
       return proceed(classModel);
     }
     
     Encoding encoding = CRACoupleData.getCurrentEncoding();
     
-    return (EList<models.cra.fitness.architectureCRA.Class>)(EList<?>) 
-        encoding.getRelatedInstancesFor(CRACoupleData.CLASSMODEL_TO_CLASS_RELATION, classModel);
+    try {
+      return (EList<models.cra.fitness.architectureCRA.Class>)(EList<?>) 
+          encoding.getRelatedInstancesFor(CRACoupleData.CLASSMODEL_TO_CLASS_RELATION, classModel);
+    } catch (Exception e) {
+      e.printStackTrace();
+      System.exit(1);
+      return null;
+    }
   }
   
   /**
    * Pointcut to intercept the getter for the features of a ClassModelImpl
    * @param classModel
    */
-  pointcut getFeaturesFromClassModel(ClassModelImpl classModel): 
-    call(EList<models.cra.fitness.architectureCRA.Feature> ClassModelImpl.getFeatures())
+  pointcut getFeaturesFromClassModel(ClassModel classModel): 
+    call(EList<models.cra.fitness.architectureCRA.Feature> ClassModel.getFeatures())
     && target (classModel);
   
-  EList<models.cra.fitness.architectureCRA.Feature> around(ClassModelImpl classModel): getFeaturesFromClassModel(classModel) {
+  EList<models.cra.fitness.architectureCRA.Feature> around(ClassModel classModel): getFeaturesFromClassModel(classModel) {
     if (!ExperimentConfig.isAspectJEnabled) {
       return proceed(classModel);
     }
     
     Encoding encoding = CRACoupleData.getCurrentEncoding();
     
-    return (EList<models.cra.fitness.architectureCRA.Feature>)(EList<?>) 
-        encoding.getRelatedInstancesFor(CRACoupleData.CLASSMODEL_TO_FEATURE_RELATION, classModel);
+    try {
+      return (EList<models.cra.fitness.architectureCRA.Feature>)(EList<?>) 
+          encoding.getRelatedInstancesFor(CRACoupleData.CLASSMODEL_TO_FEATURE_RELATION, classModel);
+    } catch (Exception e) {
+      e.printStackTrace();
+      System.exit(1);
+      return null;
+    }
   }
   // END INTERCEPTING ClassModelImpl GETTERS
   
@@ -110,7 +135,14 @@ public aspect CRACoupler {
     
     Encoding encoding = CRACoupleData.getCurrentEncoding();
     
-    EList<EObject> encapsulated = encoding.getRelatedInstancesFor(CRACoupleData.FEATURE_TO_CLASS_RELATION, feature);
+    EList<EObject> encapsulated;
+    try {
+      encapsulated = encoding.getRelatedInstancesFor(CRACoupleData.FEATURE_TO_CLASS_RELATION, feature);
+    } catch (Exception e) {
+      e.printStackTrace();
+      System.exit(1);
+      return null;
+    }
     if (encapsulated.size() > 1) {
       System.out.println("[ERROR] Encoding broke, a feature can't be encapsulated by two classes");
       return null;
@@ -123,18 +155,26 @@ public aspect CRACoupler {
     return (models.cra.fitness.architectureCRA.Class) encapsulated.get(0);
   }
   
-  pointcut getIsEncapsulatedByFeature(models.cra.fitness.architectureCRA.impl.FeatureImpl feature):
-    call(models.cra.fitness.architectureCRA.Class FeatureImpl.getIsEncapsulatedBy())
+  pointcut getIsEncapsulatedByFeature(models.cra.fitness.architectureCRA.Feature feature):
+    call(models.cra.fitness.architectureCRA.Class Feature.getIsEncapsulatedBy())
     && target(feature);
   
-  models.cra.fitness.architectureCRA.Class around(FeatureImpl feature) : getIsEncapsulatedByFeature(feature) {
+  models.cra.fitness.architectureCRA.Class around(Feature feature) : getIsEncapsulatedByFeature(feature) {
     if (!ExperimentConfig.isAspectJEnabled) {
       return proceed(feature);
     }
     
     Encoding encoding = CRACoupleData.getCurrentEncoding();
     
-    EList<EObject> encapsulated = encoding.getRelatedInstancesFor(CRACoupleData.FEATURE_TO_CLASS_RELATION, feature);
+    EList<EObject> encapsulated;
+    try {
+      encapsulated = encoding.getRelatedInstancesFor(CRACoupleData.FEATURE_TO_CLASS_RELATION, feature);
+    } catch (Exception e) {
+      e.printStackTrace();
+      System.exit(1);
+      return null;
+    }
+    
     if (encapsulated.size() > 1) {
       System.out.println("[ERROR] Encoding broke, a feature can't be encapsulated by two classes");
       return null;
@@ -149,51 +189,69 @@ public aspect CRACoupler {
   // END INTERCEPTING FeatureImpl GETTERS
   
   // BEGIN INTERCEPTING ClassImpl GETTERS
-  pointcut getEncapsulatesClass(ClassImpl clazz):
-    call(EList<models.cra.fitness.architectureCRA.Feature> ClassImpl.getEncapsulates())
+  pointcut getEncapsulatesClass(models.cra.fitness.architectureCRA.Class clazz):
+    call(EList<models.cra.fitness.architectureCRA.Feature> models.cra.fitness.architectureCRA.Class.getEncapsulates())
     && target(clazz);
   
-  EList<models.cra.fitness.architectureCRA.Feature> around(ClassImpl clazz) : getEncapsulatesClass(clazz) {
+  EList<models.cra.fitness.architectureCRA.Feature> around(models.cra.fitness.architectureCRA.Class clazz) : getEncapsulatesClass(clazz) {
     if (!ExperimentConfig.isAspectJEnabled) {
       return proceed(clazz);
     }
     
     Encoding encoding = CRACoupleData.getCurrentEncoding();
     
-    return (EList<models.cra.fitness.architectureCRA.Feature>)(EList<?>) 
-        encoding.getRelatedInstancesFor(CRACoupleData.CLASS_TO_FEATURE_RELATION, clazz);
+    try {
+      return (EList<models.cra.fitness.architectureCRA.Feature>)(EList<?>) 
+          encoding.getRelatedInstancesFor(CRACoupleData.CLASS_TO_FEATURE_RELATION, clazz);
+    } catch (Exception e) {
+      e.printStackTrace();
+      System.exit(1);
+      return null;
+    }
   }
   // END INTERCEPTING ClassImpl GETTERS
   
   // START INTERCEPTING MethodImpl GETTERS
-  pointcut getDataDependencyMethod(MethodImpl method):
-    call (EList<models.cra.fitness.architectureCRA.Attribute> MethodImpl.getDataDependency())
+  pointcut getDataDependencyMethod(Method method):
+    call (EList<models.cra.fitness.architectureCRA.Attribute> Method.getDataDependency())
     && target(method);
   
-  EList<models.cra.fitness.architectureCRA.Attribute> around(MethodImpl method) : getDataDependencyMethod(method) {
+  EList<models.cra.fitness.architectureCRA.Attribute> around(Method method) : getDataDependencyMethod(method) {
     if (!ExperimentConfig.isAspectJEnabled) {
       return proceed(method);
     }
     
     Encoding encoding = CRACoupleData.getCurrentEncoding();
     
-    return (EList<models.cra.fitness.architectureCRA.Attribute>) (EList<?>) 
-        encoding.getRelatedInstancesFor(CRACoupleData.METHOD_TO_ATTRIBUTE_DD_RELATION, method);
+    try {
+      return (EList<models.cra.fitness.architectureCRA.Attribute>) (EList<?>) 
+          encoding.getRelatedInstancesFor(CRACoupleData.METHOD_TO_ATTRIBUTE_DD_RELATION, method);
+    } catch (Exception e) {
+      e.printStackTrace();
+      System.exit(1);
+      return null;
+    }
   }
   
-  pointcut getFunctionalDependencyMethod(MethodImpl method):
-    call (EList<models.cra.fitness.architectureCRA.Method> MethodImpl.getFunctionalDependency())
+  pointcut getFunctionalDependencyMethod(Method method):
+    call (EList<models.cra.fitness.architectureCRA.Method> Method.getFunctionalDependency())
     && target(method);
   
-  EList<models.cra.fitness.architectureCRA.Method> around(MethodImpl method) : getFunctionalDependencyMethod(method) {
+  EList<models.cra.fitness.architectureCRA.Method> around(Method method) : getFunctionalDependencyMethod(method) {
     if (!ExperimentConfig.isAspectJEnabled) {
       return proceed(method);
     }
     
     Encoding encoding = CRACoupleData.getCurrentEncoding();
     
-    return (EList<models.cra.fitness.architectureCRA.Method>) (EList<?>) 
-        encoding.getRelatedInstancesFor(CRACoupleData.METHOD_TO_ATTRIBUTE_FD_RELATION, method);
+    try {
+      return (EList<models.cra.fitness.architectureCRA.Method>) (EList<?>) 
+          encoding.getRelatedInstancesFor(CRACoupleData.METHOD_TO_ATTRIBUTE_FD_RELATION, method);
+    } catch (Exception e) {
+      e.printStackTrace();
+      System.exit(1);
+      return null;
+    }
   }
   // END INTERCEPTING MethodImpl GETTERS
   

@@ -42,8 +42,8 @@ public class Main {
       + "search { \n"
       + "  mutate using <craEvolvers.henshin> unit \"createClass\"\n"
       + "  mutate using <craEvolvers.henshin> unit \"assignFeature\"\n"
-      + "  mutate using <craEvolvers.henshin> unit \"moveFeature\"\n"
-      + "  mutate using <craEvolvers.henshin> unit \"deleteEmptyClass\"\n"
+//      + "  mutate using <craEvolvers.henshin> unit \"moveFeature\"\n"
+//      + "  mutate using <craEvolvers.henshin> unit \"deleteEmptyClass\"\n"
       + "}\n"
       + "solver {\n"
       + "  optimisation provider moea algorithm NSGAII {\n"
@@ -66,8 +66,6 @@ public class Main {
     Encoding encoding = converter.convert();
     ClassModel cra = (ClassModel) converter.getStructuredModelInstance().getContents().get(0);
     
-//    runMDEOptimiser();
-    
     ModelLoader modelLoader = new ModelLoader(RESOURCE_LOCATION);
     
     org.eclipse.emf.henshin.model.Module henshinModule = modelLoader.loadHenshinModule(HENSHIN_FILENAME);
@@ -85,9 +83,12 @@ public class Main {
         .withMaxEvaluations(500)
         .withProperty("populationSize", 40)
         .run();
+    
+    runMDEOptimiser();
   }
   
   private static void runMDEOptimiser() throws Exception {
+    ExperimentConfig.isAspectJEnabled = false;
     var model = parseHelper.parse(MOPT_FILE);
     
     var startTime = System.nanoTime();

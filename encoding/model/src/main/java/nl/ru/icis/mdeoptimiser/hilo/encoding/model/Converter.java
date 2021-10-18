@@ -3,6 +3,7 @@ package nl.ru.icis.mdeoptimiser.hilo.encoding.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -113,7 +114,7 @@ public class Converter {
     convertedStructuredInstances.add(structuredObject);
     
     // For all other structuredObjects within this one add them as well
-    for (EStructuralFeature metaRelation : structuredObject.eClass().getEAllStructuralFeatures()) {
+    for (EStructuralFeature metaRelation : structuredObject.eClass().getEStructuralFeatures()) {
       if (!(metaRelation instanceof EReferenceImpl)) {
         continue;
       }
@@ -130,9 +131,6 @@ public class Converter {
       } else if (toHandle != null) {
         System.out.println("Weird type: " + toHandle.getClass().getCanonicalName());
       }
-//      else if (toHandle instanceof EObjectContainment) {
-//        TODO single EObject instead of more than one.
-//      }
     }
   }
   
@@ -151,7 +149,7 @@ public class Converter {
   }
   
   private void convertEClassImpl(EClassImpl c, Encoding encoding) throws Exception {
-    for (EStructuralFeature feature : c.getEAllStructuralFeatures()) {
+    for (EStructuralFeature feature : c.getEStructuralFeatures()) {
       if (feature instanceof EReferenceImpl) {
         if (!(((EReferenceImpl) feature).basicGetEType() instanceof EClassImpl)) {
           throw new Exception("Unexpected type type while converting meta class");
@@ -160,6 +158,14 @@ public class Converter {
         EClassImpl toClass = ((EClassImpl) ((EReferenceImpl) feature).basicGetEType());
         encoding.addRelation(feature.getName(), c.basicGetEPackage().getName(), c.getName(), toClass.basicGetEPackage().getName(), toClass.getName());
       }
+    }
+    
+    // Handle any of the super types in this meta class
+    for (EClass superClass : c.getESuperTypes()) {
+      if (!(superClass instanceof EClassImpl)) {
+        throw new Exception("Unexpected superClass type while converting super types of meta class");
+      }
+      convertEClassImpl((EClassImpl) superClass, encoding);
     }
   }
   
@@ -180,8 +186,64 @@ public class Converter {
     // We look at any relation going outward from the dynamicObject, thus we call it the fromIdentifier
     String fromIdentifier = metaModelInstance.getURIFragment(dynamicObject);
     
+    // Instantiate the relations for the immediate type of this dynamic object
+    instantiateRelationsFor(dynamicObject, fromMetaClass, fromIdentifier, encoding);
+    
+    // Do the same for all of the super types of this dynamic object
+    for (EClass superClass : fromMetaClass.getESuperTypes()) {
+      if (!(superClass instanceof EClassImpl)) {
+        throw new Exception("Unexpected EClass type when looking at the super class for a dyanic object");
+      }
+      instantiateRelationsFor(dynamicObject, (EClassImpl) superClass, fromIdentifier, encoding);
+    }
+    
     // For all meta relation in this class add them as an instance in the encoding
-    for (EStructuralFeature metaClassRelation : dynamicObject.eClass().getEAllStructuralFeatures()) {
+//    for (EStructuralFeature metaClassRelation : dynamicObject.eClass().getEStructuralFeatures()) {
+//      if (metaClassRelation instanceof EReferenceImpl) {
+//        if (!(((EReferenceImpl) metaClassRelation).basicGetEType() instanceof EClassImpl)) {
+//          throw new Exception("Meta class found to be of wrong type!");
+//        }
+//        EClassImpl toMetaClass = ((EClassImpl) ((EReferenceImpl) metaClassRelation).basicGetEType());
+//        
+//        // Define the name of the relation
+//        String relation = metaClassRelation.getName() + fromMetaClass.basicGetEPackage().getName() + fromMetaClass.getName() +
+//            toMetaClass.basicGetEPackage().getName() + toMetaClass.getName();
+//        
+//        // Add a new relation instance to the encoding for the found reference
+//        encoding.addRelationInstance(fromIdentifier, relation);
+//        
+//        // For all object in this meta relation from THIS dynamic object we recursively calls this method
+//        // Additionally for any object we find for THIS relation we ensure that it is set in our encoding
+//        Object toHandle = dynamicObject.eGet(metaClassRelation);
+//        // Either this toHandle is a EcoreList filled with DynamicEObjectImpls
+//        if (toHandle instanceof EcoreEList) {
+//          for (Object obj : (EcoreEList) toHandle) {
+//            if (obj instanceof DynamicEObjectImpl) {
+//              encoding.addDestinationToRelation(relation, fromIdentifier, metaModelInstance.getURIFragment((DynamicEObjectImpl) obj), true);
+//              convertDynamicEObjectImpl((DynamicEObjectImpl) obj, encoding);
+//            } else {
+//              System.out.println("[ERROR]: Iterating over instances got from a meta reference gave unexpected type: " + obj.getClass().getCanonicalName());
+//              System.exit(1);
+//            }
+//          }
+//        } 
+//        // Or a singular DynamicEObjectImpl.
+//        else if (toHandle instanceof DynamicEObjectImpl) { 
+//          encoding.addDestinationToRelation(relation, fromIdentifier, metaModelInstance.getURIFragment((DynamicEObjectImpl) toHandle), true);
+//          convertDynamicEObjectImpl((DynamicEObjectImpl) toHandle, encoding);
+//        } else if (toHandle == null) {
+//          System.out.println("[WARNING]: Meta relation did not find any instances");
+//        } else {
+//          System.out.println("[ERROR]: Instance got from a meta reference gave unexpected type: " + toHandle.getClass().getCanonicalName());
+//          System.exit(1);
+//        }
+//      }
+//    }
+  }
+  
+  private void instantiateRelationsFor(DynamicEObjectImpl instance, EClassImpl type, String fromIdentifier, Encoding encoding) throws Exception {
+    // For all meta relation in this class add them as an instance in the encoding
+    for (EStructuralFeature metaClassRelation : type.getEStructuralFeatures()) {
       if (metaClassRelation instanceof EReferenceImpl) {
         if (!(((EReferenceImpl) metaClassRelation).basicGetEType() instanceof EClassImpl)) {
           throw new Exception("Meta class found to be of wrong type!");
@@ -189,7 +251,7 @@ public class Converter {
         EClassImpl toMetaClass = ((EClassImpl) ((EReferenceImpl) metaClassRelation).basicGetEType());
         
         // Define the name of the relation
-        String relation = metaClassRelation.getName() + fromMetaClass.basicGetEPackage().getName() + fromMetaClass.getName() +
+        String relation = metaClassRelation.getName() + type.basicGetEPackage().getName() + type.getName() +
             toMetaClass.basicGetEPackage().getName() + toMetaClass.getName();
         
         // Add a new relation instance to the encoding for the found reference
@@ -197,7 +259,7 @@ public class Converter {
         
         // For all object in this meta relation from THIS dynamic object we recursively calls this method
         // Additionally for any object we find for THIS relation we ensure that it is set in our encoding
-        Object toHandle = dynamicObject.eGet(metaClassRelation);
+        Object toHandle = instance.eGet(metaClassRelation);
         // Either this toHandle is a EcoreList filled with DynamicEObjectImpls
         if (toHandle instanceof EcoreEList) {
           for (Object obj : (EcoreEList) toHandle) {

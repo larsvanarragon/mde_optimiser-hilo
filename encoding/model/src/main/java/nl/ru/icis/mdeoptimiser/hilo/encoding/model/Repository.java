@@ -39,13 +39,14 @@ public class Repository {
     return data.get(identifier);
   }
 
-  public void addEObjectGeneratingIdentifier(EObject createdObject) throws DuplicateIdentifierEObjectPairException {
+  public String addEObjectGeneratingIdentifier(EObject createdObject) throws DuplicateIdentifierEObjectPairException {
     if (getIdentifierForEObject(createdObject) != null) {
       throw new DuplicateIdentifierEObjectPairException(getIdentifierForEObject(createdObject), createdObject);
     }
     
-    String identifier = generateIdentifierFor(createdObject.eClass().getName());
+    String identifier = generateIdentifierFor(createdObject.eClass().getEPackage().getName() + createdObject.eClass().getName());
     data.put(identifier, createdObject);
+    return identifier;
   }
   
   private String generateIdentifierFor(String className) {
