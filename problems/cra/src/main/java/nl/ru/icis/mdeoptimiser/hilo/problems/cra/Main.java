@@ -5,8 +5,13 @@ import java.util.ArrayList;
 import org.eclipse.emf.henshin.model.Unit;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.moeaframework.Executor;
+import org.moeaframework.Instrumenter;
+import org.moeaframework.algorithm.PeriodicAction;
+import org.moeaframework.analysis.collector.ApproximationSetCollector;
+import org.moeaframework.analysis.collector.Collector;
 import org.moeaframework.core.NondominatedPopulation;
 import org.moeaframework.core.spi.AlgorithmFactory;
+import org.moeaframework.core.termination.MaxFunctionEvaluations;
 
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -19,9 +24,12 @@ import nl.ru.icis.mdeoptimiser.hilo.encoding.model.Encoding;
 import nl.ru.icis.mdeoptimiser.hilo.experiment.config.ExperimentConfig;
 import nl.ru.icis.mdeoptimiser.hilo.problems.cra.encoding.AbstractEncodingCRA;
 import nl.ru.icis.mdeoptimiser.hilo.problems.cra.encoding.EncodingCRAFactory;
+import nl.ru.icis.mdeoptimiser.hilo.problems.cra.experiment.EncodingExperiment;
 import uk.ac.kcl.inf.mdeoptimiser.languages.MoptStandaloneSetup;
 import uk.ac.kcl.inf.mdeoptimiser.languages.mopt.Optimisation;
 import uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.OptimisationInterpreter;
+import uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.moea.instrumentation.PopulationCollector;
+import uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.moea.problem.MoeaOptimisationProblem;
 
 public class Main {
   private static final String RESOURCE_LOCATION = "src/main/resources/nl/ru/icis/mdeoptimiser/hilo/problems/cra";
@@ -42,8 +50,8 @@ public class Main {
       + "search { \n"
       + "  mutate using <craEvolvers.henshin> unit \"createClass\"\n"
       + "  mutate using <craEvolvers.henshin> unit \"assignFeature\"\n"
-//      + "  mutate using <craEvolvers.henshin> unit \"moveFeature\"\n"
-//      + "  mutate using <craEvolvers.henshin> unit \"deleteEmptyClass\"\n"
+      + "  mutate using <craEvolvers.henshin> unit \"moveFeature\"\n"
+      + "  mutate using <craEvolvers.henshin> unit \"deleteEmptyClass\"\n"
       + "}\n"
       + "solver {\n"
       + "  optimisation provider moea algorithm NSGAII {\n"
@@ -70,20 +78,31 @@ public class Main {
     
     org.eclipse.emf.henshin.model.Module henshinModule = modelLoader.loadHenshinModule(HENSHIN_FILENAME);
     ArrayList<Unit> units = new ArrayList<>(henshinModule.getUnits());
-    AbstractEncodingCRA encodedCRAProblem = new AbstractEncodingCRA(encoding, cra, units);
     
-    AlgorithmFactory factory = new AlgorithmFactory();
-    factory.addProvider(new EncodingCRAFactory());
+    EncodingExperiment encodedExperiment = new EncodingExperiment(cra, encoding, units);
     
-    ExperimentConfig.isAspectJEnabled = true;
+    System.out.println(encodedExperiment.run());
     
-    NondominatedPopulation result = new Executor().usingAlgorithmFactory(factory)
-        .withProblem(encodedCRAProblem)
-        .withAlgorithm("NSGAII")
-        .withMaxEvaluations(500)
-        .withProperty("populationSize", 40)
-        .run();
-    
+//    ModelLoader modelLoader = new ModelLoader(RESOURCE_LOCATION);
+//    
+//    org.eclipse.emf.henshin.model.Module henshinModule = modelLoader.loadHenshinModule(HENSHIN_FILENAME);
+//    ArrayList<Unit> units = new ArrayList<>(henshinModule.getUnits());
+//    AbstractEncodingCRA encodedCRAProblem = new AbstractEncodingCRA(encoding, cra, units);
+//    
+//    AlgorithmFactory factory = new AlgorithmFactory();
+//    factory.addProvider(new EncodingCRAFactory());
+//    
+//    ExperimentConfig.isAspectJEnabled = true;
+//    
+//    NondominatedPopulation result = new Executor().usingAlgorithmFactory(factory)
+//        .withProblem(encodedCRAProblem)
+//        .withAlgorithm("NSGAII")
+//        .withTerminationCondition(new MaxFunctionEvaluations(20000))
+////        .withMaxEvaluations(500)
+//        .withProperty("populationSize", 40)
+//        .run();
+//    
+//    System.out.println("BEST:" + encodedCRAProblem.bestObjective);
     runMDEOptimiser();
   }
   

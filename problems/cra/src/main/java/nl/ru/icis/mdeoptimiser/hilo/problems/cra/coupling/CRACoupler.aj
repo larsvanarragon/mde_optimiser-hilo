@@ -17,6 +17,7 @@ import models.cra.fitness.architectureCRA.Attribute;
 import models.cra.fitness.architectureCRA.Feature;
 import models.cra.fitness.architectureCRA.Method;
 import models.cra.fitness.architectureCRA.impl.ClassImpl;
+import models.cra.fitness.architectureCRA.impl.ClassModelImpl;
 import models.cra.fitness.architectureCRA.ClassModel;
 import models.cra.fitness.architectureCRA.impl.FeatureImpl;
 import models.cra.fitness.architectureCRA.impl.MethodImpl;
@@ -73,9 +74,21 @@ public aspect CRACoupler {
   
   // START INTERCEPTING ClassModelImpl GETTERS
   /**
-   * Pointcut to intercept the getter for the classes of a ClassModelImpl
+   * Pointcuts to intercept the getter for the classes of a ClassModelImpl
    * @param classModel
    */
+  pointcut getClassesFromClassModelImpl(ClassModelImpl classModel): 
+    call(EList<models.cra.fitness.architectureCRA.Class> ClassModelImpl.getClasses())
+    && target (classModel);
+  
+  EList<models.cra.fitness.architectureCRA.Class> around(ClassModelImpl classModel): getClassesFromClassModelImpl(classModel) {
+    if (!ExperimentConfig.isAspectJEnabled) {
+      return proceed(classModel);
+    }
+    
+    return returnClassesFromClassModel(classModel);
+  }
+    
   pointcut getClassesFromClassModel(ClassModel classModel): 
     call(EList<models.cra.fitness.architectureCRA.Class> ClassModel.getClasses())
     && target (classModel);
@@ -85,6 +98,10 @@ public aspect CRACoupler {
       return proceed(classModel);
     }
     
+    return returnClassesFromClassModel(classModel);
+  }
+  
+  EList<models.cra.fitness.architectureCRA.Class> returnClassesFromClassModel(ClassModel classModel) {
     Encoding encoding = CRACoupleData.getCurrentEncoding();
     
     try {
@@ -110,6 +127,22 @@ public aspect CRACoupler {
       return proceed(classModel);
     }
     
+    return returnFeaturesFromClassModel(classModel);
+  }
+  
+  pointcut getFeaturesFromClassModelImpl(ClassModelImpl classModel): 
+    call(EList<models.cra.fitness.architectureCRA.Feature> ClassModelImpl.getFeatures())
+    && target (classModel);
+  
+  EList<models.cra.fitness.architectureCRA.Feature> around(ClassModelImpl classModel): getFeaturesFromClassModelImpl(classModel) {
+    if (!ExperimentConfig.isAspectJEnabled) {
+      return proceed(classModel);
+    }
+    
+    return returnFeaturesFromClassModel(classModel);
+  }
+  
+  EList<models.cra.fitness.architectureCRA.Feature>  returnFeaturesFromClassModel(ClassModel classModel) {
     Encoding encoding = CRACoupleData.getCurrentEncoding();
     
     try {
@@ -164,6 +197,22 @@ public aspect CRACoupler {
       return proceed(feature);
     }
     
+    return returnClassFromFeature(feature);
+  }
+  
+  pointcut getIsEncapsulatedByFeatureImpl():
+    call(models.cra.fitness.architectureCRA.Class models.cra.fitness.architectureCRA.Feature.getIsEncapsulatedBy())
+    && target(models.cra.fitness.architectureCRA.impl.FeatureImpl);
+  
+  models.cra.fitness.architectureCRA.Class around() : getIsEncapsulatedByFeatureImpl() {
+    if (!ExperimentConfig.isAspectJEnabled) {
+      return proceed();
+    }
+    
+    return returnClassFromFeature((FeatureImpl) thisJoinPoint.getThis());
+  }
+  
+  models.cra.fitness.architectureCRA.Class returnClassFromFeature(Feature feature) {
     Encoding encoding = CRACoupleData.getCurrentEncoding();
     
     EList<EObject> encapsulated;
@@ -198,6 +247,22 @@ public aspect CRACoupler {
       return proceed(clazz);
     }
     
+    return returnFeaturesFromClass(clazz);
+  }
+  
+  pointcut getEncapsulatesClassImpl(models.cra.fitness.architectureCRA.impl.ClassImpl clazz):
+    call(EList<models.cra.fitness.architectureCRA.Feature> models.cra.fitness.architectureCRA.impl.ClassImpl.getEncapsulates())
+    && target(clazz);
+  
+  EList<models.cra.fitness.architectureCRA.Feature> around(models.cra.fitness.architectureCRA.impl.ClassImpl clazz) : getEncapsulatesClassImpl(clazz) {
+    if (!ExperimentConfig.isAspectJEnabled) {
+      return proceed(clazz);
+    }
+    
+    return returnFeaturesFromClass(clazz);
+  }
+  
+  EList<models.cra.fitness.architectureCRA.Feature> returnFeaturesFromClass(models.cra.fitness.architectureCRA.Class clazz) {
     Encoding encoding = CRACoupleData.getCurrentEncoding();
     
     try {
@@ -221,6 +286,22 @@ public aspect CRACoupler {
       return proceed(method);
     }
     
+    return returnAttributesFromMethod(method);
+  }
+  
+  pointcut getDataDependencyMethodImpl(MethodImpl method):
+    call (EList<models.cra.fitness.architectureCRA.Attribute> MethodImpl.getDataDependency())
+    && target(method);
+  
+  EList<models.cra.fitness.architectureCRA.Attribute> around(MethodImpl method) : getDataDependencyMethodImpl(method) {
+    if (!ExperimentConfig.isAspectJEnabled) {
+      return proceed(method);
+    }
+    
+    return returnAttributesFromMethod(method);
+  }
+  
+  EList<models.cra.fitness.architectureCRA.Attribute> returnAttributesFromMethod(Method method) {
     Encoding encoding = CRACoupleData.getCurrentEncoding();
     
     try {
@@ -242,6 +323,22 @@ public aspect CRACoupler {
       return proceed(method);
     }
     
+    return returnMethodsFromMethod(method);
+  }
+  
+  pointcut getFunctionalDependencyMethodImpl(MethodImpl method):
+    call (EList<models.cra.fitness.architectureCRA.Method> MethodImpl.getFunctionalDependency())
+    && target(method);
+  
+  EList<models.cra.fitness.architectureCRA.Method> around(MethodImpl method) : getFunctionalDependencyMethodImpl(method) {
+    if (!ExperimentConfig.isAspectJEnabled) {
+      return proceed(method);
+    }
+    
+    return returnMethodsFromMethod(method);
+  }
+  
+  EList<models.cra.fitness.architectureCRA.Method> returnMethodsFromMethod(Method method) {
     Encoding encoding = CRACoupleData.getCurrentEncoding();
     
     try {

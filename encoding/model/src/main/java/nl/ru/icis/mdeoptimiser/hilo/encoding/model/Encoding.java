@@ -13,6 +13,7 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 import nl.ru.icis.mdeoptimiser.hilo.encoding.exception.DuplicateIdentifierEObjectPairException;
+import nl.ru.icis.mdeoptimiser.hilo.encoding.exception.IdentifierEObjectPairNotExistsException;
 
 public class Encoding {
   private Map<String, Map<String, BitSet>> encodings = new HashMap<String, Map<String, BitSet>>();
@@ -250,5 +251,14 @@ public class Encoding {
     int index = getIndexFor(relation, targetIdentifier);
     
     encodings.get(relation).get(sourceIdentifier).set(index, value);
+  }
+
+  public void markForDeletion(EObject toDelete) throws IdentifierEObjectPairNotExistsException {
+    repository.markForDeletion(toDelete);
+  }
+  
+  public void deleteUnusedEObjects() {
+    // TODO ideally, this should iterate over all of the relations, touching the repository and thereby unmarking them for deletion
+    // Then this should perform repository.doDeletion() to delete all not referenced EObjects in the relations.
   }
 }

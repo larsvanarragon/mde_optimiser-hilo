@@ -5,6 +5,7 @@ import java.util.Collections;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.henshin.interpreter.Engine;
 import org.eclipse.emf.henshin.interpreter.Match;
 import org.eclipse.emf.henshin.interpreter.impl.EngineImpl;
 import org.eclipse.emf.henshin.interpreter.impl.MatchImpl;
@@ -22,7 +23,13 @@ import nl.ru.icis.mdeoptimiser.hilo.problems.cra.coupling.CRAEGraphImpl;
 
 public class EncodingCRAVariation implements Variation {
   
-  static EngineImpl engine = new EngineImpl();
+  static EngineImpl engine = newEngine();
+  
+  public static EngineImpl newEngine() {
+    EngineImpl newEngine = new EngineImpl();
+    newEngine.getOptions().put(Engine.OPTION_DETERMINISTIC, false);
+    return newEngine;
+  }
   
   @Override
   public int getArity() {
@@ -57,9 +64,12 @@ public class EncodingCRAVariation implements Variation {
         Collections.shuffle(operators);
         Rule rule = (Rule) operators.remove(0);
         
-        if (rule.getName().equals("deleteEmptyClass") || rule.getName().equals("moveFeature")) {
-          continue;
-        }
+//        if (rule.getName().equals("deleteEmptyClass") || rule.getName().equals("moveFeature") || rule.getName().equals("assignFeature")) {
+//          continue;
+//        }
+//        if (rule.getName().equals("deleteEmptyClass")) {
+//          System.out.print(".");
+//        }
         
         Match potentialMatch = engine.findMatches(rule, graph, null).iterator().next();
         if (mutateEncodingWithMatch(variable.getEncoding(), potentialMatch, new MatchImpl(rule, true), rule)) {
@@ -84,8 +94,6 @@ public class EncodingCRAVariation implements Variation {
       return false;
     }
     
-    System.out.println(rule.getName());
-    
     RuleChangeInfo ruleChange = engine.getRuleInfo(rule).getChangeInfo();
     
     for (Node node : ruleChange.getCreatedNodes()) {
@@ -93,11 +101,6 @@ public class EncodingCRAVariation implements Variation {
       resultMatch.setNodeTarget(node, createdObject);
       
       encoding.addNewEObject(createdObject);
-    }
-    
-    for (Node node : ruleChange.getDeletedNodes()) {
-      System.out.println("Delete");
-      // TODO mark object for possible deletion, check whether other objects have any reference to it
     }
     
     for (Node node : ruleChange.getPreservedNodes()) {
@@ -129,6 +132,11 @@ public class EncodingCRAVariation implements Variation {
       if (opposite != null) {
         encoding.removeRelationBetween(opposite, target, source);
       }
+    }
+    
+    for (Node node : ruleChange.getDeletedNodes()) {
+      EObject toDelete = match.getNodeTarget(node);
+      encoding.markForDeletion(toDelete);
     }
     
     return true;

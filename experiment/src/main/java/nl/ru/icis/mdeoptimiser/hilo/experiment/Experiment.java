@@ -20,6 +20,8 @@ public abstract class Experiment {
   public Experiment(EObject model) {
     this.model = model;
     this.problem = problem();
+    
+    this.config = new ExperimentConfig();
   }
   
   public Experiment(EObject model, int evaluations, int populationSize) {

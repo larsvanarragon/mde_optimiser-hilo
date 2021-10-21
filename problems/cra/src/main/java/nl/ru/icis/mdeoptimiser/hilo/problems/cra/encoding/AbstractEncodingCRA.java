@@ -12,9 +12,10 @@ import models.cra.fitness.MinimiseClasslessFeatures;
 import models.cra.fitness.MinimiseEmptyClasses;
 import models.cra.fitness.architectureCRA.ClassModel;
 import nl.ru.icis.mdeoptimiser.hilo.encoding.model.Encoding;
+import nl.ru.icis.mdeoptimiser.hilo.experiment.ExperimentProblem;
 import nl.ru.icis.mdeoptimiser.hilo.problems.cra.coupling.CRACoupleData;
 
-public class AbstractEncodingCRA extends AbstractProblem {
+public class AbstractEncodingCRA extends ExperimentProblem {
   // Static values for the amount of objectives, constraints and variables
   private static final int N_OBJECTIVES = 1;
   private static final int N_CONSTRAINTS = 2;
@@ -31,6 +32,8 @@ public class AbstractEncodingCRA extends AbstractProblem {
   private ClassModel cra;
   // Henshin mutation operators
   private ArrayList<Unit> henshinOperators;
+  
+  public double bestObjective = 10;
   
   public AbstractEncodingCRA(Encoding originalEncoding, ClassModel cra, ArrayList<Unit> henshinOperators) {
     super(N_VARIABLES, N_OBJECTIVES, N_CONSTRAINTS);
@@ -52,8 +55,12 @@ public class AbstractEncodingCRA extends AbstractProblem {
         new uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.interpreter.guidance.Solution(cra);
     
     solution.setObjective(0, maximiseCRA.computeFitness(wrapperSolution));
-    solution.setConstraint(0, minimiseClasslessFeatures.computeFitness(wrapperSolution));
-    solution.setConstraint(1, minimiseEmptyClasses.computeFitness(wrapperSolution));
+//    solution.setConstraint(0, minimiseClasslessFeatures.computeFitness(wrapperSolution));
+//    solution.setConstraint(1, minimiseEmptyClasses.computeFitness(wrapperSolution));
+    
+    if (solution.getObjective(0) < bestObjective) {
+      bestObjective = solution.getObjective(0);
+    }
     
     System.out.println(solution.getObjective(0) + ", " + solution.getConstraint(0) + " & "  + solution.getConstraint(1));
   }
@@ -63,6 +70,11 @@ public class AbstractEncodingCRA extends AbstractProblem {
     Solution solution = new Solution(N_VARIABLES, N_OBJECTIVES, N_CONSTRAINTS);
     solution.setVariable(0, new EncodingCRAVariable(originalEncoding.copy(), cra, henshinOperators));
     return solution;
+  }
+
+  @Override
+  public boolean requiresAspectJ() {
+    return true;
   }
 
 }
