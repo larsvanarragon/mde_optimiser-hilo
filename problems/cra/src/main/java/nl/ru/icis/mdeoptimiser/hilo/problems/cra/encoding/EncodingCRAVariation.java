@@ -18,6 +18,7 @@ import org.moeaframework.core.Solution;
 import org.moeaframework.core.Variation;
 
 import nl.ru.icis.mdeoptimiser.hilo.encoding.model.Encoding;
+import nl.ru.icis.mdeoptimiser.hilo.problems.cra.Main;
 import nl.ru.icis.mdeoptimiser.hilo.problems.cra.coupling.CRACoupleData;
 import nl.ru.icis.mdeoptimiser.hilo.problems.cra.coupling.CRAEGraphImpl;
 
@@ -42,12 +43,16 @@ public class EncodingCRAVariation implements Variation {
     Solution mutated = parents[0].copy();
     mutated.setAttribute("parent", parents[0]);
     
+//    long startTime = System.nanoTime();
+    
     // Get the variable we will mutate and set the current encoding
     EncodingCRAVariable toMutateVariable = (EncodingCRAVariable) mutated.getVariable(0);
     CRACoupleData.setCurrentEncoding(toMutateVariable.getEncoding());
     
     // Mutate it
     mutate(toMutateVariable);
+    
+//    System.out.println("Variation nanos passed: " + (System.nanoTime() - startTime));
     
     // Return it
     return new Solution[] {mutated};
@@ -63,15 +68,11 @@ public class EncodingCRAVariation implements Variation {
       while (!operators.isEmpty()) {
         Collections.shuffle(operators);
         Rule rule = (Rule) operators.remove(0);
-        
-//        if (rule.getName().equals("deleteEmptyClass") || rule.getName().equals("moveFeature") || rule.getName().equals("assignFeature")) {
-//          continue;
-//        }
-//        if (rule.getName().equals("deleteEmptyClass")) {
-//          System.out.print(".");
-//        }
-        
+
+        long startTime = System.nanoTime();
         Match potentialMatch = engine.findMatches(rule, graph, null).iterator().next();
+        Main.addToAverage("matching",  System.nanoTime() - startTime);
+        
         if (mutateEncodingWithMatch(variable.getEncoding(), potentialMatch, new MatchImpl(rule, true), rule)) {
           break;
         }

@@ -3,8 +3,11 @@ package nl.ru.icis.mdeoptimiser.hilo.encoding.model;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
@@ -16,11 +19,14 @@ import nl.ru.icis.mdeoptimiser.hilo.encoding.exception.DuplicateIdentifierEObjec
 import nl.ru.icis.mdeoptimiser.hilo.encoding.exception.IdentifierEObjectPairNotExistsException;
 
 public class Encoding {
-  private Map<String, Map<String, BitSet>> encodings = new HashMap<String, Map<String, BitSet>>();
+  private Map<String, Map<String, Set<String>>> encodings = new HashMap<String, Map<String, Set<String>>>();
   
-  private Map<String, List<String>> identifiersIndex = new HashMap<String, List<String>>();
+//  private Map<String, List<String>> identifiersIndex = new HashMap<String, List<String>>();
   
   private Repository repository;
+  
+  //TODO remove this later
+  public static ArrayList<Long> averages = new ArrayList<>();
   
   public Encoding() {
     this.repository = Repository.getInstance();
@@ -46,17 +52,21 @@ public class Encoding {
     
     EList<EObject> returnList = new BasicEList<>();
     
-    BitSet encoding = encodings.get(relation).get(identifier);
-    List<String> identifiers = identifiersIndex.get(relation);
+//    BitSet encoding = encodings.get(relation).get(identifier);
+//    List<String> identifiers = identifiersIndex.get(relation);
     
-    for (int i = 0; i < encoding.size(); i++) {
-      if (encoding.get(i)) {
-        EObject toAdd = repository.getEObjectForIdentifier(identifiers.get(i));
-        returnList.add(toAdd);
-      }
+    for (String relatedIdentifier : encodings.get(relation).get(identifier)) {
+      returnList.add(repository.getEObjectForIdentifier(relatedIdentifier));
     }
     
-    System.out.println("Nanos passed: " + (System.nanoTime() - startTime));
+//    for (int i = 0; i < encoding.size(); i++) {
+//      if (encoding.get(i)) {
+//        EObject toAdd = repository.getEObjectForIdentifier(identifiers.get(i));
+//        returnList.add(toAdd);
+//      }
+//    }
+    
+    averages.add(System.nanoTime() - startTime);
     
     return returnList;
   }
@@ -65,18 +75,18 @@ public class Encoding {
     repository.addIdentifierEObjectBiMap(identifier, object);
   }
   
-  public void setIdentifierRelatedToInstance(String relation, String identifier, EObject object, boolean value) throws Exception {
-    if (!relationInstanceExists(relation, identifier)) {
-      System.out.println("[ERROR]: Trying to relate EObject to non existing relation");
-      System.exit(1);
-    }
-    String otherObjectIdentifier = repository.getIdentifierForEObject(object);
-    int indexOfOtherObject = getIndexFor(relation, otherObjectIdentifier);
-    
-    encodings.get(relation).get(identifier).set(indexOfOtherObject, value);
-  }
+//  public void setIdentifierRelatedToInstance(String relation, String identifier, EObject object, boolean value) throws Exception {
+//    if (!relationInstanceExists(relation, identifier)) {
+//      System.out.println("[ERROR]: Trying to relate EObject to non existing relation");
+//      System.exit(1);
+//    }
+//    String otherObjectIdentifier = repository.getIdentifierForEObject(object);
+////    int indexOfOtherObject = getIndexFor(relation, otherObjectIdentifier);
+//    
+//    encodings.get(relation).get(identifier).set(indexOfOtherObject, value);
+//  }
 
-  protected Map<String, BitSet> getEncodedRelation(String relationName) {
+  protected Map<String, Set<String>> getEncodedRelation(String relationName) {
     return encodings.get(relationName);
   }
   
@@ -87,8 +97,8 @@ public class Encoding {
     }
     
     String relation = relationName + fromPackageName + fromObject + toPackageName + toObject;
-    encodings.put(relation, new HashMap<String, BitSet>());
-    identifiersIndex.put(relation, new ArrayList<>());
+    encodings.put(relation, new HashMap<String, Set<String>>());
+//    identifiersIndex.put(relation, new ArrayList<>());
   }
   
   public void addRelationInstance(String identifier, String relationName, String fromPackageName, String fromObject, String toPackageName, String toObject) {
@@ -101,56 +111,56 @@ public class Encoding {
       return;
     }
     
-    encodings.get(relation).put(identifier, new BitSet());
+    encodings.get(relation).put(identifier, new LinkedHashSet<>());
   }
   
   public boolean relationExists(String relationName, String fromPackageName, String fromObjectName, String toPackageName, String toObjectName) {
-    return encodings.get(relationName + fromPackageName + fromObjectName + toPackageName + toObjectName) != null &&
-        identifiersIndex.get(relationName + fromPackageName + fromObjectName + toPackageName + toObjectName) != null;
+    return encodings.get(relationName + fromPackageName + fromObjectName + toPackageName + toObjectName) != null;
   }
   
   public boolean relationExists(String relationName) {
-    return encodings.get(relationName) != null && identifiersIndex.get(relationName) != null;
+    return encodings.get(relationName) != null;
   }
   
   public boolean relationInstanceExists(String relationName, String instanceName) {
-    if (encodings.get(relationName) == null || identifiersIndex.get(relationName) == null) {
+    if (encodings.get(relationName) == null) {
       return false;
     }
     return encodings.get(relationName).get(instanceName) != null;// && identifiersIndex.get(relationName).indexOf(instanceName) != -1;
   }
   
-  public List<String> getIdentifiersIndicesForRelation(String relation) {
-    if (!relationExists(relation)) {
-      return null;
-    }
-    
-    return identifiersIndex.get(relation);
-  }
+//  public List<String> getIdentifiersIndicesForRelation(String relation) {
+//    if (!relationExists(relation)) {
+//      return null;
+//    }
+//    
+//    return identifiersIndex.get(relation);
+//  }
   
   public Encoding copy() {
     Encoding copiedEncoding = new Encoding();
     
-    HashMap<String, Map<String, BitSet>> copiedRelations = new HashMap<>();
+    HashMap<String, Map<String, Set<String>>> copiedRelations = new HashMap<>();
     for (String relation : encodings.keySet()) {
-      HashMap<String, BitSet> relationInstances = new HashMap<>();
+      HashMap<String, Set<String>> relationInstances = new HashMap<>();
       for (String relationInstanceKey : encodings.get(relation).keySet()) {
-        relationInstances.put(relationInstanceKey, (BitSet) encodings.get(relation).get(relationInstanceKey).clone());
+        relationInstances.put(relationInstanceKey, new LinkedHashSet<String>(encodings.get(relation).get(relationInstanceKey)));
+//        relationInstances.put(relationInstanceKey, (BitSet) encodings.get(relation).get(relationInstanceKey).clone());
       }
       copiedRelations.put(relation, relationInstances);
     }
     copiedEncoding.encodings = copiedRelations;
     
     
-    HashMap<String, List<String>> copiedIdentifiersIndices = new HashMap<>();
-    for (String relation : identifiersIndex.keySet()) {
-      ArrayList<String> identifiers = new ArrayList<>();
-      for (String identifier : identifiersIndex.get(relation)) {
-        identifiers.add(identifier);
-      }
-      copiedIdentifiersIndices.put(relation, identifiers);
-    }
-    copiedEncoding.identifiersIndex = copiedIdentifiersIndices;
+//    HashMap<String, List<String>> copiedIdentifiersIndices = new HashMap<>();
+//    for (String relation : identifiersIndex.keySet()) {
+//      ArrayList<String> identifiers = new ArrayList<>();
+//      for (String identifier : identifiersIndex.get(relation)) {
+//        identifiers.add(identifier);
+//      }
+//      copiedIdentifiersIndices.put(relation, identifiers);
+//    }
+//    copiedEncoding.identifiersIndex = copiedIdentifiersIndices;
     
     return copiedEncoding;
   }
@@ -172,15 +182,15 @@ public class Encoding {
       }
     }
     
-    for (String relation : identifiersIndex.keySet()) {
-      if (!otherEncoding.relationExists(relation) ) {
-        return false;
-      }
-      
-      if (!otherEncoding.getIdentifiersIndicesForRelation(relation).equals(identifiersIndex.get(relation))) {
-        return false;
-      }
-    }
+//    for (String relation : identifiersIndex.keySet()) {
+//      if (!otherEncoding.relationExists(relation) ) {
+//        return false;
+//      }
+//      
+//      if (!otherEncoding.getIdentifiersIndicesForRelation(relation).equals(identifiersIndex.get(relation))) {
+//        return false;
+//      }
+//    }
     return true;
   }
 
@@ -195,37 +205,37 @@ public class Encoding {
       System.exit(1);
     }
     
-    int index = identifiersIndex.get(relation).size(); 
-    identifiersIndex.get(relation).add(toClassIdentifier);
+//    int index = identifiersIndex.get(relation).size(); 
+//    identifiersIndex.get(relation).add(toClassIdentifier);
     
-    encodings.get(relation).get(fromClassIdentifier).set(index, b);
+    encodings.get(relation).get(fromClassIdentifier).add(toClassIdentifier);
   }
   
-  public int getIndexFor(String relation, String toIdentifier) throws Exception {
-    if (!relationExists(relation)) {
-      throw new Exception("Relation does not exist");
-    }
-    
-    int index = identifiersIndex.get(relation).indexOf(toIdentifier);
-    
-    if (index < 0) {
-      index = identifiersIndex.get(relation).size();
-      identifiersIndex.get(relation).add(toIdentifier);
-    }
-    
-    return index;
-  }
+//  public int getIndexFor(String relation, String toIdentifier) throws Exception {
+//    if (!relationExists(relation)) {
+//      throw new Exception("Relation does not exist");
+//    }
+//    
+//    int index = identifiersIndex.get(relation).indexOf(toIdentifier);
+//    
+//    if (index < 0) {
+//      index = identifiersIndex.get(relation).size();
+//      identifiersIndex.get(relation).add(toIdentifier);
+//    }
+//    
+//    return index;
+//  }
 
   public void addNewEObject(EObject createdObject) throws Exception {    
     String identifier = repository.addEObjectGeneratingIdentifier(createdObject);
     
-    String relationToPart = createdObject.eClass().getEPackage().getName() + createdObject.eClass().getName();
-    
-    for (String relation : identifiersIndex.keySet()) {
-      if (relationToPart.equals(relation.substring(relation.length() - relationToPart.length()))) {
-        getIndexFor(relation, identifier);
-      }
-    }
+//    String relationToPart = createdObject.eClass().getEPackage().getName() + createdObject.eClass().getName();
+//    
+//    for (String relation : identifiersIndex.keySet()) {
+//      if (relationToPart.equals(relation.substring(relation.length() - relationToPart.length()))) {
+//        getIndexFor(relation, identifier);
+//      }
+//    }
   }
 
   public void addRelationBetween(EReference type, EObject source, EObject target) throws Exception {
@@ -251,10 +261,12 @@ public class Encoding {
     if (!relationInstanceExists(relation, sourceIdentifier)) {
       addRelationInstance(sourceIdentifier, relation);
     }
-
-    int index = getIndexFor(relation, targetIdentifier);
     
-    encodings.get(relation).get(sourceIdentifier).set(index, value);
+    if (value) {
+      encodings.get(relation).get(sourceIdentifier).add(targetIdentifier);
+    } else {
+      encodings.get(relation).get(sourceIdentifier).remove(targetIdentifier);
+    }
   }
 
   public void markForDeletion(EObject toDelete) throws IdentifierEObjectPairNotExistsException {
