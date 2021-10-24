@@ -13,10 +13,14 @@ public class BooleanExperiment extends Experiment {
   
   public BooleanExperiment(NRP model) {
     super(model);
+    
+    this.problem = problem();
   }
 
   public BooleanExperiment(NRP model, int evaluations, int popsize) {
     super(model, evaluations, popsize);
+    
+    this.problem = problem();
   }
 
   @Override
@@ -29,7 +33,7 @@ public class BooleanExperiment extends Experiment {
   }
 
   @Override
-  protected ExperimentProblem problem() {
+  public ExperimentProblem problem() {
     return new AbstractBooleanNRP();
   }
   

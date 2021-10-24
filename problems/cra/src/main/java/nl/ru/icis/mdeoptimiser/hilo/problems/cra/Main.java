@@ -1,6 +1,7 @@
 package nl.ru.icis.mdeoptimiser.hilo.problems.cra;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.emf.henshin.model.Unit;
 import org.eclipse.xtext.testing.util.ParseHelper;
@@ -34,13 +35,13 @@ import uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.moea.problem.MoeaO
 public class Main {
   private static final String RESOURCE_LOCATION = "src/main/resources/nl/ru/icis/mdeoptimiser/hilo/problems/cra";
   private static final String ECORE_FILENAME = "architectureCRA.ecore";
-  private static final String MODEL_INSTANCE = "TTC_InputRDG_A.xmi";
+  private static final String MODEL_INSTANCE = "TTC_InputRDG_C.xmi";
   private static final String HENSHIN_FILENAME = "craEvolvers.henshin";
   
   private static final String MOPT_FILE = "problem {\n"
       + "  basepath <src/main/resources/nl/ru/icis/mdeoptimiser/hilo/problems/cra/>\n"
       + "  metamodel <models.cra.fitness.architectureCRA.ArchitectureCRAPackage>\n"
-      + "  model <TTC_InputRDG_A.xmi>\n"
+      + "  model <TTC_InputRDG_C.xmi>\n"
       + "}\n"
       + "goal {\n"
       + "  objective CRA maximise java { \"models.cra.fitness.MaximiseCRA\" }\n"
@@ -80,6 +81,7 @@ public class Main {
     ArrayList<Unit> units = new ArrayList<>(henshinModule.getUnits());
     
     EncodingExperiment encodedExperiment = new EncodingExperiment(cra, encoding, units);
+    ExperimentConfig.isAspectJEnabled = encodedExperiment.requiresAJ();
     
     System.out.println(encodedExperiment.run());
     
@@ -104,6 +106,8 @@ public class Main {
 //    
 //    System.out.println("BEST:" + encodedCRAProblem.bestObjective);
     runMDEOptimiser();
+    double seconds = (double) encodedExperiment.timeTaken() / 1_000_000_000;
+    System.out.println("Encoding took: " + seconds + " second(s)");
   }
   
   private static void runMDEOptimiser() throws Exception {

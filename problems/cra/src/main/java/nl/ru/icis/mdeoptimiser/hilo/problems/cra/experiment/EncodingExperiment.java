@@ -25,15 +25,23 @@ public class EncodingExperiment extends Experiment {
 
   public EncodingExperiment(ClassModel cra, Encoding encoding, ArrayList<Unit> units) {
     super(cra);
+    
     this.encoding = encoding;
     this.units = units;
+    
+    this.problem = problem();
+    
     initializeFactory();
   }
 
   public EncodingExperiment(ClassModel cra, Encoding encoding, ArrayList<Unit> units, int evaluations, int populationSize) {
     super(cra, evaluations, populationSize);
+    
     this.encoding = encoding;
     this.units = units;
+    
+    this.problem = problem();
+    
     initializeFactory();
   }
   
@@ -57,8 +65,7 @@ public class EncodingExperiment extends Experiment {
     return new EncodingExperiment((ClassModel) EcoreUtil.copy(model), encoding.copy(), units, config.evaluations, config.populationSize);
   }
 
-  @Override
-  protected ExperimentProblem problem() {
+  public ExperimentProblem problem() {
     return new AbstractEncodingCRA(encoding, (ClassModel) model, units);
   }
 

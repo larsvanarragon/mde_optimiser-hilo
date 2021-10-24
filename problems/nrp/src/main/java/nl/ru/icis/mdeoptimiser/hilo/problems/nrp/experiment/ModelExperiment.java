@@ -9,7 +9,6 @@ import org.moeaframework.problem.AbstractProblem;
 import models.nrp.nextReleaseProblem.NRP;
 import nl.ru.icis.mdeoptimiser.hilo.experiment.Experiment;
 import nl.ru.icis.mdeoptimiser.hilo.experiment.ExperimentProblem;
-import nl.ru.icis.mdeoptimiser.hilo.experiment.config.ExperimentConfig;
 import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.model.AbstractModelNRP;
 import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.model.ModelNRPFactory;
 
@@ -18,11 +17,17 @@ public class ModelExperiment extends Experiment {
   
   public ModelExperiment(NRP model) {
     super(model);
+    
+    this.problem = problem();
+    
     initFactory();
   }
   
   public ModelExperiment(NRP model, int evaluations, int popsize) {
     super(model, evaluations, popsize);
+    
+    this.problem = problem();
+    
     initFactory();
   }
   
@@ -46,7 +51,7 @@ public class ModelExperiment extends Experiment {
   }
 
   @Override
-  protected ExperimentProblem problem() {
+  public ExperimentProblem problem() {
     return new AbstractModelNRP((NRP) this.model);
   }
 

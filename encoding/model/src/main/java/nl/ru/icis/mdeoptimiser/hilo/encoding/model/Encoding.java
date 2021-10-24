@@ -37,6 +37,8 @@ public class Encoding {
   }
   
   public EList<EObject> getRelatedInstancesFor(String relation, String identifier) {
+    long startTime = System.nanoTime();
+    
     if (!relationInstanceExists(relation, identifier)) {
       System.out.println("[ERROR] Can't get instances for a non-existing relation:" + relation);
       return null;
@@ -53,6 +55,8 @@ public class Encoding {
         returnList.add(toAdd);
       }
     }
+    
+    System.out.println("Nanos passed: " + (System.nanoTime() - startTime));
     
     return returnList;
   }

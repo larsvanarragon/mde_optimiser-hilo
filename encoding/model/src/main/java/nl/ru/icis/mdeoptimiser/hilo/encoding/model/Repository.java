@@ -38,19 +38,10 @@ public class Repository {
   
   protected String getIdentifierForEObject(EObject object) {
     String identifier = data.inverse().get(object);
-
-    if (deleteList.contains(identifier)) {
-      deleteList.remove(identifier);
-    }
-    
     return identifier;
   }
   
   protected EObject getEObjectForIdentifier(String identifier) {
-    if (deleteList.contains(identifier)) {
-      deleteList.remove(identifier);
-    }
-    
     return data.get(identifier);
   }
 

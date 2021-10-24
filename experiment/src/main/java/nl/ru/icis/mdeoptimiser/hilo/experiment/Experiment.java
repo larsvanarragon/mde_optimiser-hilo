@@ -19,23 +19,21 @@ public abstract class Experiment {
   
   public Experiment(EObject model) {
     this.model = model;
-    this.problem = problem();
     
     this.config = new ExperimentConfig();
   }
   
   public Experiment(EObject model, int evaluations, int populationSize) {
     this.model = model;
-    this.problem = problem();
     
     this.config = new ExperimentConfig(evaluations, populationSize);
   }
   
   protected abstract NondominatedPopulation doExperiment();
   
-  public abstract Experiment copy();
+  public abstract ExperimentProblem problem();
   
-  protected abstract ExperimentProblem problem();
+  public abstract Experiment copy();
   
   protected abstract String name();
   

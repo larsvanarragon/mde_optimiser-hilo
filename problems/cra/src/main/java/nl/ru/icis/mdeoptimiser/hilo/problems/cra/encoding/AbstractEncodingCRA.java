@@ -55,14 +55,14 @@ public class AbstractEncodingCRA extends ExperimentProblem {
         new uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.interpreter.guidance.Solution(cra);
     
     solution.setObjective(0, maximiseCRA.computeFitness(wrapperSolution));
-//    solution.setConstraint(0, minimiseClasslessFeatures.computeFitness(wrapperSolution));
-//    solution.setConstraint(1, minimiseEmptyClasses.computeFitness(wrapperSolution));
+    solution.setConstraint(0, minimiseClasslessFeatures.computeFitness(wrapperSolution));
+    solution.setConstraint(1, minimiseEmptyClasses.computeFitness(wrapperSolution));
     
     if (solution.getObjective(0) < bestObjective) {
       bestObjective = solution.getObjective(0);
     }
     
-    System.out.println(solution.getObjective(0) + ", " + solution.getConstraint(0) + " & "  + solution.getConstraint(1));
+//    System.out.println(solution.getObjective(0) + ", " + solution.getConstraint(0) + " & "  + solution.getConstraint(1));
   }
 
   @Override
