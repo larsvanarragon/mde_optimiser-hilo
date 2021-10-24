@@ -1,6 +1,8 @@
 package nl.ru.icis.mdeoptimiser.hilo.problems.cra;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.OptionalDouble;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.emf.henshin.model.Unit;
@@ -37,6 +39,8 @@ public class Main {
   private static final String ECORE_FILENAME = "architectureCRA.ecore";
   private static final String MODEL_INSTANCE = "TTC_InputRDG_C.xmi";
   private static final String HENSHIN_FILENAME = "craEvolvers.henshin";
+
+  private static HashMap<String, ArrayList<Long>> averages = new HashMap<>();
   
   private static final String MOPT_FILE = "problem {\n"
       + "  basepath <src/main/resources/nl/ru/icis/mdeoptimiser/hilo/problems/cra/>\n"
@@ -108,6 +112,7 @@ public class Main {
     runMDEOptimiser();
     double seconds = (double) encodedExperiment.timeTaken() / 1_000_000_000;
     System.out.println("Encoding took: " + seconds + " second(s)");
+    printAverages();
   }
   
   private static void runMDEOptimiser() throws Exception {
@@ -121,5 +126,23 @@ public class Main {
     
     var experimentDuration = (endTime - startTime) / 1000000;
     System.out.println(experimentDuration);
+  }
+  
+  public static void addToAverage(String string, long l) {
+    if (averages.get(string) == null) {
+      averages.put(string, new ArrayList<>());
+    }
+    
+    averages.get(string).add(l);
+  }
+  
+  public static void printAverages() {
+    for (String key : averages.keySet()) {
+      OptionalDouble average = averages.get(key).stream().mapToDouble(a -> a).average();
+      System.out.println("average of " + key + ":" + average.getAsDouble());
+    }
+    
+    OptionalDouble average = Encoding.averages.stream().mapToDouble(a -> a).average();
+    System.out.println("average of relatedInstances:" + average.getAsDouble());
   }
 }

@@ -22,6 +22,8 @@ public class Encoding {
   
   private Repository repository;
   
+  public static List<Long> averages = new ArrayList<>();
+  
   public Encoding() {
     this.repository = Repository.getInstance();
   }
@@ -56,7 +58,8 @@ public class Encoding {
       }
     }
     
-    System.out.println("Nanos passed: " + (System.nanoTime() - startTime));
+    averages.add(System.nanoTime() - startTime);
+//    System.out.println("Nanos passed: " + (System.nanoTime() - startTime));
     
     return returnList;
   }
