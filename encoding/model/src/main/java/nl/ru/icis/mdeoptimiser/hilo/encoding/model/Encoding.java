@@ -28,6 +28,8 @@ public class Encoding {
   //TODO remove this later
   public static ArrayList<Long> averages = new ArrayList<>();
   
+  public static ArrayList<Long> copyAverages = new ArrayList<>();
+  
   public Encoding() {
     this.repository = Repository.getInstance();
   }
@@ -138,6 +140,7 @@ public class Encoding {
 //  }
   
   public Encoding copy() {
+    long startTime = System.nanoTime();
     Encoding copiedEncoding = new Encoding();
     
     HashMap<String, Map<String, Set<String>>> copiedRelations = new HashMap<>();
@@ -151,7 +154,7 @@ public class Encoding {
     }
     copiedEncoding.encodings = copiedRelations;
     
-    
+    copyAverages.add(System.nanoTime() - startTime);
 //    HashMap<String, List<String>> copiedIdentifiersIndices = new HashMap<>();
 //    for (String relation : identifiersIndex.keySet()) {
 //      ArrayList<String> identifiers = new ArrayList<>();

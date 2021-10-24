@@ -148,5 +148,8 @@ public class Main {
     
     OptionalDouble average2 = MdeoRuleApplicationImpl.averages.stream().mapToDouble(a -> a).average();
     System.out.println("average of mde match:" + average2.getAsDouble());
+    
+    OptionalDouble average3 = Encoding.copyAverages.stream().mapToDouble(a -> a).average();
+    System.out.println("average of encoding copy:" + average3.getAsDouble());
   }
 }
