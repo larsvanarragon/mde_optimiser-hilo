@@ -144,5 +144,8 @@ public class Main {
     
     OptionalDouble average = Encoding.averages.stream().mapToDouble(a -> a).average();
     System.out.println("average of relatedInstances:" + average.getAsDouble());
+    
+    OptionalDouble average2 = Encoding.copyAverages.stream().mapToDouble(a -> a).average();
+    System.out.println("average of copy encd:" + average2.getAsDouble());
   }
 }
