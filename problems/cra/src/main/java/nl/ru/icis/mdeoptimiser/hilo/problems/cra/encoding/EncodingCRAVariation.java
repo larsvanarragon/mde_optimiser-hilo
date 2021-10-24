@@ -18,6 +18,7 @@ import org.moeaframework.core.Solution;
 import org.moeaframework.core.Variation;
 
 import nl.ru.icis.mdeoptimiser.hilo.encoding.model.Encoding;
+import nl.ru.icis.mdeoptimiser.hilo.problems.cra.Main;
 import nl.ru.icis.mdeoptimiser.hilo.problems.cra.coupling.CRACoupleData;
 import nl.ru.icis.mdeoptimiser.hilo.problems.cra.coupling.CRAEGraphImpl;
 
@@ -94,6 +95,8 @@ public class EncodingCRAVariation implements Variation {
       return false;
     }
     
+    long startTime = System.nanoTime();
+    
     RuleChangeInfo ruleChange = engine.getRuleInfo(rule).getChangeInfo();
     
     for (Node node : ruleChange.getCreatedNodes()) {
@@ -138,6 +141,8 @@ public class EncodingCRAVariation implements Variation {
       EObject toDelete = match.getNodeTarget(node);
       encoding.markForDeletion(toDelete);
     }
+    
+    Main.addToAverage("actualMUTATE", System.nanoTime() - startTime);
     
     return true;
   }
