@@ -1,6 +1,11 @@
 package nl.ru.icis.mdeoptimiser.hilo.problems.cra;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.OptionalDouble;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +29,7 @@ import models.cra.fitness.architectureCRA.ClassModel;
 import nl.ru.icis.mdeoptimiser.hilo.encoding.io.ModelLoader;
 import nl.ru.icis.mdeoptimiser.hilo.encoding.model.Converter;
 import nl.ru.icis.mdeoptimiser.hilo.encoding.model.Encoding;
+import nl.ru.icis.mdeoptimiser.hilo.experiment.Batch;
 import nl.ru.icis.mdeoptimiser.hilo.experiment.config.ExperimentConfig;
 import nl.ru.icis.mdeoptimiser.hilo.problems.cra.encoding.AbstractEncodingCRA;
 import nl.ru.icis.mdeoptimiser.hilo.problems.cra.encoding.EncodingCRAFactory;
@@ -38,15 +44,15 @@ import uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.moea.problem.MoeaO
 public class Main {
   private static final String RESOURCE_LOCATION = "src/main/resources/nl/ru/icis/mdeoptimiser/hilo/problems/cra";
   private static final String ECORE_FILENAME = "architectureCRA.ecore";
-  private static final String MODEL_INSTANCE = "TTC_InputRDG_C.xmi";
+  private static final String MODEL_INSTANCE = "TTC_InputRDG_E.xmi";
   private static final String HENSHIN_FILENAME = "craEvolvers.henshin";
   
-  private static HashMap<String, ArrayList<Long>> averages = new HashMap<>();
+  private static SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
   
   private static final String MOPT_FILE = "problem {\n"
       + "  basepath <src/main/resources/nl/ru/icis/mdeoptimiser/hilo/problems/cra/>\n"
       + "  metamodel <models.cra.fitness.architectureCRA.ArchitectureCRAPackage>\n"
-      + "  model <TTC_InputRDG_C.xmi>\n"
+      + "  model <TTC_InputRDG_E.xmi>\n"
       + "}\n"
       + "goal {\n"
       + "  objective CRA maximise java { \"models.cra.fitness.MaximiseCRA\" }\n"
@@ -86,34 +92,18 @@ public class Main {
     ArrayList<Unit> units = new ArrayList<>(henshinModule.getUnits());
     
     EncodingExperiment encodedExperiment = new EncodingExperiment(cra, encoding, units);
-    ExperimentConfig.isAspectJEnabled = encodedExperiment.requiresAJ();
     
-    System.out.println(encodedExperiment.run());
+    File file = new File(System.getProperty("user.dir") + "/results", "encodingResults" + dt.format(new Date()) + ".txt");
+    file.createNewFile();
+    BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
+    writer.append("ModelInstance: " + MODEL_INSTANCE + "\n");
+    writer.close();
     
-//    ModelLoader modelLoader = new ModelLoader(RESOURCE_LOCATION);
-//    
-//    org.eclipse.emf.henshin.model.Module henshinModule = modelLoader.loadHenshinModule(HENSHIN_FILENAME);
-//    ArrayList<Unit> units = new ArrayList<>(henshinModule.getUnits());
-//    AbstractEncodingCRA encodedCRAProblem = new AbstractEncodingCRA(encoding, cra, units);
-//    
-//    AlgorithmFactory factory = new AlgorithmFactory();
-//    factory.addProvider(new EncodingCRAFactory());
-//    
-//    ExperimentConfig.isAspectJEnabled = true;
-//    
-//    NondominatedPopulation result = new Executor().usingAlgorithmFactory(factory)
-//        .withProblem(encodedCRAProblem)
-//        .withAlgorithm("NSGAII")
-//        .withTerminationCondition(new MaxFunctionEvaluations(20000))
-////        .withMaxEvaluations(500)
-//        .withProperty("populationSize", 40)
-//        .run();
-//    
-//    System.out.println("BEST:" + encodedCRAProblem.bestObjective);
-    runMDEOptimiser();
-    double seconds = (double) encodedExperiment.timeTaken() / 1_000_000_000;
-    System.out.println("Encoding took: " + seconds + " second(s)");
-    printAverages();
+    Batch batch = new Batch(encodedExperiment, 30, file);
+    ExperimentConfig.isAspectJEnabled = batch.requiresAJ();
+    batch.run();
+//    runMDEOptimiser();
+//    System.out.println("BEST:" + AbstractEncodingCRA.bestObjective);
   }
   
   private static void runMDEOptimiser() throws Exception {
@@ -127,29 +117,5 @@ public class Main {
     
     var experimentDuration = (endTime - startTime) / 1000000;
     System.out.println(experimentDuration);
-  }
-
-  public static void addToAverage(String string, long l) {
-    if (averages.get(string) == null) {
-      averages.put(string, new ArrayList<>());
-    }
-    
-    averages.get(string).add(l);
-  }
-  
-  public static void printAverages() {
-    for (String key : averages.keySet()) {
-      OptionalDouble average = averages.get(key).stream().mapToDouble(a -> a).average();
-      System.out.println("average of " + key + ":" + average.getAsDouble());
-    }
-    
-    OptionalDouble average = Encoding.averages.stream().mapToDouble(a -> a).average();
-    System.out.println("average of relatedInstances:" + average.getAsDouble());
-    
-    OptionalDouble average2 = MdeoRuleApplicationImpl.averages.stream().mapToDouble(a -> a).average();
-    System.out.println("average of mde match:" + average2.getAsDouble());
-    
-    OptionalDouble average3 = Encoding.copyAverages.stream().mapToDouble(a -> a).average();
-    System.out.println("average of encoding copy:" + average3.getAsDouble());
   }
 }

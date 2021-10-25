@@ -37,6 +37,8 @@ public abstract class Experiment {
   
   protected abstract String name();
   
+  protected abstract String stringResults();
+  
   public long run() {
     long startTimeBits = System.nanoTime();
     this.result = doExperiment();

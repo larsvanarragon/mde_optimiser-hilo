@@ -110,7 +110,8 @@ public class Converter {
     if ("".equals(identifier) || "//-1".equals(identifier) || "/-1".equals(identifier)) {
       throw new Exception("Converter could not instantiate an identifier for a structuredObject to be added to the Repository");
     }
-    result.addIdentifierEObjectBiMap(identifier, structuredObject);
+    
+    result.addNewEObject(structuredObject, identifier);
     convertedStructuredInstances.add(structuredObject);
     
     // For all other structuredObjects within this one add them as well
@@ -257,14 +258,14 @@ public class Converter {
         // Add a new relation instance to the encoding for the found reference
         encoding.addRelationInstance(fromIdentifier, relation);
         
-        // For all object in this meta relation from THIS dynamic object we recursively calls this method
+        // For all objects in this meta relation from THIS dynamic object we recursively call this method
         // Additionally for any object we find for THIS relation we ensure that it is set in our encoding
         Object toHandle = instance.eGet(metaClassRelation);
         // Either this toHandle is a EcoreList filled with DynamicEObjectImpls
         if (toHandle instanceof EcoreEList) {
           for (Object obj : (EcoreEList) toHandle) {
             if (obj instanceof DynamicEObjectImpl) {
-              encoding.addDestinationToRelation(relation, fromIdentifier, metaModelInstance.getURIFragment((DynamicEObjectImpl) obj), true);
+              encoding.setRelationBetween(relation, fromIdentifier, metaModelInstance.getURIFragment((DynamicEObjectImpl) obj), true);
               convertDynamicEObjectImpl((DynamicEObjectImpl) obj, encoding);
             } else {
               System.out.println("[ERROR]: Iterating over instances got from a meta reference gave unexpected type: " + obj.getClass().getCanonicalName());
@@ -274,7 +275,7 @@ public class Converter {
         } 
         // Or a singular DynamicEObjectImpl.
         else if (toHandle instanceof DynamicEObjectImpl) { 
-          encoding.addDestinationToRelation(relation, fromIdentifier, metaModelInstance.getURIFragment((DynamicEObjectImpl) toHandle), true);
+          encoding.setRelationBetween(relation, fromIdentifier, metaModelInstance.getURIFragment((DynamicEObjectImpl) toHandle), true);
           convertDynamicEObjectImpl((DynamicEObjectImpl) toHandle, encoding);
         } else if (toHandle == null) {
           System.out.println("[WARNING]: Meta relation did not find any instances");

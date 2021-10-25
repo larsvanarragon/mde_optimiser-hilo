@@ -1,6 +1,7 @@
 package nl.ru.icis.mdeoptimiser.hilo.problems.cra.encoding;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.emf.henshin.model.Unit;
@@ -33,7 +34,9 @@ public class AbstractEncodingCRA extends ExperimentProblem {
   // Henshin mutation operators
   private ArrayList<Unit> henshinOperators;
   
-  public double bestObjective = 10;
+  // Variables for purposes of analyzing the performance
+  public HashMap<String, List<Long>> timings = new HashMap<String, List<Long>>();
+  public double bestObjective = 1000;
   
   public AbstractEncodingCRA(Encoding originalEncoding, ClassModel cra, ArrayList<Unit> henshinOperators) {
     super(N_VARIABLES, N_OBJECTIVES, N_CONSTRAINTS);
@@ -68,7 +71,7 @@ public class AbstractEncodingCRA extends ExperimentProblem {
   @Override
   public Solution newSolution() {
     Solution solution = new Solution(N_VARIABLES, N_OBJECTIVES, N_CONSTRAINTS);
-    solution.setVariable(0, new EncodingCRAVariable(originalEncoding.copy(), cra, henshinOperators));
+    solution.setVariable(0, new EncodingCRAVariable(originalEncoding.copy(), cra, henshinOperators, timings));
     return solution;
   }
 

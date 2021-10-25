@@ -1,5 +1,9 @@
 package nl.ru.icis.mdeoptimiser.hilo.experiment;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,15 +13,28 @@ public class Batch {
   private Experiment experiment;
   private int size;
   
-  private List<Long> results = new ArrayList<>();
+  private List<Long> results;
   
-  private List<Double> hypervolumes = new ArrayList<>();
+  private List<Double> hypervolumes;
   private HypervolumeEvaluator hvEvaluator;
   
+  private File file;
+  
   public Batch(Experiment experiment, int size, HypervolumeEvaluator hypervolumeEvaluator) {
+    this(experiment, size);
+    this.hvEvaluator = hypervolumeEvaluator;
+    this.hypervolumes = new ArrayList<>();
+  }
+  
+  public Batch(Experiment experiment, int size, File file) {
+    this(experiment, size);
+    this.file = file;
+  }
+  
+  public Batch(Experiment experiment, int size) {
     this.experiment = experiment;
     this.size = size;
-    this.hvEvaluator = hypervolumeEvaluator;
+    this.results = new ArrayList<>();
     
     if (size < 1) {
       System.out.println("ERROR: Failed initializing batch, SEVERE ERROR! n needs to be >= 1");
@@ -40,7 +57,21 @@ public class Batch {
     for (int i = 0; i < size; i++) {
       System.out.print((i+1) + " ");
       results.add(experiment.run());
-      hypervolumes.add(hvEvaluator.evaluate(experiment.result));
+      
+      if (hvEvaluator != null) {
+        hypervolumes.add(hvEvaluator.evaluate(experiment.result));
+      }
+      
+      if (file != null) {
+        try {
+          BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
+          writer.append(experiment.stringResults());
+          writer.close();
+        } catch (IOException e) {
+          e.printStackTrace();
+          System.exit(1);
+        }
+      }
       
       // Hopefully have the other experiment garbage collected
       experiment = experiment.copy();
@@ -59,8 +90,10 @@ public class Batch {
       builder.append("t");
       builder.append(results.get(i));
       
-      builder.append(" hv");
-      builder.append(hypervolumes.get(i));
+      if (hypervolumes != null) {
+        builder.append(" hv");
+        builder.append(hypervolumes.get(i));
+      }
       
       builder.append(" - ");
     }

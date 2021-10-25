@@ -1,6 +1,7 @@
 package nl.ru.icis.mdeoptimiser.hilo.problems.cra.experiment;
 
 import java.util.ArrayList;
+import java.util.OptionalDouble;
 
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.henshin.model.Unit;
@@ -13,6 +14,8 @@ import models.cra.fitness.architectureCRA.ClassModel;
 import nl.ru.icis.mdeoptimiser.hilo.encoding.model.Encoding;
 import nl.ru.icis.mdeoptimiser.hilo.experiment.Experiment;
 import nl.ru.icis.mdeoptimiser.hilo.experiment.ExperimentProblem;
+import nl.ru.icis.mdeoptimiser.hilo.experiment.config.ExperimentConfig;
+import nl.ru.icis.mdeoptimiser.hilo.experiment.io.ExperimentData;
 import nl.ru.icis.mdeoptimiser.hilo.problems.cra.encoding.AbstractEncodingCRA;
 import nl.ru.icis.mdeoptimiser.hilo.problems.cra.encoding.EncodingCRAFactory;
 
@@ -62,16 +65,45 @@ public class EncodingExperiment extends Experiment {
 
   @Override
   public Experiment copy() {
-    return new EncodingExperiment((ClassModel) EcoreUtil.copy(model), encoding.copy(), units, config.evaluations, config.populationSize);
+    boolean old = ExperimentConfig.isAspectJEnabled;
+    ExperimentConfig.isAspectJEnabled = false;
+    
+    EncodingExperiment copy = new EncodingExperiment((ClassModel) model, encoding.copy(), units, config.evaluations, config.populationSize);
+    
+    ExperimentConfig.isAspectJEnabled = old;
+    return copy;
   }
 
   public ExperimentProblem problem() {
-    return new AbstractEncodingCRA(encoding, (ClassModel) model, units);
+    return new AbstractEncodingCRA(encoding.copy(), (ClassModel) model, units);
   }
 
   @Override
   protected String name() {
     return "EncodedCRAExperiment";
+  }
+
+  @Override
+  protected String stringResults() {
+    StringBuilder builder = new StringBuilder();
+    
+    builder.append("<timeTaken: ");
+    builder.append((double) this.timeTaken() / 1_000_000_000);
+    builder.append(" second(s), bestFitness: ");
+    builder.append(((AbstractEncodingCRA) problem).bestObjective);
+    builder.append(", ");
+    for (String resultName : ((AbstractEncodingCRA) problem).timings.keySet()) {
+      OptionalDouble average = ((AbstractEncodingCRA) problem).timings.get(resultName).stream().mapToDouble(a -> a).average();
+      
+      builder.append(resultName);
+      builder.append(": ");
+      builder.append(average.toString());
+      builder.append(", ");
+    }
+    builder.delete((builder.length() - 2), builder.length());
+    builder.append(">\n");
+    
+    return builder.toString();
   }
 
 }

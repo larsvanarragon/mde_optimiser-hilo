@@ -26,7 +26,7 @@ public class EncodingCRAVariation implements Variation {
   
   static EngineImpl engine = newEngine();
   
-  public static EngineImpl newEngine() {
+  private static EngineImpl newEngine() {
     EngineImpl newEngine = new EngineImpl();
     newEngine.getOptions().put(Engine.OPTION_DETERMINISTIC, false);
     return newEngine;
@@ -69,11 +69,13 @@ public class EncodingCRAVariation implements Variation {
         Collections.shuffle(operators);
         Rule rule = (Rule) operators.remove(0);
 
-        long startTime = System.nanoTime();
+        long startTimeMatching = System.nanoTime();
         Match potentialMatch = engine.findMatches(rule, graph, null).iterator().next();
-        Main.addToAverage("matching",  System.nanoTime() - startTime);
+        variable.addToTimings("matching",  System.nanoTime() - startTimeMatching);
         
+        long startTimeMutating = System.nanoTime();
         if (mutateEncodingWithMatch(variable.getEncoding(), potentialMatch, new MatchImpl(rule, true), rule)) {
+          variable.addToTimings("mutating", System.nanoTime() - startTimeMutating);
           break;
         }
       }
@@ -139,7 +141,7 @@ public class EncodingCRAVariation implements Variation {
       EObject toDelete = match.getNodeTarget(node);
       encoding.markForDeletion(toDelete);
     }
-    
+
     return true;
   }
 }

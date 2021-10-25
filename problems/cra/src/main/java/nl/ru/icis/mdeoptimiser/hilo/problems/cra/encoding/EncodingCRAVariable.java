@@ -2,6 +2,7 @@ package nl.ru.icis.mdeoptimiser.hilo.problems.cra.encoding;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.emf.henshin.model.Unit;
@@ -17,17 +18,20 @@ public class EncodingCRAVariable implements Variable {
   
   private ClassModel model;
 
-  private ArrayList<Unit> operators = new ArrayList<Unit>();
+  private ArrayList<Unit> operators;
+
+  private HashMap<String, List<Long>> timings;
   
-  public EncodingCRAVariable(Encoding encoding, ClassModel model, ArrayList<Unit> operators) {
+  public EncodingCRAVariable(Encoding encoding, ClassModel model, ArrayList<Unit> operators, HashMap<String, List<Long>> timings) {
     this.encoding = encoding;
     this.model = model;
     this.operators = operators;
+    this.timings = timings;
   }
 
   @Override
   public Variable copy() {
-    EncodingCRAVariable var = new EncodingCRAVariable(encoding.copy(), model, operators);
+    EncodingCRAVariable var = new EncodingCRAVariable(encoding.copy(), model, operators, timings);
     return var;
   }
 
@@ -47,5 +51,13 @@ public class EncodingCRAVariable implements Variable {
   
   public ArrayList<Unit> getOperators() {
     return operators;
+  }
+  
+  public void addToTimings(String string, long l) {
+    if (timings.get(string) == null) {
+      timings.put(string, new ArrayList<>());
+    }
+    
+    timings.get(string).add(l);
   }
 }
