@@ -59,10 +59,10 @@ public class Converter {
   }
 
   public Encoding convert() throws Exception {
-    if (this.result != null) {
-      System.out.println("[ERROR]: This converter has already converted the given models to an encoding");
-      throw new Exception("Already converted the models to an encoding");
-    }
+    // Clear old repository
+    Encoding.clearRepository();
+    convertedMetaInstances.clear();
+    convertedStructuredInstances.clear();
     
     // Fill in the result with a fresh encoding
     this.result = new Encoding();
@@ -101,7 +101,7 @@ public class Converter {
   private void addStructuredObjectToRepository(EObject structuredObject) throws Exception {
     // Check if structuredObject has already been added to the repository
     if (this.convertedStructuredInstances.contains(structuredObject)) {
-      System.out.println("[INFO]: Structured object has already been added to the repository, skipping..");
+//      System.out.println("[INFO]: Structured object has already been added to the repository, skipping..");
       return;
     }
     
@@ -178,7 +178,7 @@ public class Converter {
     EClassImpl fromMetaClass = (EClassImpl) dynamicObject.eClass();
     
     if (convertedMetaInstances.contains(dynamicObject)) {
-      System.out.println("[INFO]: Object instance has already been converted, skipping..");
+//      System.out.println("[INFO]: Object instance has already been converted, skipping..");
       return;
     }
     convertedMetaInstances.add(dynamicObject);
@@ -278,7 +278,7 @@ public class Converter {
           encoding.setRelationBetween(relation, fromIdentifier, metaModelInstance.getURIFragment((DynamicEObjectImpl) toHandle), true);
           convertDynamicEObjectImpl((DynamicEObjectImpl) toHandle, encoding);
         } else if (toHandle == null) {
-          System.out.println("[WARNING]: Meta relation did not find any instances");
+//          System.out.println("[WARNING]: Meta relation did not find any instances");
         } else {
           System.out.println("[ERROR]: Instance got from a meta reference gave unexpected type: " + toHandle.getClass().getCanonicalName());
           System.exit(1);
@@ -292,7 +292,7 @@ public class Converter {
   }
 
   public void setXMIFilename(String XMIFilename) {
-    XMIFilename = XMIFilename;
+    this.XMIFilename = XMIFilename;
   }
   
   public Encoding getResult() {

@@ -40,6 +40,10 @@ public class Encoding {
     this.repository = Repository.getInstance();
   }
   
+  public static void clearRepository() {
+    Repository.clear();
+  }
+  
   public EList<EObject> getRelatedInstancesFor(String relation, EObject object) throws NoSuchRelationInstanceException {
     String identifier = repository.getIdentifierForEObject(object);
     return getRelatedInstancesFor(relation, identifier);
@@ -78,7 +82,7 @@ public class Encoding {
   
   public void addRelation(String relationName, String fromPackageName, String fromObject, String toPackageName, String toObject) {
     if (relationExists(relationName, fromPackageName, fromObject, toPackageName, toObject)) {
-      System.out.println("[INFO] Relation for " + fromPackageName + fromObject + " and " + toPackageName + toObject + " already exists, skipping..");
+//      System.out.println("[INFO] Relation for " + fromPackageName + fromObject + " and " + toPackageName + toObject + " already exists, skipping..");
       return;
     }
     

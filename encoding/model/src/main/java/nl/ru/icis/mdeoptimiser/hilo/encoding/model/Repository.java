@@ -28,6 +28,10 @@ public class Repository {
   protected static Repository getInstance() {
     return repository;
   }
+  
+  protected static void clear() {
+    repository = new Repository();
+  }
     
   protected String getIdentifierForEObject(EObject object) {
     String identifier = data.inverse().get(object);

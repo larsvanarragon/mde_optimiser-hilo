@@ -1,0 +1,4 @@
+ModelInstance: TTC_InputRDG_E.xmi
+<timeTaken: 918.241038667 second(s), bestFitness: -2.3333333333333335, mutating: OptionalDouble[7705.27865], matching: OptionalDouble[2.0320996025148388E7]>
+<timeTaken: 703.810529125 second(s), bestFitness: -1.5, mutating: OptionalDouble[6132.9009], matching: OptionalDouble[1.5391101030024802E7]>
+<timeTaken: 769.574016292 second(s), bestFitness: -1.25, mutating: OptionalDouble[6526.1923], matching: OptionalDouble[1.6930013433860164E7]>

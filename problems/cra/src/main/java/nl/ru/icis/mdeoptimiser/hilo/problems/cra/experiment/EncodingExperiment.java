@@ -11,6 +11,7 @@ import org.moeaframework.core.spi.AlgorithmFactory;
 import org.moeaframework.core.termination.MaxFunctionEvaluations;
 
 import models.cra.fitness.architectureCRA.ClassModel;
+import nl.ru.icis.mdeoptimiser.hilo.encoding.model.Converter;
 import nl.ru.icis.mdeoptimiser.hilo.encoding.model.Encoding;
 import nl.ru.icis.mdeoptimiser.hilo.experiment.Experiment;
 import nl.ru.icis.mdeoptimiser.hilo.experiment.ExperimentProblem;
@@ -25,11 +26,15 @@ public class EncodingExperiment extends Experiment {
   private Encoding encoding;
   
   private ArrayList<Unit> units;
+  
+  private Converter converter;
 
-  public EncodingExperiment(ClassModel cra, Encoding encoding, ArrayList<Unit> units) {
+  public EncodingExperiment(ClassModel cra, Converter converter, ArrayList<Unit> units) throws Exception {
     super(cra);
     
-    this.encoding = encoding;
+    this.converter = converter;
+    this.encoding = converter.convert();
+    
     this.units = units;
     
     this.problem = problem();
@@ -37,10 +42,12 @@ public class EncodingExperiment extends Experiment {
     initializeFactory();
   }
 
-  public EncodingExperiment(ClassModel cra, Encoding encoding, ArrayList<Unit> units, int evaluations, int populationSize) {
+  public EncodingExperiment(ClassModel cra, Converter converter, ArrayList<Unit> units, int evaluations, int populationSize) throws Exception {
     super(cra, evaluations, populationSize);
     
-    this.encoding = encoding;
+    this.converter = converter;
+    this.encoding = converter.convert();
+    
     this.units = units;
     
     this.problem = problem();
@@ -65,13 +72,20 @@ public class EncodingExperiment extends Experiment {
 
   @Override
   public Experiment copy() {
-    boolean old = ExperimentConfig.isAspectJEnabled;
-    ExperimentConfig.isAspectJEnabled = false;
+    try {
+      boolean old = ExperimentConfig.isAspectJEnabled;
+      ExperimentConfig.isAspectJEnabled = false;
+      
+      EncodingExperiment copy = new EncodingExperiment((ClassModel) model, converter, units, config.evaluations, config.populationSize);
+      
+      ExperimentConfig.isAspectJEnabled = old;
+      return copy;
+    } catch (Exception e) {
+      e.printStackTrace();
+      System.exit(1);
+    }
     
-    EncodingExperiment copy = new EncodingExperiment((ClassModel) model, encoding.copy(), units, config.evaluations, config.populationSize);
-    
-    ExperimentConfig.isAspectJEnabled = old;
-    return copy;
+    return null;
   }
 
   public ExperimentProblem problem() {
