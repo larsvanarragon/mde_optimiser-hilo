@@ -1,0 +1,11 @@
+ModelInstance: TTC_InputRDG_E.xmi
+<timeTaken: 859.58218125 second(s), bestFitness: -1.75, mutating: OptionalDouble[6846.83315], matching: OptionalDouble[1.8954138256986693E7]>
+<timeTaken: 922.422796458 second(s), bestFitness: -2.0, mutating: OptionalDouble[6009.9978], matching: OptionalDouble[2.046447926925645E7]>
+<timeTaken: 697.040818208 second(s), bestFitness: -1.4, mutating: OptionalDouble[5874.7288], matching: OptionalDouble[1.5283814286705615E7]>
+<timeTaken: 648.661328917 second(s), bestFitness: -1.5, mutating: OptionalDouble[5642.7331], matching: OptionalDouble[1.4170696604585143E7]>
+<timeTaken: 956.189691375 second(s), bestFitness: -2.0, mutating: OptionalDouble[5803.7379], matching: OptionalDouble[2.1300251709420897E7]>
+<timeTaken: 813.335901208 second(s), bestFitness: -2.0, mutating: OptionalDouble[5837.88175], matching: OptionalDouble[1.7917756080110565E7]>
+<timeTaken: 819.180371833 second(s), bestFitness: -1.2083333333333333, mutating: OptionalDouble[5809.75245], matching: OptionalDouble[1.8105042176229216E7]>
+<timeTaken: 719.92708725 second(s), bestFitness: -1.1777777777777778, mutating: OptionalDouble[5509.00335], matching: OptionalDouble[1.5623909761296893E7]>
+<timeTaken: 943.19090625 second(s), bestFitness: -1.5, mutating: OptionalDouble[5693.17185], matching: OptionalDouble[2.087729830650896E7]>
+<timeTaken: 756.006295542 second(s), bestFitness: -1.2619047619047619, mutating: OptionalDouble[5839.94195], matching: OptionalDouble[1.6424335549904507E7]>
