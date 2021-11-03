@@ -21,23 +21,23 @@ public class Main {
   private static final String RESOURCE_LOCATION = "src/main/resources/nl/ru/icis/mdeoptimiser/hilo/problems/nrp/models";
   private static final String MODEL_NAME = "nrp-model-25-cus-50-req-203-sa.xmi";
   
-  private static final String COMBINED_PARETO_FRONT_NAME = "cpf_2000p_25000e.dat";
+  private static final String COMBINED_PARETO_FRONT_NAME = "cpf_2kp_100ke.dat";
   
   private static HenshinResourceSet resourceSet = new HenshinResourceSet(RESOURCE_LOCATION);
   
   private static boolean createReferencePareto = false;
   
-  private static final int EVALUATIONS_START_VALUE = 1000;
-  private static final int EVALUATIONS_END_VALUE = 2000;
-//  private static final int EVALUATIONS_END_VALUE = 10_000;
-  private static final int EVALUATIONS_INCREMENT_STEP = 1000;
+  private static final int EVALUATIONS_START_VALUE = 10_000;
+  private static final int EVALUATIONS_END_VALUE = 50_000;
+//  private static final int EVALUATIONS_END_VALUE = 50_000;
+  private static final int EVALUATIONS_INCREMENT_STEP = 10_000;
   
-  private static final int POPSIZE_START_VALUE = 200;
-//  private static final int POPSIZE_END_VALUE = 1000;
-  private static final int POPSIZE_END_VALUE = 400;
-  private static final int POPSIZE_INCREMENT_STEP = 200;
+  private static final int POPSIZE_START_VALUE = 1000;
+  private static final int POPSIZE_END_VALUE = 1000;
+//  private static final int POPSIZE_END_VALUE = 400;
+  private static final int POPSIZE_INCREMENT_STEP = 1000;
   
-  private static final int EXPERIMENTS_PER_CYCLE = 5;
+  private static final int EXPERIMENTS_PER_CYCLE = 10;
   
   private static Batch[][] bitResults = new Batch[calcNEvals()][calcNPopSize()];
   private static Batch[][] modelResults = new Batch[calcNEvals()][calcNPopSize()];
@@ -137,8 +137,8 @@ public class Main {
 //  private static final int REFERENCE_POPSIZE = 2000;
 //  private static final int REFERENCE_EVALUATIONS = 25_000;
   
-  private static final int REFERENCE_POPSIZE = 3000;
-  private static final int REFERENCE_EVALUATIONS = 50_000;
+  private static final int REFERENCE_POPSIZE = 2000;
+  private static final int REFERENCE_EVALUATIONS = 100_000;
   
 //  private static final int REFERENCE_POPSIZE = 100;
 //  private static final int REFERENCE_EVALUATIONS = 500;

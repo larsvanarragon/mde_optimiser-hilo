@@ -1,0 +1,12 @@
+ModelInstance: TTC_InputRDG_C.xmi
+<timeTaken: 17.1775013 second(s), bestFitness: -2.243434343434344 matching: OptionalDouble[163616.78557476818] mutation: OptionalDouble[8335.339321357285] copy: OptionalDouble[61181.33233532934]>
+<timeTaken: 12.2663412 second(s), bestFitness: -2.9111111111111114 matching: OptionalDouble[109922.81558398747] mutation: OptionalDouble[4185.484031936127] copy: OptionalDouble[54991.19760479042]>
+<timeTaken: 14.6472655 second(s), bestFitness: -3.555059523809524 matching: OptionalDouble[163025.91928435978] mutation: OptionalDouble[3166.0329341317365] copy: OptionalDouble[51626.98602794411]>
+<timeTaken: 16.6248847 second(s), bestFitness: -3.3913690476190474 matching: OptionalDouble[188963.93199381762] mutation: OptionalDouble[4984.471057884231] copy: OptionalDouble[51507.74201596806]>
+<timeTaken: 25.4021282 second(s), bestFitness: -0.7222222222222232 matching: OptionalDouble[374344.640943194] mutation: OptionalDouble[4462.360279441118] copy: OptionalDouble[50984.87624750499]>
+<timeTaken: 6.4339137 second(s), bestFitness: -1.1008403361344536 matching: OptionalDouble[31145.404377570634] mutation: OptionalDouble[2812.015988008993] copy: OptionalDouble[49488.721723220224]>
+<timeTaken: 16.8834587 second(s), bestFitness: -2.9857142857142858 matching: OptionalDouble[211822.29823292344] mutation: OptionalDouble[3411.1077844311376] copy: OptionalDouble[48627.27259766182]>
+<timeTaken: 6.1327911 second(s), bestFitness: -1.0054945054945055 matching: OptionalDouble[27604.337116935898] mutation: OptionalDouble[2626.4103467364503] copy: OptionalDouble[47501.70471556886]>
+<timeTaken: 12.7726045 second(s), bestFitness: -3.742521367521367 matching: OptionalDouble[134388.10693641618] mutation: OptionalDouble[2797.0908183632732] copy: OptionalDouble[46766.25360390331]>
+<timeTaken: 9.1533278 second(s), bestFitness: -2.220959595959596 matching: OptionalDouble[76269.57188127835] mutation: OptionalDouble[3283.7924151696607] copy: OptionalDouble[46323.30239520958]>
+AVERAGES <averagemutation: OptionalDouble[4006.410497746001], averagebestFitness: OptionalDouble[-2.387872633902046], averagecopy: OptionalDouble[50899.93892671007], averagematching: OptionalDouble[148110.38119252515]>

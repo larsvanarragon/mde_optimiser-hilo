@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.eclipse.emf.henshin.model.Unit;
 import org.moeaframework.core.Solution;
-import org.moeaframework.problem.AbstractProblem;
 
 import models.cra.fitness.MaximiseCRA;
 import models.cra.fitness.MinimiseClasslessFeatures;
@@ -36,7 +35,9 @@ public class AbstractEncodingCRA extends ExperimentProblem {
   
   // Variables for purposes of analyzing the performance
   public HashMap<String, List<Long>> timings = new HashMap<String, List<Long>>();
-  public double bestObjective = 1000;
+  
+  // Wrapper solution
+  uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.interpreter.guidance.Solution wrapperSolution;
   
   public AbstractEncodingCRA(Encoding originalEncoding, ClassModel cra, ArrayList<Unit> henshinOperators) {
     super(N_VARIABLES, N_OBJECTIVES, N_CONSTRAINTS);
@@ -48,24 +49,21 @@ public class AbstractEncodingCRA extends ExperimentProblem {
     this.originalEncoding = originalEncoding;
     this.cra = cra;
     this.henshinOperators = henshinOperators;
+    
+    this.wrapperSolution = new uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.interpreter.guidance.Solution(cra);
   }
 
   @Override
   public void evaluate(Solution solution) {
     CRACoupleData.setCurrentEncoding(((EncodingCRAVariable) solution.getVariable(0)).getEncoding());
     
-    uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.interpreter.guidance.Solution wrapperSolution = 
-        new uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.interpreter.guidance.Solution(cra);
+    long startTime = System.nanoTime();
     
     solution.setObjective(0, maximiseCRA.computeFitness(wrapperSolution));
     solution.setConstraint(0, minimiseClasslessFeatures.computeFitness(wrapperSolution));
     solution.setConstraint(1, minimiseEmptyClasses.computeFitness(wrapperSolution));
     
-    if (solution.getObjective(0) < bestObjective) {
-      bestObjective = solution.getObjective(0);
-    }
-    
-//    System.out.println(solution.getObjective(0) + ", " + solution.getConstraint(0) + " & "  + solution.getConstraint(1));
+    ((EncodingCRAVariable) solution.getVariable(0)).addToTimings("evaluation", System.nanoTime() - startTime);
   }
 
   @Override

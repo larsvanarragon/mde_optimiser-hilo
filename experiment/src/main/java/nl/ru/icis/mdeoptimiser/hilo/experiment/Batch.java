@@ -5,7 +5,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.OptionalDouble;
 
 import nl.ru.icis.mdeoptimiser.hilo.experiment.hypervolume.HypervolumeEvaluator;
 
@@ -19,6 +21,7 @@ public class Batch {
   private HypervolumeEvaluator hvEvaluator;
   
   private File file;
+  private HashMap<String, ArrayList<Double>> timings = new HashMap<>();
   
   public Batch(Experiment experiment, int size, HypervolumeEvaluator hypervolumeEvaluator) {
     this(experiment, size);
@@ -73,13 +76,56 @@ public class Batch {
         }
       }
       
+      addToTimings(experiment.timings);
+      
       // Hopefully have the other experiment garbage collected
       experiment = experiment.copy();
+    }
+    
+    if (file != null) {
+      try {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
+        writer.append(generateAverages());
+        writer.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+        System.exit(1);
+      }
     }
     
     this.experiment = null;
     
     System.out.println("finished!");
+  }
+  
+  public void addToTimings(HashMap<String, OptionalDouble> toAdd) {
+    for (String key : toAdd.keySet()) {
+      if (timings.get(key) == null) {
+        timings.put(key, new ArrayList<>());
+      }
+      
+      timings.get(key).add(toAdd.get(key).getAsDouble());
+    }
+  }
+  
+  public String generateAverages() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("AVERAGES <");
+    
+    for (String key : timings.keySet()) {
+      builder.append("average");
+      builder.append(key);
+      builder.append(": ");
+      
+      OptionalDouble average = timings.get(key).stream().mapToDouble(a -> a).average();
+      builder.append(average);
+      builder.append(", ");
+    }
+    builder.delete((builder.length() - 2), builder.length());
+    
+    builder.append(">\n");
+    
+    return builder.toString();
   }
   
   public String generateResults() {

@@ -64,4 +64,10 @@ public class ModelExperiment extends Experiment {
   protected String name() {
     return "ModelExperiment";
   }
+
+  @Override
+  protected String stringResults() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 }

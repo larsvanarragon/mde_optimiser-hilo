@@ -19,8 +19,6 @@ public class CRAEGraphImpl extends EGraphImpl {
     super();
     this.encoding = encoding;
     
-//    initializeContents(Collections.singleton(model));
-    
     addTree(model);
   }
 

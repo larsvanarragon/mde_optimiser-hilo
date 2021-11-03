@@ -46,4 +46,10 @@ public class BooleanExperiment extends Experiment {
   protected String name() {
     return "BooleanExperiment";
   }
+
+  @Override
+  protected String stringResults() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 }

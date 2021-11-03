@@ -1,7 +1,6 @@
 package nl.ru.icis.mdeoptimiser.hilo.problems.cra.encoding;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 

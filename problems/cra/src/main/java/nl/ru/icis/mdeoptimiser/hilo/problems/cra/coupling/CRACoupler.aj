@@ -3,20 +3,13 @@ package nl.ru.icis.mdeoptimiser.hilo.problems.cra.coupling;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.impl.EReferenceImpl;
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
-import org.eclipse.emf.ecore.util.EObjectResolvingEList;
-import org.eclipse.emf.ecore.util.EObjectWithInverseResolvingEList;
 
-import models.cra.fitness.architectureCRA.ArchitectureCRAPackage;
-import models.cra.fitness.architectureCRA.Attribute;
 import models.cra.fitness.architectureCRA.Feature;
 import models.cra.fitness.architectureCRA.Method;
-import models.cra.fitness.architectureCRA.impl.ClassImpl;
 import models.cra.fitness.architectureCRA.impl.ClassModelImpl;
 import models.cra.fitness.architectureCRA.ClassModel;
 import models.cra.fitness.architectureCRA.impl.FeatureImpl;
@@ -25,20 +18,6 @@ import nl.ru.icis.mdeoptimiser.hilo.encoding.model.Encoding;
 import nl.ru.icis.mdeoptimiser.hilo.experiment.config.ExperimentConfig;
 
 public aspect CRACoupler {
-//  import java.util.ArrayList;
-//  import java.util.List;
-//
-//  import org.eclipse.emf.common.util.EList;
-//  import org.eclipse.emf.ecore.EObject;
-//  import org.eclipse.emf.ecore.EStructuralFeature;
-//  import org.eclipse.emf.ecore.impl.EReferenceImpl;
-//
-//  import models.cra.fitness.architectureCRA.impl.ClassImpl;
-//  import models.cra.fitness.architectureCRA.impl.ClassModelImpl;
-//  import models.cra.fitness.architectureCRA.impl.FeatureImpl;
-//  import models.cra.fitness.architectureCRA.impl.MethodImpl;
-//  import nl.ru.icis.mdeoptimiser.hilo.encoding.model.Encoding;
-//  import nl.ru.icis.mdeoptimiser.hilo.experiment.config.ExperimentConfig;
   
   pointcut addTreeToGraph(EObject root, CRAEGraphImpl graph): 
     call(boolean nl.ru.icis.mdeoptimiser.hilo.problems.cra.coupling.CRAEGraphImpl.addTree(org.eclipse.emf.ecore.EObject))
@@ -82,11 +61,15 @@ public aspect CRACoupler {
     && target (classModel);
   
   EList<models.cra.fitness.architectureCRA.Class> around(ClassModelImpl classModel): getClassesFromClassModelImpl(classModel) {
+//    long startTime = System.nanoTime();
+    
     if (!ExperimentConfig.isAspectJEnabled) {
       return proceed(classModel);
     }
     
-    return returnClassesFromClassModel(classModel);
+    EList<models.cra.fitness.architectureCRA.Class> returnList = returnClassesFromClassModel(classModel);
+//    System.out.println(System.nanoTime() - startTime);
+    return returnList;
   }
     
   pointcut getClassesFromClassModel(ClassModel classModel): 
@@ -94,19 +77,21 @@ public aspect CRACoupler {
     && target (classModel);
   
   EList<models.cra.fitness.architectureCRA.Class> around(ClassModel classModel): getClassesFromClassModel(classModel) {
+//    long startTime = System.nanoTime();
+    
     if (!ExperimentConfig.isAspectJEnabled) {
       return proceed(classModel);
     }
     
-    return returnClassesFromClassModel(classModel);
+    EList<models.cra.fitness.architectureCRA.Class> returnList =  returnClassesFromClassModel(classModel);
+//    System.out.println(System.nanoTime() - startTime);
+    return returnList;
   }
   
-  EList<models.cra.fitness.architectureCRA.Class> returnClassesFromClassModel(ClassModel classModel) {
-    Encoding encoding = CRACoupleData.getCurrentEncoding();
-    
+  EList<models.cra.fitness.architectureCRA.Class> returnClassesFromClassModel(ClassModel classModel) {    
     try {
       return (EList<models.cra.fitness.architectureCRA.Class>)(EList<?>) 
-          encoding.getRelatedInstancesFor(CRACoupleData.CLASSMODEL_TO_CLASS_RELATION, classModel);
+          CRACoupleData.getCurrentEncoding().getRelatedInstancesFor(CRACoupleData.CLASSMODEL_TO_CLASS_RELATION, classModel);
     } catch (Exception e) {
       e.printStackTrace();
       System.exit(1);

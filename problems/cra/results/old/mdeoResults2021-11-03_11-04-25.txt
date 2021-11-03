@@ -1,0 +1,11 @@
+ModelInstance: TTC_InputRDG_C.xmi
+<timeTaken: 14.5516822 second(s), bestFitness: -2.761111111111111 matching: OptionalDouble[150101.5874326528]>
+<timeTaken: 8.3050371 second(s), bestFitness: -1.8594276094276094 matching: OptionalDouble[52454.28759622906]>
+<timeTaken: 15.048754 second(s), bestFitness: -3.4814814814814823 matching: OptionalDouble[170981.50575877258]>
+<timeTaken: 13.6542301 second(s), bestFitness: -3.198888888888889 matching: OptionalDouble[146574.29534503794]>
+<timeTaken: 15.0162156 second(s), bestFitness: -3.722527472527473 matching: OptionalDouble[171223.5066957334]>
+<timeTaken: 7.007774 second(s), bestFitness: -1.3812415654520915 matching: OptionalDouble[34392.87492541612]>
+<timeTaken: 6.7972098 second(s), bestFitness: -1.0145442792501616 matching: OptionalDouble[34170.447277795996]>
+<timeTaken: 18.0182619 second(s), bestFitness: -2.1722222222222216 matching: OptionalDouble[228379.45112129848]>
+<timeTaken: 16.8407996 second(s), bestFitness: -3.467261904761905 matching: OptionalDouble[203307.46830754034]>
+<timeTaken: 7.1809242 second(s), bestFitness: -1.1008403361344536 matching: OptionalDouble[35589.63986186482]>

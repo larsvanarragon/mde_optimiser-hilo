@@ -1,0 +1,11 @@
+<timeTaken: 16.8755912 second(s), bestFitness: -3.435439560439561 matching: OptionalDouble[180800.2628148087] mutation: OptionalDouble[6307.909181636726] copy: OptionalDouble[57277.939121756484]>
+<timeTaken: 7.6407371 second(s), bestFitness: -1.6141025641025641 matching: OptionalDouble[48370.58218473565] mutation: OptionalDouble[2977.2854291417166] copy: OptionalDouble[48425.33183632734]>
+<timeTaken: 18.5392053 second(s), bestFitness: -3.0928571428571425 matching: OptionalDouble[243714.29486649582] mutation: OptionalDouble[3839.795409181637] copy: OptionalDouble[46661.07119095143]>
+<timeTaken: 11.3152417 second(s), bestFitness: -2.8805555555555555 matching: OptionalDouble[100110.66458982347] mutation: OptionalDouble[3666.24750499002] copy: OptionalDouble[46018.7000998004]>
+<timeTaken: 15.314871 second(s), bestFitness: -1.4675925925925926 matching: OptionalDouble[184121.89214367044] mutation: OptionalDouble[3720.454091816367] copy: OptionalDouble[45201.81037924152]>
+<timeTaken: 10.4657122 second(s), bestFitness: -2.695555555555555 matching: OptionalDouble[89863.92990259673] mutation: OptionalDouble[3134.8902195608784] copy: OptionalDouble[44686.342315369264]>
+<timeTaken: 22.883785 second(s), bestFitness: -2.4761904761904754 matching: OptionalDouble[318659.2390296185] mutation: OptionalDouble[4534.051896207585] copy: OptionalDouble[45228.37753065298]>
+<timeTaken: 11.5921678 second(s), bestFitness: -3.1500000000000004 matching: OptionalDouble[110565.8120894104] mutation: OptionalDouble[3260.4690618762475] copy: OptionalDouble[44778.876621756484]>
+<timeTaken: 14.0675625 second(s), bestFitness: -2.698717948717949 matching: OptionalDouble[158055.58902345292] mutation: OptionalDouble[3389.306387225549] copy: OptionalDouble[44659.114548680416]>
+<timeTaken: 19.3754339 second(s), bestFitness: -2.5333333333333328 matching: OptionalDouble[261201.1884232615] mutation: OptionalDouble[3932.574850299401] copy: OptionalDouble[44536.27994011976]>
+AVERAGES <averagemutation: OptionalDouble[3876.2984031936126], averagebestFitness: OptionalDouble[-2.604434472934473], averagecopy: OptionalDouble[46747.384358465606], averagematching: OptionalDouble[169546.34550678742]>

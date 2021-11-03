@@ -1,0 +1,10 @@
+<timeTaken: 9.8278382 second(s), bestFitness: -2.7305555555555556 matching: OptionalDouble[75985.13430134507] mutation: OptionalDouble[2760.938123752495]>
+<timeTaken: 8.2465932 second(s), bestFitness: -2.378787878787879 matching: OptionalDouble[54715.28580208973] mutation: OptionalDouble[2251.081730769231]>
+<timeTaken: 6.330929 second(s), bestFitness: -1.148110661268556 matching: OptionalDouble[26759.33344145313] mutation: OptionalDouble[2195.780983403133]>
+<timeTaken: 10.4707529 second(s), bestFitness: -2.9666666666666672 matching: OptionalDouble[94965.84032833543] mutation: OptionalDouble[2684.7804391217564]>
+<timeTaken: 8.9870283 second(s), bestFitness: -2.3045454545454547 matching: OptionalDouble[72396.02194221609] mutation: OptionalDouble[3147.814371257485]>
+<timeTaken: 9.6075117 second(s), bestFitness: -2.3848484848484848 matching: OptionalDouble[77793.47529178049] mutation: OptionalDouble[3971.581836327345]>
+<timeTaken: 11.2214408 second(s), bestFitness: -3.02991452991453 matching: OptionalDouble[107975.58946479685] mutation: OptionalDouble[2410.818363273453]>
+<timeTaken: 15.0298973 second(s), bestFitness: -3.1321428571428567 matching: OptionalDouble[176502.9292073788] mutation: OptionalDouble[2982.005988023952]>
+<timeTaken: 16.005049 second(s), bestFitness: -2.442857142857143 matching: OptionalDouble[199864.30766036952] mutation: OptionalDouble[3166.322355289421]>
+AVERAGES <averagemutation: OptionalDouble[3100.258626706657], averagebestFitness: OptionalDouble[-2.5396207009364904], averagematching: OptionalDouble[103716.70572135966]>

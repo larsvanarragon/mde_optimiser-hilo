@@ -17,20 +17,20 @@ import models.cra.fitness.architectureCRA.ArchitectureCRAPackage;
 import models.cra.fitness.architectureCRA.ClassModel;
 import nl.ru.icis.mdeoptimiser.hilo.encoding.io.ModelLoader;
 import nl.ru.icis.mdeoptimiser.hilo.encoding.model.Converter;
-import nl.ru.icis.mdeoptimiser.hilo.encoding.model.Encoding;
 import nl.ru.icis.mdeoptimiser.hilo.experiment.Batch;
 import nl.ru.icis.mdeoptimiser.hilo.experiment.config.ExperimentConfig;
 import nl.ru.icis.mdeoptimiser.hilo.problems.cra.experiment.EncodingExperiment;
 import nl.ru.icis.mdeoptimiser.hilo.problems.cra.experiment.MDEOExperiment;
 import uk.ac.kcl.inf.mdeoptimiser.languages.MoptStandaloneSetup;
 import uk.ac.kcl.inf.mdeoptimiser.languages.mopt.Optimisation;
-import uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.OptimisationInterpreter;
 
 public class Main {
   private static final String RESOURCE_LOCATION = "src/main/resources/nl/ru/icis/mdeoptimiser/hilo/problems/cra";
   private static final String ECORE_FILENAME = "architectureCRA.ecore";
-  private static final String MODEL_INSTANCE = "TTC_InputRDG_E.xmi";
+  private static final String MODEL_INSTANCE = "TTC_InputRDG_C.xmi";
   private static final String HENSHIN_FILENAME = "craEvolvers.henshin";
+  
+  private static final Integer BATCH_SIZE = 50;
   
   private static SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
   
@@ -55,7 +55,7 @@ public class Main {
     encWriter.append("ModelInstance: " + MODEL_INSTANCE + "\n");
     encWriter.close();
 
-    Batch encBatch = new Batch(encodedExperiment, 10, encFile);
+    Batch encBatch = new Batch(encodedExperiment, BATCH_SIZE, encFile);
     ExperimentConfig.isAspectJEnabled = encBatch.requiresAJ();
     encBatch.run();
     
@@ -68,7 +68,7 @@ public class Main {
     
     ExperimentConfig.isAspectJEnabled = false;
     MDEOExperiment mdeoExperiment = new MDEOExperiment(parseHelper, 500, 40, MODEL_INSTANCE);
-    Batch mdeBatch = new Batch(mdeoExperiment, 10, mdeFile);
+    Batch mdeBatch = new Batch(mdeoExperiment, BATCH_SIZE, mdeFile);
     mdeBatch.run();
   }
 }

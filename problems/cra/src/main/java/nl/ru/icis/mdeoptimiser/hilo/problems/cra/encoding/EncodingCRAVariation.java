@@ -39,20 +39,23 @@ public class EncodingCRAVariation implements Variation {
 
   @Override
   public Solution[] evolve(Solution[] parents) {
-    // Copy and set parent
-    Solution mutated = parents[0].copy();
-    mutated.setAttribute("parent", parents[0]);
     
-//    long startTime = System.nanoTime();
+    // Copy and set parent
+    long copyStartTime = System.nanoTime();
+    Solution mutated = parents[0].copy();
+    long copyTime = System.nanoTime() - copyStartTime;
+    
+    mutated.setAttribute("parent", parents[0]);
     
     // Get the variable we will mutate and set the current encoding
     EncodingCRAVariable toMutateVariable = (EncodingCRAVariable) mutated.getVariable(0);
     CRACoupleData.setCurrentEncoding(toMutateVariable.getEncoding());
+    toMutateVariable.addToTimings("copy", copyTime);
     
     // Mutate it
+    long mutationStartTime = System.nanoTime();
     mutate(toMutateVariable);
-    
-//    System.out.println("Variation nanos passed: " + (System.nanoTime() - startTime));
+    toMutateVariable.addToTimings("entireMutation", System.nanoTime() - mutationStartTime);
     
     // Return it
     return new Solution[] {mutated};
@@ -75,7 +78,7 @@ public class EncodingCRAVariation implements Variation {
         
         long startTimeMutating = System.nanoTime();
         if (mutateEncodingWithMatch(variable.getEncoding(), potentialMatch, new MatchImpl(rule, true), rule)) {
-          variable.addToTimings("mutating", System.nanoTime() - startTimeMutating);
+          variable.addToTimings("mutation", System.nanoTime() - startTimeMutating);
           break;
         }
       }

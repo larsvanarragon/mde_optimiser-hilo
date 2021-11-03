@@ -1,0 +1,12 @@
+ModelInstance: TTC_InputRDG_C.xmi
+<timeTaken: 25.0604971 second(s), bestFitness: -2.8499999999999996, mutation: OptionalDouble[7833.525], copy: OptionalDouble[20458.181362725452], matching: OptionalDouble[368742.12558380904]>
+<timeTaken: 19.956579 second(s), bestFitness: -2.4595959595959602, mutation: OptionalDouble[4204.66], copy: OptionalDouble[16750.105210420843], matching: OptionalDouble[294532.92942660407]>
+<timeTaken: 22.7568774 second(s), bestFitness: -2.948214285714286, mutation: OptionalDouble[4622.92], copy: OptionalDouble[16751.518036072146], matching: OptionalDouble[342186.9760138834]>
+<timeTaken: 22.5821631 second(s), bestFitness: -3.2762345679012337, mutation: OptionalDouble[5833.615], copy: OptionalDouble[19843.582164328658], matching: OptionalDouble[331106.1059575345]>
+<timeTaken: 7.2207837 second(s), bestFitness: -1.784090909090909, mutation: OptionalDouble[3439.86], copy: OptionalDouble[14438.527054108217], matching: OptionalDouble[68540.17270940493]>
+<timeTaken: 8.3861828 second(s), bestFitness: -1.637784090909091, mutation: OptionalDouble[3698.41], copy: OptionalDouble[15117.675350701404], matching: OptionalDouble[87552.55221620724]>
+<timeTaken: 22.1121796 second(s), bestFitness: -3.0138888888888884, mutation: OptionalDouble[5086.0], copy: OptionalDouble[17980.265531062123], matching: OptionalDouble[328946.7776240527]>
+<timeTaken: 16.9785233 second(s), bestFitness: -3.1481481481481484, mutation: OptionalDouble[4857.57], copy: OptionalDouble[17648.496993987977], matching: OptionalDouble[231598.37442202825]>
+<timeTaken: 16.3034032 second(s), bestFitness: -2.890598290598291, mutation: OptionalDouble[4374.58], copy: OptionalDouble[16706.397795591183], matching: OptionalDouble[223022.834238962]>
+<timeTaken: 10.7492385 second(s), bestFitness: -2.8136363636363635, mutation: OptionalDouble[4247.335], copy: OptionalDouble[16045.165330661323], matching: OptionalDouble[124681.68461077473]>
+AVERAGES <averagemutation: OptionalDouble[4819.8475], averagebestFitness: OptionalDouble[-2.6822191504483173], averagecopy: OptionalDouble[17173.991482965932], averagematching: OptionalDouble[240091.05328032607]>

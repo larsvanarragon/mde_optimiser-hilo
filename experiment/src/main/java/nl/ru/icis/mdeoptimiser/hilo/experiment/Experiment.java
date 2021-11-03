@@ -1,5 +1,8 @@
 package nl.ru.icis.mdeoptimiser.hilo.experiment;
 
+import java.util.HashMap;
+import java.util.OptionalDouble;
+
 import org.eclipse.emf.ecore.EObject;
 import org.moeaframework.core.NondominatedPopulation;
 
@@ -16,6 +19,8 @@ public abstract class Experiment {
   private long timeTaken = 0;
   
   protected NondominatedPopulation result;
+  
+  protected HashMap<String, OptionalDouble> timings = new HashMap<>();
   
   public Experiment(EObject model) {
     this.model = model;

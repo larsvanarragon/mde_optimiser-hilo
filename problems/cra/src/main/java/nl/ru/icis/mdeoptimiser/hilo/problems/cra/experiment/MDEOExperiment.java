@@ -8,11 +8,12 @@ import org.moeaframework.core.NondominatedPopulation;
 
 import nl.ru.icis.mdeoptimiser.hilo.experiment.Experiment;
 import nl.ru.icis.mdeoptimiser.hilo.experiment.ExperimentProblem;
-import nl.ru.icis.mdeoptimiser.hilo.problems.cra.encoding.AbstractEncodingCRA;
 import uk.ac.kcl.inf.mdeoptimiser.languages.mopt.Optimisation;
 import uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.OptimisationInterpreter;
 import uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.interpreter.henshin.MdeoRuleApplicationImpl;
+import uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.moea.problem.MoeaOptimisationProblem;
 import uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.moea.problem.MoeaOptimisationSolution;
+import uk.ac.kcl.inf.mdeoptimiser.libraries.core.optimisation.operators.mutation.application.AbstractMutationStrategy;
 
 public class MDEOExperiment extends Experiment {
   private String moptFile;
@@ -68,12 +69,42 @@ public class MDEOExperiment extends Experiment {
     builder.append((double) this.timeTaken() / 1_000_000_000);
     builder.append(" second(s), bestFitness: ");
     builder.append(bestFitness);
+    
     builder.append(" matching: ");
     OptionalDouble average = MdeoRuleApplicationImpl.timings.stream().mapToDouble(a -> a).average();
     builder.append(average.toString());
+
+    builder.append(" mutation: ");
+    OptionalDouble mutationAverage = MdeoRuleApplicationImpl.mutationTimings.stream().mapToDouble(a -> a).average();
+    builder.append(mutationAverage.toString());
+    
+    builder.append(" copy: ");
+    OptionalDouble copyAverage = AbstractMutationStrategy.timings.stream().mapToDouble(a -> a).average();
+    builder.append(copyAverage.toString());
+    
+    builder.append(" evaluation: ");
+    OptionalDouble evaluationAverage = MoeaOptimisationProblem.timings.stream().mapToDouble(a -> a).average();
+    builder.append(evaluationAverage.toString());
+    
+    builder.append(" entireMutation: ");
+    OptionalDouble entireMutationAverage = AbstractMutationStrategy.mutationTimings.stream().mapToDouble(a -> a).average();
+    builder.append(entireMutationAverage.toString());
+        
     builder.append(">\n");
+
+    timings.put("timeTaken", OptionalDouble.of((double) this.timeTaken() / 1_000_000_000));
+    timings.put("bestFitness", OptionalDouble.of(bestFitness));
+    timings.put("matching", average);
+    timings.put("mutation", mutationAverage);
+    timings.put("entireMutation", entireMutationAverage);
+    timings.put("copy", copyAverage);
+    timings.put("evaluation", evaluationAverage);
     
     MdeoRuleApplicationImpl.timings.clear();
+    MdeoRuleApplicationImpl.mutationTimings.clear();
+    AbstractMutationStrategy.timings.clear();
+    AbstractMutationStrategy.mutationTimings.clear();
+    MoeaOptimisationProblem.timings.clear();
     
     // TODO Auto-generated method stub
     return builder.toString();
