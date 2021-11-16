@@ -48,8 +48,7 @@ public class ModelNRPVariation implements Variation {
       var child1Artifact = child1Model.getAvailableArtifacts().get(i);
       
       if (
-          (parent0Model.getSolutions().get(0).getSelectedArtifacts().contains(parent0Artifact) !=
-          parent1Model.getSolutions().get(0).getSelectedArtifacts().contains(parent1Artifact)) &&
+          (parent0Artifact.getSolutions().isEmpty() != parent1Artifact.getSolutions().isEmpty()) &&
           PRNG.nextBoolean()
           ) {
         
