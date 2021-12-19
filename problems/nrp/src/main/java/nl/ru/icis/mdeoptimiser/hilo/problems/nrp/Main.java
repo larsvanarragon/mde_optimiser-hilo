@@ -19,23 +19,23 @@ import nl.ru.icis.mdeoptimiser.hilo.problems.nrp.experiment.ModelExperiment;
 
 public class Main {
   private static final String RESOURCE_LOCATION = "src/main/resources/nl/ru/icis/mdeoptimiser/hilo/problems/nrp/models";
-  private static final String MODEL_NAME = "nrp-model-25-cus-50-req-203-sa.xmi";
+  private static final String MODEL_NAME = "nrp-model-5-cus-25-req-63-sa.xmi";
   
-  private static final String COMBINED_PARETO_FRONT_NAME = "cpf_2kp_100ke.dat";
+  private static final String COMBINED_PARETO_FRONT_NAME = "cpf_2kp_50ke.dat";
   
   private static HenshinResourceSet resourceSet = new HenshinResourceSet(RESOURCE_LOCATION);
   
   private static boolean createReferencePareto = false;
   
   private static final int EVALUATIONS_START_VALUE = 10_000;
-  private static final int EVALUATIONS_END_VALUE = 50_000;
+  private static final int EVALUATIONS_END_VALUE = 30_000;
 //  private static final int EVALUATIONS_END_VALUE = 50_000;
   private static final int EVALUATIONS_INCREMENT_STEP = 10_000;
   
-  private static final int POPSIZE_START_VALUE = 1000;
-  private static final int POPSIZE_END_VALUE = 1000;
+  private static final int POPSIZE_START_VALUE = 500;
+  private static final int POPSIZE_END_VALUE = 2000;
 //  private static final int POPSIZE_END_VALUE = 400;
-  private static final int POPSIZE_INCREMENT_STEP = 1000;
+  private static final int POPSIZE_INCREMENT_STEP = 500;
   
   private static final int EXPERIMENTS_PER_CYCLE = 10;
   
@@ -51,13 +51,15 @@ public class Main {
   // TODO for ttesting we want to reject the 0 null hypothesis by finding a p value lower than 5 percent.
   // TODO assuming that they are the same (which is what we want to show, so we look for a p value > 5 per cent)
   
-  private static BooleanNRPHypervolumeEvaluator hypervolumeEvaluator = new BooleanNRPHypervolumeEvaluator(new AbstractBooleanNRP(), COMBINED_PARETO_FRONT_NAME);
+  private static BooleanNRPHypervolumeEvaluator hypervolumeEvaluator;
   
   public static void main( String[] args ) throws Exception {
     if (createReferencePareto) {
       System.out.println("Creating reference pareto front for model instance: " + MODEL_NAME);
       makeReferencePoint();
       System.exit(0);
+    } else {
+      hypervolumeEvaluator = new BooleanNRPHypervolumeEvaluator(new AbstractBooleanNRP(), COMBINED_PARETO_FRONT_NAME);
     }
     
     for (int popsize = POPSIZE_START_VALUE; popsize <= POPSIZE_END_VALUE; popsize += POPSIZE_INCREMENT_STEP) {
@@ -138,7 +140,7 @@ public class Main {
 //  private static final int REFERENCE_EVALUATIONS = 25_000;
   
   private static final int REFERENCE_POPSIZE = 2000;
-  private static final int REFERENCE_EVALUATIONS = 100_000;
+  private static final int REFERENCE_EVALUATIONS = 50_000;
   
 //  private static final int REFERENCE_POPSIZE = 100;
 //  private static final int REFERENCE_EVALUATIONS = 500;
