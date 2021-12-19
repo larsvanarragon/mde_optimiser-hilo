@@ -1,5 +1,6 @@
 
 NRP_PATH = "..\\problems\\nrp\\results\\experiments"
+CRA_PATH = "..\\problems\\cra\\results\\experiments"
 
 
 def results(filename, relative_path):

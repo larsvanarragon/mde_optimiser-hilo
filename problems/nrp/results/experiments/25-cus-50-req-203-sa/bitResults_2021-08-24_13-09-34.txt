@@ -19,3 +19,8 @@ private static final int POPSIZE_END_VALUE = 1000;
 private static final int POPSIZE_INCREMENT_STEP = 200;
 
 cpf_2000p_25000e
+
+Ttest_indResult(statistic=-0.05265011387781582, pvalue=0.9580317997680032)
+
+Average speedup: 1.9316788991013027
+Min: 1.4069603291022945  Max: 2.274684948275963
