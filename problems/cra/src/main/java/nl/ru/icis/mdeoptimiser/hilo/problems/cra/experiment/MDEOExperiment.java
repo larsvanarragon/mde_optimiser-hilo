@@ -70,23 +70,23 @@ public class MDEOExperiment extends Experiment {
     builder.append(" second(s), bestFitness: ");
     builder.append(bestFitness);
     
-    builder.append(" matching: ");
+    builder.append(", matching: ");
     OptionalDouble average = MdeoRuleApplicationImpl.timings.stream().mapToDouble(a -> a).average();
     builder.append(average.toString());
 
-    builder.append(" mutation: ");
+    builder.append(", mutation: ");
     OptionalDouble mutationAverage = MdeoRuleApplicationImpl.mutationTimings.stream().mapToDouble(a -> a).average();
     builder.append(mutationAverage.toString());
     
-    builder.append(" copy: ");
+    builder.append(", copy: ");
     OptionalDouble copyAverage = AbstractMutationStrategy.timings.stream().mapToDouble(a -> a).average();
     builder.append(copyAverage.toString());
     
-    builder.append(" evaluation: ");
+    builder.append(", evaluation: ");
     OptionalDouble evaluationAverage = MoeaOptimisationProblem.timings.stream().mapToDouble(a -> a).average();
     builder.append(evaluationAverage.toString());
     
-    builder.append(" entireMutation: ");
+    builder.append(", entireMutation: ");
     OptionalDouble entireMutationAverage = AbstractMutationStrategy.mutationTimings.stream().mapToDouble(a -> a).average();
     builder.append(entireMutationAverage.toString());
         

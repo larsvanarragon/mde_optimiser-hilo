@@ -27,7 +27,7 @@ import uk.ac.kcl.inf.mdeoptimiser.languages.mopt.Optimisation;
 public class Main {
   private static final String RESOURCE_LOCATION = "src/main/resources/nl/ru/icis/mdeoptimiser/hilo/problems/cra";
   private static final String ECORE_FILENAME = "architectureCRA.ecore";
-  private static final String MODEL_INSTANCE = "TTC_InputRDG_E.xmi";
+  private static final String MODEL_INSTANCE = "TTC_InputRDG_D.xmi";
   private static final String HENSHIN_FILENAME = "craEvolvers.henshin";
   
   private static final Integer BATCH_SIZE = 20;

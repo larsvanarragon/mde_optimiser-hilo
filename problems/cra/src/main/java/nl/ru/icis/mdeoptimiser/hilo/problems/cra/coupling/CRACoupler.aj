@@ -103,42 +103,42 @@ public aspect CRACoupler {
    * Pointcut to intercept the getter for the features of a ClassModelImpl
    * @param classModel
    */
-  pointcut getFeaturesFromClassModel(ClassModel classModel): 
-    call(EList<models.cra.fitness.architectureCRA.Feature> ClassModel.getFeatures())
-    && target (classModel);
-  
-  EList<models.cra.fitness.architectureCRA.Feature> around(ClassModel classModel): getFeaturesFromClassModel(classModel) {
-    if (!ExperimentConfig.isAspectJEnabled) {
-      return proceed(classModel);
-    }
-    
-    return returnFeaturesFromClassModel(classModel);
-  }
-  
-  pointcut getFeaturesFromClassModelImpl(ClassModelImpl classModel): 
-    call(EList<models.cra.fitness.architectureCRA.Feature> ClassModelImpl.getFeatures())
-    && target (classModel);
-  
-  EList<models.cra.fitness.architectureCRA.Feature> around(ClassModelImpl classModel): getFeaturesFromClassModelImpl(classModel) {
-    if (!ExperimentConfig.isAspectJEnabled) {
-      return proceed(classModel);
-    }
-    
-    return returnFeaturesFromClassModel(classModel);
-  }
-  
-  EList<models.cra.fitness.architectureCRA.Feature>  returnFeaturesFromClassModel(ClassModel classModel) {
-    Encoding encoding = CRACoupleData.getCurrentEncoding();
-    
-    try {
-      return (EList<models.cra.fitness.architectureCRA.Feature>)(EList<?>) 
-          encoding.getRelatedInstancesFor(CRACoupleData.CLASSMODEL_TO_FEATURE_RELATION, classModel);
-    } catch (Exception e) {
-      e.printStackTrace();
-      System.exit(1);
-      return null;
-    }
-  }
+//  pointcut getFeaturesFromClassModel(ClassModel classModel): 
+//    call(EList<models.cra.fitness.architectureCRA.Feature> ClassModel.getFeatures())
+//    && target (classModel);
+//  
+//  EList<models.cra.fitness.architectureCRA.Feature> around(ClassModel classModel): getFeaturesFromClassModel(classModel) {
+//    if (!ExperimentConfig.isAspectJEnabled) {
+//      return proceed(classModel);
+//    }
+//    
+//    return returnFeaturesFromClassModel(classModel);
+//  }
+//  
+//  pointcut getFeaturesFromClassModelImpl(ClassModelImpl classModel): 
+//    call(EList<models.cra.fitness.architectureCRA.Feature> ClassModelImpl.getFeatures())
+//    && target (classModel);
+//  
+//  EList<models.cra.fitness.architectureCRA.Feature> around(ClassModelImpl classModel): getFeaturesFromClassModelImpl(classModel) {
+//    if (!ExperimentConfig.isAspectJEnabled) {
+//      return proceed(classModel);
+//    }
+//    
+//    return returnFeaturesFromClassModel(classModel);
+//  }
+//  
+//  EList<models.cra.fitness.architectureCRA.Feature>  returnFeaturesFromClassModel(ClassModel classModel) {
+//    Encoding encoding = CRACoupleData.getCurrentEncoding();
+//    
+//    try {
+//      return (EList<models.cra.fitness.architectureCRA.Feature>)(EList<?>) 
+//          encoding.getRelatedInstancesFor(CRACoupleData.CLASSMODEL_TO_FEATURE_RELATION, classModel);
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//      System.exit(1);
+//      return null;
+//    }
+//  }
   // END INTERCEPTING ClassModelImpl GETTERS
   
   // START INTERCEPTING FeatureImpl GETTERS
@@ -262,79 +262,79 @@ public aspect CRACoupler {
   // END INTERCEPTING ClassImpl GETTERS
   
   // START INTERCEPTING MethodImpl GETTERS
-  pointcut getDataDependencyMethod(Method method):
-    call (EList<models.cra.fitness.architectureCRA.Attribute> Method.getDataDependency())
-    && target(method);
-  
-  EList<models.cra.fitness.architectureCRA.Attribute> around(Method method) : getDataDependencyMethod(method) {
-    if (!ExperimentConfig.isAspectJEnabled) {
-      return proceed(method);
-    }
-    
-    return returnAttributesFromMethod(method);
-  }
-  
-  pointcut getDataDependencyMethodImpl(MethodImpl method):
-    call (EList<models.cra.fitness.architectureCRA.Attribute> MethodImpl.getDataDependency())
-    && target(method);
-  
-  EList<models.cra.fitness.architectureCRA.Attribute> around(MethodImpl method) : getDataDependencyMethodImpl(method) {
-    if (!ExperimentConfig.isAspectJEnabled) {
-      return proceed(method);
-    }
-    
-    return returnAttributesFromMethod(method);
-  }
-  
-  EList<models.cra.fitness.architectureCRA.Attribute> returnAttributesFromMethod(Method method) {
-    Encoding encoding = CRACoupleData.getCurrentEncoding();
-    
-    try {
-      return (EList<models.cra.fitness.architectureCRA.Attribute>) (EList<?>) 
-          encoding.getRelatedInstancesFor(CRACoupleData.METHOD_TO_ATTRIBUTE_DD_RELATION, method);
-    } catch (Exception e) {
-      e.printStackTrace();
-      System.exit(1);
-      return null;
-    }
-  }
-  
-  pointcut getFunctionalDependencyMethod(Method method):
-    call (EList<models.cra.fitness.architectureCRA.Method> Method.getFunctionalDependency())
-    && target(method);
-  
-  EList<models.cra.fitness.architectureCRA.Method> around(Method method) : getFunctionalDependencyMethod(method) {
-    if (!ExperimentConfig.isAspectJEnabled) {
-      return proceed(method);
-    }
-    
-    return returnMethodsFromMethod(method);
-  }
-  
-  pointcut getFunctionalDependencyMethodImpl(MethodImpl method):
-    call (EList<models.cra.fitness.architectureCRA.Method> MethodImpl.getFunctionalDependency())
-    && target(method);
-  
-  EList<models.cra.fitness.architectureCRA.Method> around(MethodImpl method) : getFunctionalDependencyMethodImpl(method) {
-    if (!ExperimentConfig.isAspectJEnabled) {
-      return proceed(method);
-    }
-    
-    return returnMethodsFromMethod(method);
-  }
-  
-  EList<models.cra.fitness.architectureCRA.Method> returnMethodsFromMethod(Method method) {
-    Encoding encoding = CRACoupleData.getCurrentEncoding();
-    
-    try {
-      return (EList<models.cra.fitness.architectureCRA.Method>) (EList<?>) 
-          encoding.getRelatedInstancesFor(CRACoupleData.METHOD_TO_ATTRIBUTE_FD_RELATION, method);
-    } catch (Exception e) {
-      e.printStackTrace();
-      System.exit(1);
-      return null;
-    }
-  }
+//  pointcut getDataDependencyMethod(Method method):
+//    call (EList<models.cra.fitness.architectureCRA.Attribute> Method.getDataDependency())
+//    && target(method);
+//  
+//  EList<models.cra.fitness.architectureCRA.Attribute> around(Method method) : getDataDependencyMethod(method) {
+//    if (!ExperimentConfig.isAspectJEnabled) {
+//      return proceed(method);
+//    }
+//    
+//    return returnAttributesFromMethod(method);
+//  }
+//  
+//  pointcut getDataDependencyMethodImpl(MethodImpl method):
+//    call (EList<models.cra.fitness.architectureCRA.Attribute> MethodImpl.getDataDependency())
+//    && target(method);
+//  
+//  EList<models.cra.fitness.architectureCRA.Attribute> around(MethodImpl method) : getDataDependencyMethodImpl(method) {
+//    if (!ExperimentConfig.isAspectJEnabled) {
+//      return proceed(method);
+//    }
+//    
+//    return returnAttributesFromMethod(method);
+//  }
+//  
+//  EList<models.cra.fitness.architectureCRA.Attribute> returnAttributesFromMethod(Method method) {
+//    Encoding encoding = CRACoupleData.getCurrentEncoding();
+//    
+//    try {
+//      return (EList<models.cra.fitness.architectureCRA.Attribute>) (EList<?>) 
+//          encoding.getRelatedInstancesFor(CRACoupleData.METHOD_TO_ATTRIBUTE_DD_RELATION, method);
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//      System.exit(1);
+//      return null;
+//    }
+//  }
+//  
+//  pointcut getFunctionalDependencyMethod(Method method):
+//    call (EList<models.cra.fitness.architectureCRA.Method> Method.getFunctionalDependency())
+//    && target(method);
+//  
+//  EList<models.cra.fitness.architectureCRA.Method> around(Method method) : getFunctionalDependencyMethod(method) {
+//    if (!ExperimentConfig.isAspectJEnabled) {
+//      return proceed(method);
+//    }
+//    
+//    return returnMethodsFromMethod(method);
+//  }
+//  
+//  pointcut getFunctionalDependencyMethodImpl(MethodImpl method):
+//    call (EList<models.cra.fitness.architectureCRA.Method> MethodImpl.getFunctionalDependency())
+//    && target(method);
+//  
+//  EList<models.cra.fitness.architectureCRA.Method> around(MethodImpl method) : getFunctionalDependencyMethodImpl(method) {
+//    if (!ExperimentConfig.isAspectJEnabled) {
+//      return proceed(method);
+//    }
+//    
+//    return returnMethodsFromMethod(method);
+//  }
+//  
+//  EList<models.cra.fitness.architectureCRA.Method> returnMethodsFromMethod(Method method) {
+//    Encoding encoding = CRACoupleData.getCurrentEncoding();
+//    
+//    try {
+//      return (EList<models.cra.fitness.architectureCRA.Method>) (EList<?>) 
+//          encoding.getRelatedInstancesFor(CRACoupleData.METHOD_TO_ATTRIBUTE_FD_RELATION, method);
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//      System.exit(1);
+//      return null;
+//    }
+//  }
   // END INTERCEPTING MethodImpl GETTERS
   
   // START INTERCEPTING AttributeImpl GETTERS
