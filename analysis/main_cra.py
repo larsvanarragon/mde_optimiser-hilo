@@ -14,11 +14,11 @@ import numpy as np
 # modelc_encores = cra_results("encodingResults2023-07-06_13-24-31.txt", CRA_PATH + "\\slim-results\\modelc")
 # modelc_mdeores = cra_results("mdeoResults2023-07-06_13-28-08.txt", CRA_PATH + "\\slim-results\\modelc")
 #
-modeld_encores = cra_results("encodingResults2023-07-06_13-31-57.txt", CRA_PATH + "\\slim-results\\modeld")
-modeld_mdeores = cra_results("mdeoResults2023-07-06_14-04-24.txt", CRA_PATH + "\\slim-results\\modeld")
+# modeld_encores = cra_results("encodingResults2023-07-06_13-31-57.txt", CRA_PATH + "\\slim-results\\modeld")
+# modeld_mdeores = cra_results("mdeoResults2023-07-06_14-04-24.txt", CRA_PATH + "\\slim-results\\modeld")
 
-modeld_encores = cra_results("encodingResults2023-07-06_15-27-29.txt", CRA_PATH + "")
-modeld_mdeores = cra_results("mdeoResults2023-07-06_16-04-56.txt", CRA_PATH + "")
+# modeld_encores = cra_results("encodingResults2023-07-06_15-27-29.txt", CRA_PATH + "")
+# modeld_mdeores = cra_results("mdeoResults2023-07-06_16-04-56.txt", CRA_PATH + "")
 
 
 modela_encores = cra_results("encodingResults2021-11-03_18-12-54.txt", CRA_PATH + "\\modela")
@@ -30,8 +30,8 @@ modelb_mdeores = cra_results("mdeoResults2021-11-03_19-19-50.txt", CRA_PATH + "\
 modelc_encores = cra_results("encodingResults2021-11-03_16-41-34.txt", CRA_PATH + "\\modelc")
 modelc_mdeores = cra_results("mdeoResults2021-11-03_16-54-54.txt", CRA_PATH + "\\modelc")
 
-# modeld_encores = cra_results("encodingResults2021-11-04_10-35-12.txt", CRA_PATH + "\\modeld")
-# modeld_mdeores = cra_results("mdeoResults2021-11-04_11-40-27.txt", CRA_PATH + "\\modeld")
+modeld_encores = cra_results("encodingResults2021-11-04_10-35-12.txt", CRA_PATH + "\\modeld")
+modeld_mdeores = cra_results("mdeoResults2021-11-04_11-40-27.txt", CRA_PATH + "\\modeld")
 
 modele_encores = cra_results("encodingResults2021-11-03_17-13-15.txt", CRA_PATH + "\\modele")
 modele_mdeores = cra_results("mdeoResults2021-11-03_21-54-32.txt", CRA_PATH + "\\modele")
@@ -83,10 +83,32 @@ def main():
     show_plot("evaluation", "Time in nanosecond(s)", "Time for evaluating members of the population")
     show_plot("matching", "Time in nanosecond(s)", "Time for matching a Henshin rule to a member of the population")
 
+    print("ENC A STD: {}, MEAN: {}".format(np.std(modela_encores["bestFitness"]), np.mean(modela_encores["bestFitness"])))
+    print("MOD A STD: {}, MEAN: {}".format(np.std(modela_mdeores["bestFitness"]), np.mean(modela_mdeores["bestFitness"])))
+
+    print("ENC B STD: {}, MEAN: {}".format(np.std(modelb_encores["bestFitness"]), np.mean(modelb_encores["bestFitness"])))
+    print("MOD B STD: {}, MEAN: {}".format(np.std(modelb_mdeores["bestFitness"]), np.mean(modelb_mdeores["bestFitness"])))
+
+    print("ENC C STD: {}, MEAN: {}".format(np.std(modelc_encores["bestFitness"]), np.mean(modelc_encores["bestFitness"])))
+    print("MOD C STD: {}, MEAN: {}".format(np.std(modelc_mdeores["bestFitness"]), np.mean(modelc_mdeores["bestFitness"])))
+
+    print("ENC D STD: {}, MEAN: {}".format(np.std(modeld_encores["bestFitness"]), np.mean(modeld_encores["bestFitness"])))
+    print( "MOD D STD: {}, MEAN: {}".format(np.std(modeld_mdeores["bestFitness"]), np.mean(modeld_mdeores["bestFitness"])))
+
+    print("ENC E STD: {}, MEAN: {}".format(np.std(modele_encores["bestFitness"]), np.mean(modele_encores["bestFitness"])))
+    print( "MOD E STD: {}, MEAN: {}".format(np.std(modele_mdeores["bestFitness"]), np.mean(modele_mdeores["bestFitness"])))
+
     print("TTESTING A", scistats.ttest_ind(modela_encores["bestFitness"], modela_mdeores["bestFitness"]))
     print("TTESTING B", scistats.ttest_ind(modelb_encores["bestFitness"], modelb_mdeores["bestFitness"]))
     print("TTESTING C", scistats.ttest_ind(modelc_encores["bestFitness"], modelc_mdeores["bestFitness"]))
     print("TTESTING D", scistats.ttest_ind(modeld_encores["bestFitness"], modeld_mdeores["bestFitness"]))
     print("TTESTING E", scistats.ttest_ind(modele_encores["bestFitness"], modele_mdeores["bestFitness"]))
+
+    print("TTESTINGTIMES A", scistats.ttest_ind(modela_encores["timeTaken"], modela_mdeores["timeTaken"]))
+    print("TTESTINGTIMES B", scistats.ttest_ind(modelb_encores["timeTaken"], modelb_mdeores["timeTaken"]))
+    print("TTESTINGTIMES C", scistats.ttest_ind(modelc_encores["timeTaken"], modelc_mdeores["timeTaken"]))
+    print("TTESTINGTIMES D", scistats.ttest_ind(modeld_encores["timeTaken"], modeld_mdeores["timeTaken"]))
+    print("TTESTINGTIMES E", scistats.ttest_ind(modele_encores["timeTaken"], modele_mdeores["timeTaken"]))
+
 
 main()
