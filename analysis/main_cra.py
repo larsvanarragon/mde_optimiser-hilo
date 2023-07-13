@@ -76,39 +76,67 @@ def show_plot(aspect, description, title):
     plt.show()
 
 
+def calc_mean_and_std():
+    letters = ['A', 'B', 'C', 'D', 'E']
+    for i, (enc_res, mde_res) in enumerate([(modela_encores, modela_mdeores), (modelb_encores, modelb_mdeores),
+                                            (modelc_encores, modelc_mdeores), (modeld_encores, modeld_mdeores),
+                                            (modele_encores, modele_mdeores)]):
+        print("{} ENC_TOTAL_RUNTIME: MEAN {}, STD {}".format(letters[i], np.mean(enc_res["timeTaken"]),
+                                                             np.std(enc_res["timeTaken"])))
+        print("{} MDE_TOTAL_RUNTIME: MEAN {}, STD {}".format(letters[i], np.mean(mde_res["timeTaken"]),
+                                                             np.std(mde_res["timeTaken"])))
+
+        print("{} ENC_COPY_TIME: MEAN {}, STD {}".format(letters[i], np.mean(enc_res["copy"]),
+                                                             np.std(enc_res["copy"])))
+        print("{} MDE_COPY_TIME: MEAN {}, STD {}".format(letters[i], np.mean(mde_res["copy"]),
+                                                             np.std(mde_res["copy"])))
+
+        print("{} ENC_MUTATION_TIME: MEAN {}, STD {}".format(letters[i], np.mean(enc_res["entireMutation"]),
+                                                             np.std(enc_res["entireMutation"])))
+        print("{} MDE_MUTATION_TIME: MEAN {}, STD {}".format(letters[i], np.mean(mde_res["entireMutation"]),
+                                                             np.std(mde_res["entireMutation"])))
+
+        print("{} ENC_EVALUATION_TIME: MEAN {}, STD {}".format(letters[i], np.mean(enc_res["evaluation"]),
+                                                             np.std(enc_res["evaluation"])))
+        print("{} MDE_EVALUATION_TIME: MEAN {}, STD {}".format(letters[i], np.mean(mde_res["evaluation"]),
+                                                             np.std(mde_res["evaluation"])))
+        print("")
+
+
 def main():
-    show_plot("timeTaken", "Time in second(s)", "Overall time taken")
-    show_plot("copy", "Time in nanosecond(s)", "Time for copying the population")
-    show_plot("mutation", "Time in nanosecond(s)", "Time for mutating the population")
-    show_plot("evaluation", "Time in nanosecond(s)", "Time for evaluating members of the population")
-    show_plot("matching", "Time in nanosecond(s)", "Time for matching a Henshin rule to a member of the population")
+    # show_plot("timeTaken", "Time in second(s)", "Overall time taken")
+    # show_plot("copy", "Time in nanosecond(s)", "Time for copying the population")
+    # show_plot("mutation", "Time in nanosecond(s)", "Time for mutating the population")
+    # show_plot("evaluation", "Time in nanosecond(s)", "Time for evaluating members of the population")
+    # show_plot("matching", "Time in nanosecond(s)", "Time for matching a Henshin rule to a member of the population")
 
-    print("ENC A STD: {}, MEAN: {}".format(np.std(modela_encores["bestFitness"]), np.mean(modela_encores["bestFitness"])))
-    print("MOD A STD: {}, MEAN: {}".format(np.std(modela_mdeores["bestFitness"]), np.mean(modela_mdeores["bestFitness"])))
-
-    print("ENC B STD: {}, MEAN: {}".format(np.std(modelb_encores["bestFitness"]), np.mean(modelb_encores["bestFitness"])))
-    print("MOD B STD: {}, MEAN: {}".format(np.std(modelb_mdeores["bestFitness"]), np.mean(modelb_mdeores["bestFitness"])))
-
-    print("ENC C STD: {}, MEAN: {}".format(np.std(modelc_encores["bestFitness"]), np.mean(modelc_encores["bestFitness"])))
-    print("MOD C STD: {}, MEAN: {}".format(np.std(modelc_mdeores["bestFitness"]), np.mean(modelc_mdeores["bestFitness"])))
-
-    print("ENC D STD: {}, MEAN: {}".format(np.std(modeld_encores["bestFitness"]), np.mean(modeld_encores["bestFitness"])))
-    print( "MOD D STD: {}, MEAN: {}".format(np.std(modeld_mdeores["bestFitness"]), np.mean(modeld_mdeores["bestFitness"])))
-
-    print("ENC E STD: {}, MEAN: {}".format(np.std(modele_encores["bestFitness"]), np.mean(modele_encores["bestFitness"])))
-    print( "MOD E STD: {}, MEAN: {}".format(np.std(modele_mdeores["bestFitness"]), np.mean(modele_mdeores["bestFitness"])))
-
-    print("TTESTING A", scistats.ttest_ind(modela_encores["bestFitness"], modela_mdeores["bestFitness"]))
-    print("TTESTING B", scistats.ttest_ind(modelb_encores["bestFitness"], modelb_mdeores["bestFitness"]))
-    print("TTESTING C", scistats.ttest_ind(modelc_encores["bestFitness"], modelc_mdeores["bestFitness"]))
-    print("TTESTING D", scistats.ttest_ind(modeld_encores["bestFitness"], modeld_mdeores["bestFitness"]))
-    print("TTESTING E", scistats.ttest_ind(modele_encores["bestFitness"], modele_mdeores["bestFitness"]))
-
-    print("TTESTINGTIMES A", scistats.ttest_ind(modela_encores["timeTaken"], modela_mdeores["timeTaken"]))
-    print("TTESTINGTIMES B", scistats.ttest_ind(modelb_encores["timeTaken"], modelb_mdeores["timeTaken"]))
-    print("TTESTINGTIMES C", scistats.ttest_ind(modelc_encores["timeTaken"], modelc_mdeores["timeTaken"]))
-    print("TTESTINGTIMES D", scistats.ttest_ind(modeld_encores["timeTaken"], modeld_mdeores["timeTaken"]))
-    print("TTESTINGTIMES E", scistats.ttest_ind(modele_encores["timeTaken"], modele_mdeores["timeTaken"]))
+    # print("ENC A STD: {}, MEAN: {}".format(np.std(modela_encores["bestFitness"]), np.mean(modela_encores["bestFitness"])))
+    # print("MOD A STD: {}, MEAN: {}".format(np.std(modela_mdeores["bestFitness"]), np.mean(modela_mdeores["bestFitness"])))
+    #
+    # print("ENC B STD: {}, MEAN: {}".format(np.std(modelb_encores["bestFitness"]), np.mean(modelb_encores["bestFitness"])))
+    # print("MOD B STD: {}, MEAN: {}".format(np.std(modelb_mdeores["bestFitness"]), np.mean(modelb_mdeores["bestFitness"])))
+    #
+    # print("ENC C STD: {}, MEAN: {}".format(np.std(modelc_encores["bestFitness"]), np.mean(modelc_encores["bestFitness"])))
+    # print("MOD C STD: {}, MEAN: {}".format(np.std(modelc_mdeores["bestFitness"]), np.mean(modelc_mdeores["bestFitness"])))
+    #
+    # print("ENC D STD: {}, MEAN: {}".format(np.std(modeld_encores["bestFitness"]), np.mean(modeld_encores["bestFitness"])))
+    # print( "MOD D STD: {}, MEAN: {}".format(np.std(modeld_mdeores["bestFitness"]), np.mean(modeld_mdeores["bestFitness"])))
+    #
+    # print("ENC E STD: {}, MEAN: {}".format(np.std(modele_encores["bestFitness"]), np.mean(modele_encores["bestFitness"])))
+    # print( "MOD E STD: {}, MEAN: {}".format(np.std(modele_mdeores["bestFitness"]), np.mean(modele_mdeores["bestFitness"])))
+    #
+    # print("TTESTING A", scistats.ttest_ind(modela_encores["bestFitness"], modela_mdeores["bestFitness"]))
+    # print("TTESTING B", scistats.ttest_ind(modelb_encores["bestFitness"], modelb_mdeores["bestFitness"]))
+    # print("TTESTING C", scistats.ttest_ind(modelc_encores["bestFitness"], modelc_mdeores["bestFitness"]))
+    # print("TTESTING D", scistats.ttest_ind(modeld_encores["bestFitness"], modeld_mdeores["bestFitness"]))
+    # print("TTESTING E", scistats.ttest_ind(modele_encores["bestFitness"], modele_mdeores["bestFitness"]))
+    #
+    # print("TTESTINGTIMES A", scistats.ttest_ind(modela_encores["timeTaken"], modela_mdeores["timeTaken"]))
+    # print("TTESTINGTIMES B", scistats.ttest_ind(modelb_encores["timeTaken"], modelb_mdeores["timeTaken"]))
+    # print("TTESTINGTIMES C", scistats.ttest_ind(modelc_encores["timeTaken"], modelc_mdeores["timeTaken"]))
+    # print("TTESTINGTIMES D", scistats.ttest_ind(modeld_encores["timeTaken"], modeld_mdeores["timeTaken"]))
+    # print("TTESTINGTIMES E", scistats.ttest_ind(modele_encores["timeTaken"], modele_mdeores["timeTaken"]))
+    calc_mean_and_std()
 
 
 main()
