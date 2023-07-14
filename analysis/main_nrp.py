@@ -6,42 +6,42 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # START NRP 5-cus-25-req-63-sa RESULTS
-eval_start = 10_000
-eval_end = 30_000
-eval_step = 10_000
-
-pop_start = 500
-pop_end = 2000
-pop_step = 500
-
-bit_results, bit_results_batch_size = nrp_results("bitResults_2021-11-04_19-02-44.txt", NRP_PATH + "\\5-cus-25-req-63-sa")
-model_results, model_results_batch_size = nrp_results("modelResults_2021-11-04_19-02-44.txt", NRP_PATH + "\\5-cus-25-req-63-sa")
+# eval_start = 10_000
+# eval_end = 30_000
+# eval_step = 10_000
+#
+# pop_start = 500
+# pop_end = 2000
+# pop_step = 500
+#
+# bit_results, bit_results_batch_size = nrp_results("bitResults_2021-11-04_19-02-44.txt", NRP_PATH + "\\5-cus-25-req-63-sa")
+# model_results, model_results_batch_size = nrp_results("modelResults_2021-11-04_19-02-44.txt", NRP_PATH + "\\5-cus-25-req-63-sa")
 # END NRP 5-cus-25-req-63-sa RESULTS
 
 # START NRP 25-cus-50-req-203-sa SMALL EVALS RESULTS
-eval_start = 1000
-eval_end = 10_000
-eval_step = 1000
-
-pop_start = 200
-pop_end = 1000
-pop_step = 200
-
-bit_results, bit_results_batch_size = nrp_results("bitResults_2021-08-24_13-09-34.txt", NRP_PATH + "\\25-cus-50-req-203-sa")
-model_results, model_results_batch_size = nrp_results("modelResults_2021-08-24_13-09-34.txt", NRP_PATH + "\\25-cus-50-req-203-sa")
+# eval_start = 1000
+# eval_end = 10_000
+# eval_step = 1000
+#
+# pop_start = 200
+# pop_end = 1000
+# pop_step = 200
+#
+# bit_results, bit_results_batch_size = nrp_results("bitResults_2021-08-24_13-09-34.txt", NRP_PATH + "\\25-cus-50-req-203-sa")
+# model_results, model_results_batch_size = nrp_results("modelResults_2021-08-24_13-09-34.txt", NRP_PATH + "\\25-cus-50-req-203-sa")
 # END NRP 25-cus-50-req-203-sa SMALL EVALS RESULTS
 
 # START NRP 25-cus-50-req-203-sa BIG EVALS RESULTS
-# eval_start = 10_000
-# eval_end = 50_000
-# eval_step = 10_000
-#
-# pop_start = 1000
-# pop_end = 1000
-# pop_step = 1000
-#
-# bit_results, bit_results_batch_size = nrp_results("bitResults_2021-10-28_17-48-38.txt", NRP_PATH + "\\25-cus-50-req-203-sa")
-# model_results, model_results_batch_size = nrp_results("modelResults_2021-10-28_17-48-38.txt", NRP_PATH + "\\25-cus-50-req-203-sa")
+eval_start = 10_000
+eval_end = 50_000
+eval_step = 10_000
+
+pop_start = 1000
+pop_end = 1000
+pop_step = 1000
+
+bit_results, bit_results_batch_size = nrp_results("bitResults_2021-10-28_17-48-38.txt", NRP_PATH + "\\25-cus-50-req-203-sa")
+model_results, model_results_batch_size = nrp_results("modelResults_2021-10-28_17-48-38.txt", NRP_PATH + "\\25-cus-50-req-203-sa")
 # END NRP 25-cus-50-req-203-sa BIG EVALS RESULTS
 
 # Calculate speedup by dividing the results with eachother
@@ -241,8 +241,10 @@ def calc_mean_and_std_per_eval():
         br_time_array = []
         mr_time_array = []
         for column_index, column in enumerate(row):
-            br_time_array.extend(column)
-            mr_time_array.extend(mr[row_index][column_index])
+            # br_time_array.extend(column)
+            # mr_time_array.extend(mr[row_index][column_index])
+            br_time_array.extend(map(divide_ns_to_s, column))
+            mr_time_array.extend(map(divide_ns_to_s, mr[row_index][column_index]))
 
             # PRINTS FOR SHOWING THAT POPSIZE IS IRRELEVANT AS BIGGER JUST MEANS EACH MEMBER WILL BE EVALUATED LESS
             # print("popsize: {}".format(pop_start * (column_index + 1)))
@@ -254,7 +256,6 @@ def calc_mean_and_std_per_eval():
         print("BASELINE, MEAN: {}, STD: {}".format(np.mean(mr_time_array), np.std(mr_time_array)))
         print(scistats.ttest_ind(br_time_array, mr_time_array))
         print("")
-
     # time_br_flat = np.array(flatten_cube_of_tuples(bit_results, TIME_N))
     # time_mr_flat = np.array(flatten_cube_of_tuples(model_results, TIME_N))
     # print(scistats.ttest_ind(time_br_flat, time_mr_flat))
@@ -265,7 +266,7 @@ def main():
     # print(model_results)
 
     calc_mean_and_std_per_eval()
-    # ttesting()
+    ttesting()
     # speedup()
     # plot_nrp_boxplots_individual()
     # plot_nrp_boxplots_combined_pop()

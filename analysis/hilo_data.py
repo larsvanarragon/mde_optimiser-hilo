@@ -38,3 +38,15 @@ def focus_on_n_in_tuple(data, n):
         result.append(new_row)
 
     return result
+
+
+def divide_ns_to_s(nanoseconds):
+    return nanoseconds/1_000_000_000
+
+
+def divide_ns_to_millisecond(nanoseconds):
+    return nanoseconds/1_000_000
+
+
+def divide_ns_to_microsecond(nanoseconds):
+    return nanoseconds/1_000
